@@ -1,326 +1,336 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Cellarium — by Noonautics Labs</title>
   <meta name="description" content="Cellarium is Noonautics Labs’ flagship project: full human cell simulations and a search engine for disease mechanisms and pharma targets." />
-  <meta property="og:title" content="Cellarium — by Noonautics Labs" />
-  <meta property="og:description" content="Full human cell simulations. Exploring disease mechanisms and pharma targets." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://noonauticslabs.org/" />
   <meta name="theme-color" content="#0b0c10" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='44' fill='%231f6feb'/%3E%3C/svg%3E" />
   <style>
-    :root{
-      --bg:#0b0c10; --card:#111318; --muted:#9aa3b2; --text:#e6ebf2; --accent:#1f6feb; --accent-2:#2bd4a1; --ring:rgba(31,111,235,.35);
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji";
-      background: radial-gradient(1200px 600px at 80% -10%, rgba(43,212,161,.08), transparent 60%),
-                  radial-gradient(900px 500px at -10% 10%, rgba(31,111,235,.12), transparent 60%),
-                  var(--bg);
-      color:var(--text); line-height:1.6;
-    }
-    a{color:var(--accent); text-decoration:none}
-    a:hover{text-decoration:underline}
+    :root{--bg:#0b0c10; --card:#111318; --muted:#9aa3b2; --text:#e6ebf2; --accent:#1f6feb; --accent-2:#2bd4a1; --ring:rgba(31,111,235,.35)}
+    *{box-sizing:border-box} html,body{height:100%}
+    body{margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial; background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(43,212,161,.08), transparent 60%),
+      radial-gradient(900px 500px at -10% 10%, rgba(31,111,235,.12), transparent 60%), var(--bg); color:var(--text); line-height:1.6}
+    a{color:var(--accent); text-decoration:none} a:hover{text-decoration:underline}
     .container{max-width:1100px; margin:0 auto; padding:0 20px}
-    header{
-      position:sticky; top:0; z-index:50; backdrop-filter:saturate(140%) blur(6px);
+    header{position:sticky; top:0; z-index:50; backdrop-filter:saturate(140%) blur(6px);
       background:linear-gradient(to bottom, rgba(11,12,16,.8), rgba(11,12,16,.5) 60%, transparent);
-      border-bottom:1px solid rgba(255,255,255,.06);
-    }
-    .nav{
-      display:flex; align-items:center; justify-content:space-between; padding:14px 0;
-    }
-    .brand{
-      display:flex; align-items:center; gap:12px; font-weight:700; letter-spacing:.2px;
-    }
-    .logo{
-      width:28px; height:28px; border-radius:8px;
-      background: conic-gradient(from 210deg, var(--accent), var(--accent-2) 40%, #6ee7ff 70%, var(--accent));
-      box-shadow: 0 0 0 4px rgba(255,255,255,.03), 0 8px 30px var(--ring);
-    }
-    .brand small{display:block; font-weight:600; color:var(--muted); letter-spacing:.3px}
-    .menu{display:flex; gap:18px}
-    .menu a{color:var(--text); opacity:.86}
-    .menu a:hover{opacity:1}
-    .menu-btn{display:none}
-    @media (max-width:820px){
-      .menu{display:none}
-      .menu-btn{display:inline-flex; padding:8px 10px; border:1px solid rgba(255,255,255,.12); border-radius:10px; background:#141722; color:var(--text)}
-      .menu.open{display:flex; flex-direction:column; gap:10px; background:#0e1016; padding:12px; border:1px solid rgba(255,255,255,.08); border-radius:12px; position:absolute; right:20px; top:60px}
-    }
-
-    /* Hero */
-    .hero{position:relative; padding:96px 0 40px}
-    .badge{
-      display:inline-flex; align-items:center; gap:8px; font-size:.83rem; color:#cfe0ff;
-      background:rgba(31,111,235,.12); border:1px solid rgba(31,111,235,.35);
-      padding:6px 10px; border-radius:999px;
-    }
+      border-bottom:1px solid rgba(255,255,255,.06)}
+    .nav{display:flex; align-items:center; justify-content:space-between; padding:14px 0}
+    .brand{display:flex; align-items:center; gap:12px; font-weight:700}
+    .logo{width:28px; height:28px; border-radius:8px; background: conic-gradient(from 210deg, var(--accent), var(--accent-2) 40%, #6ee7ff 70%, var(--accent)); box-shadow:0 0 0 4px rgba(255,255,255,.03), 0 8px 30px var(--ring)}
+    .brand small{display:block; font-weight:600; color:var(--muted)}
+    .menu{display:flex; gap:18px; align-items:center}
+    .menu a{color:var(--text); opacity:.86} .menu a:hover{opacity:1}
+    .lang{display:inline-flex; gap:6px; align-items:center; padding:6px 10px; border:1px solid rgba(255,255,255,.12); border-radius:10px; background:#141722; color:#d8e0ee; font-size:.9rem}
+    .hero{padding:96px 0 40px}
+    .badge{display:inline-flex; align-items:center; gap:8px; font-size:.83rem; color:#cfe0ff; background:rgba(31,111,235,.12); border:1px solid rgba(31,111,235,.35); padding:6px 10px; border-radius:999px}
     h1{font-size:clamp(2rem, 5vw, 3.2rem); line-height:1.1; margin:16px 0 10px}
     .lead{font-size:clamp(1.05rem, 2.2vw, 1.25rem); color:var(--muted); max-width:780px}
     .cta{margin-top:24px; display:flex; gap:12px; flex-wrap:wrap}
-    .btn{
-      display:inline-flex; align-items:center; gap:10px; padding:12px 16px; border-radius:12px; font-weight:700;
-      background:linear-gradient(135deg, var(--accent), #3aa0ff); color:white; border:none; cursor:pointer;
-      box-shadow:0 10px 30px var(--ring);
-    }
+    .btn{display:inline-flex; align-items:center; gap:10px; padding:12px 16px; border-radius:12px; font-weight:700; background:linear-gradient(135deg, var(--accent), #3aa0ff); color:white; border:none; cursor:pointer; box-shadow:0 10px 30px var(--ring)}
     .btn.ghost{background:#121520; color:#d8e0ee; border:1px solid rgba(255,255,255,.1); box-shadow:none}
-    .hero-visual{
-      margin-top:36px; background: radial-gradient(400px 160px at 50% 0, rgba(31,111,235,.25), transparent 60%), #0c0f15;
-      border:1px solid rgba(255,255,255,.06); border-radius:18px; padding:18px;
-    }
+    .hero-visual{margin-top:36px; background: radial-gradient(400px 160px at 50% 0, rgba(31,111,235,.25), transparent 60%), #0c0f15; border:1px solid rgba(255,255,255,.06); border-radius:18px; padding:18px}
     .hero-svg{width:100%; height:auto; display:block; border-radius:12px}
-
-    /* Sections */
     section{padding:64px 0}
-    .grid{display:grid; grid-template-columns: 1.2fr 1fr; gap:28px}
-    @media (max-width:900px){ .grid{grid-template-columns:1fr} }
+    .grid{display:grid; grid-template-columns: 1.2fr 1fr; gap:28px} @media (max-width:900px){ .grid{grid-template-columns:1fr} }
     h2{font-size:1.6rem; margin:0 0 10px}
-    .card{
-      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00));
-      border:1px solid rgba(255,255,255,.07); border-radius:16px; padding:18px;
-    }
+    .card{background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00)); border:1px solid rgba(255,255,255,.07); border-radius:16px; padding:18px}
     .list{display:grid; gap:12px; margin:12px 0 0; padding:0; list-style:none}
     .list li{display:flex; gap:10px}
     .dot{width:10px; height:10px; border-radius:999px; background:linear-gradient(135deg, var(--accent), var(--accent-2))}
-    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size:.95rem; color:#b7c3d4}
-    .muted{color:var(--muted)}
-
-    /* Footer */
+    .mono{font-family: ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:.95rem; color:#b7c3d4}
     footer{padding:40px 0; border-top:1px solid rgba(255,255,255,.06); color:var(--muted); font-size:.95rem}
-    .cols{display:grid; grid-template-columns:2fr 1fr 1fr; gap:20px}
-    @media (max-width:900px){ .cols{grid-template-columns:1fr} }
+    .cols{display:grid; grid-template-columns:2fr 1fr 1fr; gap:20px} @media (max-width:900px){ .cols{grid-template-columns:1fr} }
     .pill{display:inline-block; padding:6px 10px; border:1px solid rgba(255,255,255,.12); border-radius:999px; color:#d6deed}
-    .nowrap{white-space:nowrap}
     .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0}
+    form .row{display:grid; gap:12px; grid-template-columns:1fr 1fr} @media (max-width:700px){form .row{grid-template-columns:1fr}}
+    input, textarea{width:100%; padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.12); background:#0f1220; color:#e6ebf2}
+    textarea{min-height:120px; resize:vertical}
   </style>
 </head>
 <body>
-  <header>
-    <div class="container nav">
-      <div class="brand" aria-label="Noonautics Labs">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          NOONAUTICS LABS
-          <small>R&amp;D • Cell Sim • Bioinformatics</small>
-        </div>
+<header>
+  <div class="container nav">
+    <div class="brand" aria-label="Noonautics Labs">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        NOONAUTICS LABS
+        <small data-i18n="tagline">R&amp;D • Cell Sim • Bioinformatics</small>
       </div>
-      <nav aria-label="Primary">
-        <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="menu">Menu</button>
-        <div class="menu" id="menu">
-          <a href="#project">Project</a>
-          <a href="#technology">Technology</a>
-          <a href="#company">Company</a>
-          <a href="#team">Team</a>
-          <a href="#contact">Contact</a>
-        </div>
-      </nav>
     </div>
-  </header>
+    <nav class="menu" aria-label="Primary">
+      <a href="#project" data-i18n="nav_project">Project</a>
+      <a href="#technology" data-i18n="nav_tech">Technology</a>
+      <a href="#company" data-i18n="nav_company">Company</a>
+      <a href="#team" data-i18n="nav_team">Team</a>
+      <a href="#contact" data-i18n="nav_contact">Contact</a>
+      <span class="lang">
+        <button type="button" id="lang-en" aria-pressed="true">EN</button>|
+        <button type="button" id="lang-pl" aria-pressed="false">PL</button>
+      </span>
+    </nav>
+  </div>
+</header>
 
-  <main>
-    <!-- HERO -->
-    <section class="hero" id="project">
-      <div class="container">
-        <span class="badge" aria-label="Project badge">
-          <span class="sr-only">Project: </span>Cellarium — Flagship Project
-        </span>
-        <h1>Full human cell simulations — closing the gap between silicon and carbon.</h1>
-        <p class="lead">
-          <strong>Cellarium</strong> is our audacious step toward programmable biology:
-          universal initial-state definitions, mechanistic models, and a search engine
-          to explore disease mechanisms and pharma targets — as fast and iterative as software.
-        </p>
-        <div class="cta">
-          <a class="btn" href="#contact" role="button" aria-label="Contact us">Contact us</a>
-          <button class="btn ghost" type="button" disabled title="Whitepaper coming soon">Whitepaper (soon)</button>
-        </div>
+<main>
+  <!-- HERO -->
+  <section class="hero" id="project">
+    <div class="container">
+      <span class="badge"><span class="sr-only">Project: </span><span data-i18n="hero_badge">Cellarium — Flagship Project</span></span>
+      <h1 data-i18n="hero_title">Full human cell simulations — closing the gap between silicon and carbon.</h1>
+      <p class="lead" data-i18n="hero_lead">
+        <strong>Cellarium</strong> is our audacious step toward programmable biology:
+        universal initial-state definitions, mechanistic models, and a search engine
+        to explore disease mechanisms and pharma targets — as fast and iterative as software.
+      </p>
+      <div class="cta">
+        <a class="btn" href="#contact" role="button" aria-label="Contact us" data-i18n="cta_contact">Contact us</a>
+        <button class="btn ghost" type="button" disabled title="Whitepaper coming soon" data-i18n="cta_whitepaper">Whitepaper (soon)</button>
+      </div>
 
-        <div class="hero-visual" aria-hidden="true">
-          <!-- Abstract “digital cell” visual (inline SVG, no external assets) -->
-          <svg class="hero-svg" viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#1f6feb" stop-opacity="0.9"/>
-                <stop offset="100%" stop-color="#2bd4a1" stop-opacity="0.9"/>
-              </linearGradient>
-              <radialGradient id="bg" cx="50%" cy="50%" r="60%">
-                <stop offset="0%" stop-color="#0f1626"/>
-                <stop offset="100%" stop-color="#0b0c10"/>
-              </radialGradient>
-              <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
-                <feGaussianBlur stdDeviation="12" result="b"/>
-                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-              </filter>
-            </defs>
-            <rect width="1200" height="420" fill="url(#bg)"/>
-            <g filter="url(#glow)">
-              <circle cx="260" cy="210" r="120" fill="none" stroke="url(#g1)" stroke-width="2"/>
-              <circle cx="260" cy="210" r="170" fill="none" stroke="url(#g1)" stroke-opacity=".5" stroke-width="1.4" stroke-dasharray="4 6"/>
-              <circle cx="260" cy="210" r="60" fill="none" stroke="url(#g1)" stroke-opacity=".8" stroke-width="2"/>
-              <circle cx="260" cy="210" r="6" fill="url(#g1)"/>
-              <!-- membrane channels -->
-              <g stroke="#8dd" stroke-opacity=".6">
-                <path d="M260,40 q30,60 0,120" fill="none"/>
-                <path d="M260,400 q-40,-70 0,-120" fill="none"/>
-                <path d="M100,210 q80,-20 160,0" fill="none"/>
-                <path d="M420,210 q-80,20 -160,0" fill="none"/>
-              </g>
-              <!-- data lattice -->
-              <g stroke="rgba(255,255,255,.07)">
-                <path d="M560 80 H1100"/>
-                <path d="M560 140 H1100"/>
-                <path d="M560 200 H1100"/>
-                <path d="M560 260 H1100"/>
-                <path d="M560 320 H1100"/>
-                <path d="M640 40 V380"/>
-                <path d="M760 40 V380"/>
-                <path d="M880 40 V380"/>
-                <path d="M1000 40 V380"/>
-              </g>
-              <!-- signal flow -->
-              <polyline points="580,320 700,200 820,260 940,160 1060,220" fill="none" stroke="url(#g1)" stroke-width="3"/>
-              <circle cx="700" cy="200" r="6" fill="url(#g1)"/>
-              <circle cx="940" cy="160" r="6" fill="url(#g1)"/>
+      <div class="hero-visual" aria-hidden="true">
+        <svg class="hero-svg" viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#1f6feb" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#2bd4a1" stop-opacity="0.9"/>
+            </linearGradient>
+            <radialGradient id="bg" cx="50%" cy="50%" r="60%">
+              <stop offset="0%" stop-color="#0f1626"/><stop offset="100%" stop-color="#0b0c10"/>
+            </radialGradient>
+            <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="12" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <rect width="1200" height="420" fill="url(#bg)"/>
+          <g filter="url(#glow)">
+            <circle cx="260" cy="210" r="120" fill="none" stroke="url(#g1)" stroke-width="2"/>
+            <circle cx="260" cy="210" r="170" fill="none" stroke="url(#g1)" stroke-opacity=".5" stroke-width="1.4" stroke-dasharray="4 6"/>
+            <circle cx="260" cy="210" r="60" fill="none" stroke="url(#g1)" stroke-opacity=".8" stroke-width="2"/>
+            <circle cx="260" cy="210" r="6" fill="url(#g1)"/>
+            <g stroke="#8dd" stroke-opacity=".6">
+              <path d="M260,40 q30,60 0,120" fill="none"/>
+              <path d="M260,400 q-40,-70 0,-120" fill="none"/>
+              <path d="M100,210 q80,-20 160,0" fill="none"/>
+              <path d="M420,210 q-80,20 -160,0" fill="none"/>
             </g>
-          </svg>
-        </div>
-      </div>
-    </section>
-
-    <!-- TECHNOLOGY -->
-    <section id="technology">
-      <div class="container grid">
-        <div class="card">
-          <h2>Technology</h2>
-          <p class="muted">From curated databases to mechanistic graphs:
-             we synthesize structured knowledge into deterministic systems that run fast and compose cleanly.</p>
-          <ul class="list">
-            <li><span class="dot"></span>Universal <strong>initial state</strong>: genes, epigenetics, organelles, protein levels → any cell type (neuron, stem, cancer, engineered).</li>
-            <li><span class="dot"></span>Mechanistic <strong>ODE/graph models</strong> with feedback loops; no trillion-param training needed.</li>
-            <li><span class="dot"></span><strong>Search engine</strong> to explore disease pathways, targets, apoptosis routes, and drug effects.</li>
-            <li><span class="dot"></span>Simple <strong>APIs &amp; visuals</strong> for rapid prototyping, like software.</li>
-          </ul>
-        </div>
-        <div class="card">
-          <h2>Why now?</h2>
-          <p class="muted">
-            It’s a paradox: we run trillion-parameter AIs trained from scratch, yet biology —
-            where we already know so much — trails behind. We aim to close the gap between silicon on CPUs and carbon in cells, bringing biology into the era of emergent, iterative tooling.
-          </p>
-          <p class="mono">“Make biology buildable.”</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- COMPANY -->
-    <section id="company">
-      <div class="container grid">
-        <div class="card">
-          <h2>About Noonautics Labs</h2>
-          <p><strong>NOONAUTICS LABS SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ</strong><br/>
-             <span class="muted">Legal form: sp. z o.o. • Kraków (Kraków-Podgórze), Małopolskie</span></p>
-          <p class="muted">BADANIA I ROZWÓJ W ZAKRESIE SYMULACJI KOMÓRKOWYCH, BIOINFORMATYKI I TWORZENIA NARZĘDZI DLA BIOTECHNOLOGII.</p>
-        </div>
-        <div class="card">
-          <h2>Focus</h2>
-          <ul class="list">
-            <li><span class="dot"></span>Full human cell simulations (mechanistic).</li>
-            <li><span class="dot"></span>Bioinformatics pipelines &amp; knowledge synthesis.</li>
-            <li><span class="dot"></span>Developer-grade tools for biotech teams.</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- TEAM -->
-    <section id="team">
-      <div class="container grid">
-        <div class="card">
-          <h2>Team</h2>
-          <p><strong>Marcel Tomaszek</strong> — Cellular &amp; Molecular Biophysics, UJ</p>
-          <p><a href="mailto:marcel.tomaszek@student.uj.edu.pl">marcel.tomaszek@student.uj.edu.pl</a></p>
-          <hr style="border:none;border-top:1px solid rgba(255,255,255,.08);margin:12px 0">
-          <p><strong>Oskar Lurka</strong> — Cellular &amp; Molecular Biophysics, UJ</p>
-          <p><a href="mailto:oskar.lurka@student.uj.edu.pl">oskar.lurka@student.uj.edu.pl</a></p>
-        </div>
-        <div class="card">
-          <h2>What we’re building next</h2>
-          <ul class="list">
-            <li><span class="dot"></span>Open APIs for state definitions and simulation control.</li>
-            <li><span class="dot"></span>Interactive visuals for pathway exploration.</li>
-            <li><span class="dot"></span>Whitepaper &amp; demo (in progress).</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- CONTACT -->
-    <section id="contact">
-      <div class="container grid">
-        <div class="card">
-          <h2>Contact</h2>
-          <p>General: <a href="mailto:contact@noonauticslabs.org">contact@noonauticslabs.org</a></p>
-          <p class="muted">We’re preparing our conference materials. A whitepaper and demo access will follow.</p>
-          <div class="cta">
-            <a class="btn" href="mailto:contact@noonauticslabs.org">Email us</a>
-            <button class="btn ghost" type="button" disabled>Whitepaper (soon)</button>
-          </div>
-        </div>
-        <div class="card">
-          <h2>For partners</h2>
-          <p class="muted">Exploration of disease mechanisms, target discovery, and in-silico hypothesis testing. Let’s collaborate on focused, mechanistic problems.</p>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div class="container cols">
-      <div>
-        <span class="pill">Cellarium</span>
-        <div style="margin-top:8px">© 2025 Noonautics Labs sp. z o.o. — Kraków, Poland</div>
-      </div>
-      <div>
-        <div class="muted">Company</div>
-        <div><a href="#company">About</a></div>
-        <div><a href="#team">Team</a></div>
-      </div>
-      <div>
-        <div class="muted">Project</div>
-        <div><a href="#project">Overview</a></div>
-        <div><a href="#technology">Technology</a></div>
+            <g stroke="rgba(255,255,255,.07)">
+              <path d="M560 80 H1100"/><path d="M560 140 H1100"/><path d="M560 200 H1100"/><path d="M560 260 H1100"/><path d="M560 320 H1100"/>
+              <path d="M640 40 V380"/><path d="M760 40 V380"/><path d="M880 40 V380"/><path d="M1000 40 V380"/>
+            </g>
+            <polyline points="580,320 700,200 820,260 940,160 1060,220" fill="none" stroke="url(#g1)" stroke-width="3"/>
+            <circle cx="700" cy="200" r="6" fill="url(#g1)"/><circle cx="940" cy="160" r="6" fill="url(#g1)"/>
+          </g>
+        </svg>
       </div>
     </div>
-  </footer>
+  </section>
 
-  <script>
-    // Mobile menu toggle
-    const btn = document.getElementById('menuBtn');
-    const menu = document.getElementById('menu');
-    if (btn) {
-      btn.addEventListener('click', () => {
-        const open = menu.classList.toggle('open');
-        btn.setAttribute('aria-expanded', String(open));
-      });
+  <!-- TECHNOLOGY -->
+  <section id="technology">
+    <div class="container grid">
+      <div class="card">
+        <h2 data-i18n="tech_title">Technology</h2>
+        <p class="muted" data-i18n="tech_intro">
+          From curated databases to mechanistic graphs:
+          we synthesize structured knowledge into deterministic systems that run fast and compose cleanly.
+        </p>
+        <ul class="list">
+          <li><span class="dot"></span><span data-i18n="tech_point1">Universal <strong>initial state</strong>: genes, epigenetics, organelles, protein levels → any cell type (neuron, stem, cancer, engineered).</span></li>
+          <li><span class="dot"></span><span data-i18n="tech_point2">Mechanistic <strong>ODE/graph models</strong> with feedback loops; no trillion-param training needed.</span></li>
+          <li><span class="dot"></span><span data-i18n="tech_point3"><strong>Search engine</strong> to explore disease pathways, targets, apoptosis routes, and drug effects.</span></li>
+          <li><span class="dot"></span><span data-i18n="tech_point4">Simple <strong>APIs &amp; visuals</strong> for rapid prototyping, like software.</span></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2 data-i18n="why_title">Why now?</h2>
+        <p class="muted" data-i18n="why_text">
+          It’s a paradox: we run trillion-parameter AIs trained from scratch, yet biology —
+          where we already know so much — trails behind. We aim to close the gap between silicon on CPUs and carbon in cells, bringing biology into the era of emergent, iterative tooling.
+        </p>
+        <p class="mono" data-i18n="why_motto">“Make biology buildable.”</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPANY -->
+  <section id="company">
+    <div class="container grid">
+      <div class="card">
+        <h2 data-i18n="about_title">About Noonautics Labs</h2>
+        <p><strong>NOONAUTICS LABS SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ</strong><br/>
+          <span class="muted" data-i18n="about_legal">Legal form: sp. z o.o. • Kraków (Kraków-Podgórze), Małopolskie</span></p>
+        <p class="muted" data-i18n="about_desc">BADANIA I ROZWÓJ W ZAKRESIE SYMULACJI KOMÓRKOWYCH, BIOINFORMATYKI I TWORZENIA NARZĘDZI DLA BIOTECHNOLOGII.</p>
+      </div>
+      <div class="card">
+        <h2 data-i18n="focus_title">Focus</h2>
+        <ul class="list">
+          <li><span class="dot"></span><span data-i18n="focus_1">Full human cell simulations (mechanistic).</span></li>
+          <li><span class="dot"></span><span data-i18n="focus_2">Bioinformatics pipelines &amp; knowledge synthesis.</span></li>
+          <li><span class="dot"></span><span data-i18n="focus_3">Developer-grade tools for biotech teams.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAM -->
+  <section id="team">
+    <div class="container grid">
+      <div class="card">
+        <h2 data-i18n="team_title">Team</h2>
+        <p><strong>Marcel Tomaszek</strong> — <span data-i18n="team_affil">Cellular &amp; Molecular Biophysics, UJ</span></p>
+        <p><a href="mailto:marcel.tomaszek@student.uj.edu.pl">marcel.tomaszek@student.uj.edu.pl</a></p>
+        <hr style="border:none;border-top:1px solid rgba(255,255,255,.08);margin:12px 0">
+        <p><strong>Oskar Lurka</strong> — <span data-i18n="team_affil">Cellular &amp; Molecular Biophysics, UJ</span></p>
+        <p><a href="mailto:oskar.lurka@student.uj.edu.pl">oskar.lurka@student.uj.edu.pl</a></p>
+      </div>
+      <div class="card">
+        <h2 data-i18n="next_title">What we’re building next</h2>
+        <ul class="list">
+          <li><span class="dot"></span><span data-i18n="next_1">Open APIs for state definitions and simulation control.</span></li>
+          <li><span class="dot"></span><span data-i18n="next_2">Interactive visuals for pathway exploration.</span></li>
+          <li><span class="dot"></span><span data-i18n="next_3">Whitepaper &amp; demo (in progress).</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="container grid">
+      <div class="card">
+        <h2 data-i18n="contact_title">Contact</h2>
+        <p><span data-i18n="contact_general">General</span>:
+          <a href="mailto:contact@noonauticslabs.org">contact@noonauticslabs.org</a></p>
+        <form action="https://formsubmit.co/contact@noonauticslabs.org" method="POST">
+          <!-- FormSubmit options -->
+          <input type="hidden" name="_subject" value="Noonautics Labs — Website Contact">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_captcha" value="false">
+          <!-- honeypot -->
+          <input type="text" name="_honey" style="display:none">
+          <div class="row">
+            <div>
+              <label class="sr-only" for="name">Name</label>
+              <input id="name" name="name" type="text" placeholder="Name / Company" required>
+            </div>
+            <div>
+              <label class="sr-only" for="email">Email</label>
+              <input id="email" name="email" type="email" placeholder="Email" required>
+            </div>
+          </div>
+          <label class="sr-only" for="message">Message</label>
+          <textarea id="message" name="message" placeholder="How can we collaborate?" required></textarea>
+          <div class="cta" style="margin-top:14px">
+            <button class="btn" type="submit" data-i18n="contact_send">Send</button>
+            <a class="btn ghost" href="mailto:contact@noonauticslabs.org" data-i18n="contact_email">Email instead</a>
+          </div>
+        </form>
+        <p class="muted" data-i18n="contact_note">We’re preparing our conference materials. A whitepaper and demo access will follow.</p>
+      </div>
+      <div class="card">
+        <h2 data-i18n="partners_title">For partners</h2>
+        <p class="muted" data-i18n="partners_text">
+          Exploration of disease mechanisms, target discovery, and in-silico hypothesis testing.
+          Let’s collaborate on focused, mechanistic problems.
+        </p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container cols">
+    <div>
+      <span class="pill">Cellarium</span>
+      <div style="margin-top:8px">© 2025 Noonautics Labs sp. z o.o. — Kraków, Poland</div>
+    </div>
+    <div>
+      <div class="muted">Company</div>
+      <div><a href="#company" data-i18n="nav_company">About</a></div>
+      <div><a href="#team" data-i18n="nav_team">Team</a></div>
+    </div>
+    <div>
+      <div class="muted">Project</div>
+      <div><a href="#project" data-i18n="nav_project">Overview</a></div>
+      <div><a href="#technology" data-i18n="nav_tech">Technology</a></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Simple i18n
+  const dict = {
+    en: {
+      tagline:"R&D • Cell Sim • Bioinformatics",
+      nav_project:"Project", nav_tech:"Technology", nav_company:"Company", nav_team:"Team", nav_contact:"Contact",
+      hero_badge:"Cellarium — Flagship Project",
+      hero_title:"Full human cell simulations — closing the gap between silicon and carbon.",
+      hero_lead:"<strong>Cellarium</strong> is our audacious step toward programmable biology: universal initial-state definitions, mechanistic models, and a search engine to explore disease mechanisms and pharma targets — as fast and iterative as software.",
+      cta_contact:"Contact us", cta_whitepaper:"Whitepaper (soon)",
+      tech_title:"Technology",
+      tech_intro:"From curated databases to mechanistic graphs: we synthesize structured knowledge into deterministic systems that run fast and compose cleanly.",
+      tech_point1:"Universal <strong>initial state</strong>: genes, epigenetics, organelles, protein levels → any cell type (neuron, stem, cancer, engineered).",
+      tech_point2:"Mechanistic <strong>ODE/graph models</strong> with feedback loops; no trillion-param training needed.",
+      tech_point3:"<strong>Search engine</strong> to explore disease pathways, targets, apoptosis routes, and drug effects.",
+      tech_point4:"Simple <strong>APIs & visuals</strong> for rapid prototyping, like software.",
+      why_title:"Why now?",
+      why_text:"It’s a paradox: we run trillion-parameter AIs trained from scratch, yet biology — where we already know so much — trails behind. We aim to close the gap between silicon on CPUs and carbon in cells, bringing biology into the era of emergent, iterative tooling.",
+      why_motto:"“Make biology buildable.”",
+      about_title:"About Noonautics Labs",
+      about_legal:"Legal form: sp. z o.o. • Kraków (Kraków-Podgórze), Małopolskie",
+      about_desc:"BADANIA I ROZWÓJ W ZAKRESIE SYMULACJI KOMÓRKOWYCH, BIOINFORMATYKI I TWORZENIA NARZĘDZI DLA BIOTECHNOLOGII.",
+      focus_title:"Focus", focus_1:"Full human cell simulations (mechanistic).", focus_2:"Bioinformatics pipelines & knowledge synthesis.", focus_3:"Developer-grade tools for biotech teams.",
+      team_title:"Team", team_affil:"Cellular & Molecular Biophysics, UJ",
+      next_title:"What we’re building next", next_1:"Open APIs for state definitions and simulation control.", next_2:"Interactive visuals for pathway exploration.", next_3:"Whitepaper & demo (in progress).",
+      contact_title:"Contact", contact_general:"General", contact_send:"Send", contact_email:"Email instead",
+      contact_note:"We’re preparing our conference materials. A whitepaper and demo access will follow.",
+      partners_title:"For partners", partners_text:"Exploration of disease mechanisms, target discovery, and in-silico hypothesis testing. Let’s collaborate on focused, mechanistic problems."
+    },
+    pl: {
+      tagline:"B+R • Symulacje komórkowe • Bioinformatyka",
+      nav_project:"Projekt", nav_tech:"Technologia", nav_company:"Spółka", nav_team:"Zespół", nav_contact:"Kontakt",
+      hero_badge:"Cellarium — Projekt flagowy",
+      hero_title:"Pełnoskalowe symulacje komórkowe — zbliżamy krzem do węgla.",
+      hero_lead:"<strong>Cellarium</strong> to nasz odważny krok w stronę programowalnej biologii: uniwersalny stan początkowy, modele mechanistyczne i wyszukiwarka do eksploracji mechanizmów chorób oraz celów farmaceutycznych — szybko i iteracyjnie jak w oprogramowaniu.",
+      cta_contact:"Skontaktuj się", cta_whitepaper:"Biała księga (wkrótce)",
+      tech_title:"Technologia",
+      tech_intro:"Od kuratorowanych baz danych do mechanistycznych grafów: syntetyzujemy wiedzę w deterministyczne systemy, które działają szybko i składają się elegancko.",
+      tech_point1:"Uniwersalny <strong>stan początkowy</strong>: geny, epigenetyka, organella, poziomy białek → dowolny typ komórki (neuron, macierzysta, nowotworowa, inżynierowana).",
+      tech_point2:"Mechanistyczne <strong>modele ODE/grafowe</strong> z pętlami sprzężeń; bez trenowania na bilionach parametrów.",
+      tech_point3:"<strong>Wyszukiwarka</strong> do eksploracji szlaków chorobowych, celów, apoptozy i efektów leków.",
+      tech_point4:"Proste <strong>API i wizualizacje</strong> do szybkiego prototypowania.",
+      why_title:"Dlaczego teraz?",
+      why_text:"Paradoks: uruchamiamy AIs z bilionami parametrów trenowane od zera, a biologia — gdzie wiemy już bardzo dużo — wciąż odstaje. Zamykamy lukę między krzemem a komórką, wprowadzając biologię w erę narzędzi emergentnych i iteracyjnych.",
+      why_motto:"„Sprawmy, by biologia była budowalna.”",
+      about_title:"O Noonautics Labs",
+      about_legal:"Forma prawna: sp. z o.o. • Kraków (Kraków-Podgórze), Małopolskie",
+      about_desc:"BADANIA I ROZWÓJ W ZAKRESIE SYMULACJI KOMÓRKOWYCH, BIOINFORMATYKI I TWORZENIA NARZĘDZI DLA BIOTECHNOLOGII.",
+      focus_title:"Zakres", focus_1:"Pełnoskalowe symulacje komórkowe (mechanistyczne).", focus_2:"Pipelines bioinformatyczne i synteza wiedzy.", focus_3:"Narzędzia deweloperskie dla zespołów biotech.",
+      team_title:"Zespół", team_affil:"Biofizyka komórki i molekularna, UJ",
+      next_title:"Co budujemy dalej", next_1:"Otwarte API do definicji stanów i sterowania symulacją.", next_2:"Interaktywne wizualizacje szlaków.", next_3:"Biała księga i demo (w toku).",
+      contact_title:"Kontakt", contact_general:"Ogólne", contact_send:"Wyślij", contact_email:"Wyślij e-mail",
+      contact_note:"Przygotowujemy materiały konferencyjne. Wkrótce opublikujemy białą księgę i demo.",
+      partners_title:"Dla partnerów", partners_text:"Eksploracja mechanizmów chorób, odkrywanie celów i hipotezy in-silico. Współpracujmy przy konkretnych, mechanistycznych problemach."
     }
-    // Smooth scroll for same-page anchors
-    document.addEventListener('click', (e) => {
-      const a = e.target.closest('a[href^="#"]');
-      if (!a) return;
-      const id = a.getAttribute('href').slice(1);
-      const el = document.getElementById(id);
-      if (el) {
-        e.preventDefault();
-        el.scrollIntoView({behavior:'smooth', block:'start'});
-        history.pushState(null, '', '#'+id);
-      }
-    });
-  </script>
+  };
+
+  function setLang(lang){
+    document.documentElement.setAttribute('lang', lang);
+    document.documentElement.dataset.lang = lang;
+    for (const el of document.querySelectorAll('[data-i18n]')) {
+      const key = el.getAttribute('data-i18n');
+      const html = dict[lang][key] || '';
+      if (html) el.innerHTML = html;
+    }
+    document.getElementById('lang-en').setAttribute('aria-pressed', lang==='en');
+    document.getElementById('lang-pl').setAttribute('aria-pressed', lang==='pl');
+  }
+  document.getElementById('lang-en').addEventListener('click', ()=>setLang('en'));
+  document.getElementById('lang-pl').addEventListener('click', ()=>setLang('pl'));
+  setLang('en'); // default
+</script>
 </body>
 </html>
