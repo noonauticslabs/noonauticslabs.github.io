@@ -3,9 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SimCell - by Noonautics Labs</title>
+  <title>SimCell — by Noonautics Labs</title>
   <meta name="description" content="SimCell is Noonautics Labs’ flagship project: full human cell simulations and a search engine for disease mechanisms and pharma targets." />
   <meta name="theme-color" content="#0b0c10" />
+  <!-- Inline SVG favicon + .ico fallback -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%231f6feb'/%3E%3Cstop offset='100%25' stop-color='%232bd4a1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='44' fill='url(%23g)'/%3E%3C/svg%3E" />
   <link rel="shortcut icon" href="/favicon.ico" />
   <style>
@@ -17,6 +18,7 @@
       --container: min(1200px, 92vw);
       --radius:16px;
       --pad: clamp(18px, 2.2vw, 28px);
+      --header-h: 64px; /* updated on load */
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -27,18 +29,25 @@
         radial-gradient(1200px 600px at 80% -10%, rgba(43,212,161,.08), transparent 60%),
         radial-gradient(900px 500px at -10% 10%, rgba(31,111,235,.12), transparent 60%),
         var(--bg);
+      padding-top: var(--header-h); /* space for fixed header */
     }
     a{color:var(--accent); text-decoration:none}
     a:hover{text-decoration:underline}
     .container{width:var(--container); margin:0 auto; padding:0 8px}
 
-    /* HEADER */
+    /* FIXED header with hide-on-scroll */
     header{
-      position:sticky; top:0; z-index:50;
-      backdrop-filter:saturate(140%) blur(6px);
-      background:linear-gradient(to bottom, rgba(11,12,16,.86), rgba(11,12,16,.6) 60%, transparent);
-      border-bottom:1px solid var(--border);
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      backdrop-filter: saturate(140%) blur(6px);
+      background: linear-gradient(to bottom, rgba(11,12,16,.86), rgba(11,12,16,.6) 60%, transparent);
+      border-bottom: 1px solid var(--border);
+      transform: translateY(0);
+      transition: transform .25s ease, background .2s ease, box-shadow .2s ease;
     }
+    header.scrolled{ background: rgba(11,12,16,.92); box-shadow: 0 6px 22px rgba(0,0,0,.28) }
+    header.hide{ transform: translateY(-100%) }
+
     .nav{display:flex; align-items:center; justify-content:space-between; padding:12px 0}
     .brand{display:flex; align-items:center; gap:12px; font-weight:700}
     .logo{
@@ -47,18 +56,24 @@
       box-shadow: 0 0 0 4px rgba(255,255,255,.03), 0 8px 30px var(--ring);
     }
     .brand small{display:block; font-weight:600; color:var(--muted)}
+
     .menu{display:flex; gap:18px; align-items:center}
     .menu a{color:var(--text); opacity:.9}
     .menu a:hover{opacity:1}
     .lang{display:inline-flex; gap:6px; align-items:center; padding:6px 10px;
       border:1px solid var(--border); border-radius:10px; background:#141722; color:#d8e0ee; font-size:.9rem}
-    /* hamburger */
     .hamb{display:none; background:#151a27; border:1px solid var(--border); color:#e6ebf2; padding:8px 10px; border-radius:10px}
+
     @media (max-width:860px){
-      .menu{display:none; position:absolute; right:12px; top:58px; flex-direction:column; gap:10px;
-        background:#0e1118; border:1px solid var(--border); border-radius:12px; padding:12px; width:calc(100vw - 24px)}
-      .menu.open{display:flex}
       .hamb{display:inline-flex}
+      .menu{
+        display:none; position: fixed; right:12px;
+        top: calc(var(--header-h) + 6px);
+        flex-direction:column; gap:10px;
+        background:#0e1118; border:1px solid var(--border); border-radius:12px; padding:12px;
+        width: calc(100vw - 24px)
+      }
+      .menu.open{display:flex}
     }
 
     /* SECTIONS */
@@ -84,7 +99,7 @@
     .hero-visual{margin-top:36px; background:#0c0f15; border:1px solid var(--border); border-radius:18px; padding:18px}
     .hero-svg{width:100%; height:auto; display:block; border-radius:12px}
 
-    /* CARDS */
+    /* CARDS + GRID */
     h2{font-size:1.6rem; margin:0 0 12px}
     .grid{
       display:grid;
@@ -103,7 +118,7 @@
     .list{display:grid; gap:10px; margin:14px 0 0; padding:0; list-style:none}
     .list li{display:grid; grid-template-columns: 14px 1fr; align-items:start; column-gap:10px}
     .list li::before{
-      content:""; width:10px; height:10px; margin-top:.4em; /* centers with first line */
+      content:""; width:10px; height:10px; margin-top:.4em; /* align with first line */
       border-radius:999px; background:linear-gradient(135deg, var(--accent), var(--accent-2));
       box-shadow:0 0 0 3px rgba(255,255,255,.03)
     }
@@ -163,12 +178,12 @@
   <!-- HERO -->
   <section class="hero" id="project">
     <div class="container">
-      <span class="badge"><span class="sr-only">Project: </span><span data-i18n="hero_badge">SimCell - Flagship Project</span></span>
-      <h1 data-i18n="hero_title">Full human cell simulations - closing the gap between silicon and carbon.</h1>
+      <span class="badge"><span class="sr-only">Project: </span><span data-i18n="hero_badge">SimCell — Flagship Project</span></span>
+      <h1 data-i18n="hero_title">Full human cell simulations — closing the gap between silicon and carbon.</h1>
       <p class="lead" data-i18n="hero_lead">
         <strong>SimCell</strong> is our audacious step toward programmable biology:
         universal initial-state definitions, mechanistic models, and a search engine
-        to explore disease mechanisms and pharma targets - as fast and iterative as software.
+        to explore disease mechanisms and pharma targets — as fast and iterative as software.
       </p>
       <div class="cta">
         <a class="btn" href="#contact" role="button" aria-label="Contact us" data-i18n="cta_contact">Contact us</a>
@@ -232,8 +247,8 @@
       <div class="card">
         <h2 data-i18n="why_title">Why now?</h2>
         <p class="muted" data-i18n="why_text">
-          It’s a paradox: we run trillion-parameter AIs trained from scratch, yet biology -
-          where we already know so much - trails behind. We aim to close the gap between silicon on CPUs and carbon in cells, bringing biology into the era of emergent, iterative tooling.
+          It’s a paradox: we run trillion-parameter AIs trained from scratch, yet biology —
+          where we already know so much — trails behind. We aim to close the gap between silicon on CPUs and carbon in cells, bringing biology into the era of emergent, iterative tooling.
         </p>
         <p class="mono" data-i18n="why_motto">“Make biology buildable.”</p>
       </div>
@@ -265,10 +280,10 @@
     <div class="container grid">
       <div class="card">
         <h2 data-i18n="team_title">Team</h2>
-        <p><strong>Marcel Tomaszek</strong> - <span data-i18n="team_affil">Cellular &amp; Molecular Biophysics, UJ</span></p>
+        <p><strong>Marcel Tomaszek</strong> — <span data-i18n="team_affil">Cellular &amp; Molecular Biophysics, UJ</span></p>
         <p><a href="mailto:marcel.tomaszek@student.uj.edu.pl">marcel.tomaszek@student.uj.edu.pl</a></p>
         <hr style="border:none;border-top:1px solid var(--border);margin:12px 0">
-        <p><strong>Oskar Lurka</strong> - <span data-i18n="team_affil">Cellular &amp; Molecular Biophysics, UJ</span></p>
+        <p><strong>Oskar Lurka</strong> — <span data-i18n="team_affil">Cellular &amp; Molecular Biophysics, UJ</span></p>
         <p><a href="mailto:oskar.lurka@student.uj.edu.pl">oskar.lurka@student.uj.edu.pl</a></p>
       </div>
       <div class="card">
@@ -308,7 +323,7 @@
             <button class="btn" type="submit" data-i18n="contact_send">Send</button>
             <a class="btn ghost" href="mailto:contact@noonauticslabs.org" data-i18n="contact_email">Email instead</a>
           </div>
-          <p class="muted" style="margin-top:8px">No backend needed - this opens your email client with the details prefilled.</p>
+          <p class="muted" style="margin-top:8px">No backend needed — this opens your email client with the details prefilled.</p>
         </form>
 
         <p class="muted" data-i18n="contact_note" style="margin-top:10px">We’re preparing our conference materials. A whitepaper and demo access will follow.</p>
@@ -329,7 +344,7 @@
   <div class="container cols">
     <div>
       <span class="pill">SimCell</span>
-      <div style="margin-top:8px">© 2025 Noonautics Labs sp. z o.o. - Kraków, Poland</div>
+      <div style="margin-top:8px">© 2025 Noonautics Labs sp. z o.o. — Kraków, Poland</div>
     </div>
     <div class="footer-links">
       <div class="muted">Company</div>
@@ -353,15 +368,61 @@
 
 <!-- Scripts -->
 <script>
-  // Mobile menu
+  // --- Mobile menu ---
   const hamb = document.getElementById('hamb');
   const menu = document.getElementById('menu');
-  hamb.addEventListener('click', () => {
-    const open = menu.classList.toggle('open');
-    hamb.setAttribute('aria-expanded', String(open));
+  const header = document.querySelector('header');
+
+  if (hamb && menu) {
+    hamb.addEventListener('click', () => {
+      const open = menu.classList.toggle('open');
+      hamb.setAttribute('aria-expanded', String(open));
+      if (open) header.classList.remove('hide'); // keep header visible while menu open
+    });
+  }
+
+  // --- Hide-on-scroll header ---
+  let lastY = window.scrollY;
+  let ticking = false;
+  const UP_THRESHOLD = 6;
+  const DOWN_THRESHOLD = 10;
+  const MIN_SHOW_Y = 80;
+
+  function onScroll() {
+    const y = window.scrollY;
+    const dy = y - lastY;
+
+    if (y > 2) header.classList.add('scrolled');
+    else header.classList.remove('scrolled');
+
+    const menuOpen = menu && menu.classList.contains('open');
+
+    if (!menuOpen && y > MIN_SHOW_Y && dy > DOWN_THRESHOLD) {
+      header.classList.add('hide');    // scrolling down → hide
+    } else if (dy < -UP_THRESHOLD) {
+      header.classList.remove('hide'); // scrolling up → show
+    }
+
+    lastY = y;
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      window.requestAnimationFrame(onScroll);
+      ticking = true;
+    }
   });
 
-  // Mailto form handler (no backend)
+  // Ensure body padding matches actual header height
+  function setHeaderOffset(){
+    const h = header.getBoundingClientRect().height;
+    document.documentElement.style.setProperty('--header-h', `${Math.round(h)}px`);
+  }
+  window.addEventListener('load', setHeaderOffset);
+  window.addEventListener('resize', setHeaderOffset);
+
+  // --- Mailto form handler (no backend) ---
   const form = document.getElementById('mailtoForm');
   form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -369,19 +430,19 @@
     const email = encodeURIComponent(document.getElementById('email').value.trim());
     const msg = encodeURIComponent(document.getElementById('message').value.trim());
 
-    const subject = encodeURIComponent('Noonautics Labs - Website Contact');
+    const subject = encodeURIComponent('Noonautics Labs — Website Contact');
     const body = `Name/Company: ${name}%0AEmail: ${email}%0A%0A${msg}`;
     window.location.href = `mailto:contact@noonauticslabs.org?subject=${subject}&body=${body}`;
   });
 
-  // i18n dictionary
+  // --- i18n dictionary (EN + rewritten PL) ---
   const dict = {
     en: {
       tagline:"R&D • Cell Sim • Bioinformatics",
       nav_project:"Project", nav_tech:"Technology", nav_company:"Company", nav_team:"Team", nav_contact:"Contact",
-      hero_badge:"SimCell - Flagship Project",
-      hero_title:"Full human cell simulations - closing the gap between silicon and carbon.",
-      hero_lead:"<strong>SimCell</strong> is our audacious step toward programmable biology: universal initial-state definitions, mechanistic models, and a search engine to explore disease mechanisms and pharma targets - as fast and iterative as software.",
+      hero_badge:"SimCell — Flagship Project",
+      hero_title:"Full human cell simulations — closing the gap between silicon and carbon.",
+      hero_lead:"<strong>SimCell</strong> is our audacious step toward programmable biology: universal initial-state definitions, mechanistic models, and a search engine to explore disease mechanisms and pharma targets — as fast and iterative as software.",
       cta_contact:"Contact us", cta_whitepaper:"Whitepaper (soon)",
       tech_title:"Technology",
       tech_intro:"From curated databases to mechanistic graphs: we synthesize structured knowledge into deterministic systems that run fast and compose cleanly.",
@@ -390,7 +451,7 @@
       tech_point3:"<strong>Search engine</strong> to explore disease pathways, targets, apoptosis routes, and drug effects.",
       tech_point4:"Simple <strong>APIs & visuals</strong> for rapid prototyping, like software.",
       why_title:"Why now?",
-      why_text:"It’s a paradox: we run trillion-parameter AIs trained from scratch, yet biology - where we already know so much - trails behind. We aim to close the gap between silicon on CPUs and carbon in cells, bringing biology into the era of emergent, iterative tooling.",
+      why_text:"It’s a paradox: we run trillion-parameter AIs trained from scratch, yet biology — where we already know so much — trails behind. We aim to close the gap between silicon on CPUs and carbon in cells, bringing biology into the era of emergent, iterative tooling.",
       why_motto:"“Make biology buildable.”",
       about_title:"About Noonautics Labs",
       about_legal:"Legal form: sp. z o.o. • Kraków (Kraków-Podgórze), Małopolskie",
@@ -405,28 +466,45 @@
     pl: {
       tagline:"B+R • Symulacje komórkowe • Bioinformatyka",
       nav_project:"Projekt", nav_tech:"Technologia", nav_company:"Spółka", nav_team:"Zespół", nav_contact:"Kontakt",
-      hero_badge:"SimCell - Projekt flagowy",
-      hero_title:"Pełnoskalowe symulacje komórkowe - zbliżamy krzem do węgla.",
-      hero_lead:"<strong>SimCell</strong> to nasz odważny krok w stronę programowalnej biologii: uniwersalny stan początkowy, modele mechanistyczne i wyszukiwarka do eksploracji mechanizmów chorób oraz celów farmaceutycznych - szybko i iteracyjnie jak w oprogramowaniu.",
+
+      hero_badge:"SimCell — projekt flagowy",
+      hero_title:"Symulacje komórek w pełnej skali — zamykamy lukę między krzemem a węglem.",
+      hero_lead:"<strong>SimCell</strong> to nasz odważny krok w stronę programowalnej biologii: własne definicje stanów początkowych, modele mechanistyczne i wyszukiwarka do analizy chorób oraz celów farmaceutycznych — tak szybkie i iteracyjne jak rozwój oprogramowania.",
+
       cta_contact:"Skontaktuj się", cta_whitepaper:"Biała księga (wkrótce)",
+
       tech_title:"Technologia",
-      tech_intro:"Od kuratorowanych baz danych do mechanistycznych grafów: syntetyzujemy wiedzę w deterministyczne systemy, które działają szybko i składają się elegancko.",
-      tech_point1:"Uniwersalny <strong>stan początkowy</strong>: geny, epigenetyka, organella, poziomy białek → dowolny typ komórki (neuron, macierzysta, nowotworowa, inżynierowana).",
-      tech_point2:"Mechanistyczne <strong>modele ODE/grafowe</strong> z pętlami sprzężeń; bez trenowania na bilionach parametrów.",
-      tech_point3:"<strong>Wyszukiwarka</strong> do eksploracji szlaków chorobowych, celów, apoptozy i efektów leków.",
-      tech_point4:"Proste <strong>API i wizualizacje</strong> do szybkiego prototypowania.",
+      tech_intro:"Łączymy dane z kuratorowanych baz i mechanistyczne modele: przekształcamy wiedzę biologiczną w deterministyczne systemy, które działają szybko i łączą się ze sobą jak klocki.",
+      tech_point1:"Elastyczne <strong>stany początkowe</strong>: geny, epigenetyka, organella, poziomy białek → dowolny typ komórki (neuron, komórka macierzysta, nowotworowa, zaprojektowana).",
+      tech_point2:"Mechanistyczne <strong>modele ODE/grafowe</strong> ze sprzężeniami zwrotnymi — bez bilionów parametrów i kosztownego trenowania.",
+      tech_point3:"<strong>Wyszukiwarka</strong> do badania szlaków chorobowych, celów terapeutycznych, apoptozy i efektów leków.",
+      tech_point4:"Proste <strong>API i wizualizacje</strong>, które umożliwiają szybkie prototypowanie — jak w inżynierii oprogramowania.",
+
       why_title:"Dlaczego teraz?",
-      why_text:"Paradoks: uruchamiamy AIs z bilionami parametrów trenowane od zera, a biologia - gdzie wiemy już bardzo dużo - wciąż odstaje. Zamykamy lukę między krzemem a komórką, wprowadzając biologię w erę narzędzi emergentnych i iteracyjnych.",
-      why_motto:"„Sprawmy, by biologia była budowalna.”",
+      why_text:"Paradoks: budujemy systemy AI z bilionami parametrów uczonymi od zera, a biologia — mimo ogromnej ilości wiedzy — wciąż zostaje w tyle. Naszym celem jest domknięcie luki między krzemem a komórką i wejście w erę narzędzi emergentnych, które pozwalają pracować iteracyjnie.",
+      why_motto:"„Sprawmy, by biologia stała się inżynierią.”",
+
       about_title:"O Noonautics Labs",
       about_legal:"Forma prawna: sp. z o.o. • Kraków (Kraków-Podgórze), Małopolskie",
-      about_desc:"BADANIA I ROZWÓJ W ZAKRESIE SYMULACJI KOMÓRKOWYCH, BIOINFORMATYKI I TWORZENIA NARZĘDZI DLA BIOTECHNOLOGII.",
-      focus_title:"Zakres", focus_1:"Pełnoskalowe symulacje komórkowe (mechanistyczne).", focus_2:"Pipelines bioinformatyczne i synteza wiedzy.", focus_3:"Narzędzia deweloperskie dla zespołów biotech.",
-      team_title:"Zespół", team_affil:"Biofizyka komórki i molekularna, UJ",
-      next_title:"Co budujemy dalej", next_1:"Otwarte API do definicji stanów i sterowania symulacją.", next_2:"Interaktywne wizualizacje szlaków.", next_3:"Biała księga i demo (w toku).",
+      about_desc:"Badania i rozwój w zakresie symulacji komórkowych, bioinformatyki i tworzenia narzędzi dla biotechnologii.",
+
+      focus_title:"Zakres",
+      focus_1:"Symulacje komórek w pełnej skali (mechanistyczne).",
+      focus_2:"Pipeline’y bioinformatyczne i synteza wiedzy.",
+      focus_3:"Narzędzia deweloperskie dla zespołów biotech.",
+
+      team_title:"Zespół", team_affil:"Biofizyka komórkowa i molekularna, UJ",
+
+      next_title:"Co budujemy dalej",
+      next_1:"Otwarte API do definiowania stanów i sterowania symulacją.",
+      next_2:"Interaktywne wizualizacje do eksploracji szlaków biologicznych.",
+      next_3:"Biała księga i demo (w przygotowaniu).",
+
       contact_title:"Kontakt", contact_general:"Ogólne", contact_send:"Wyślij", contact_email:"Wyślij e-mail",
-      contact_note:"Przygotowujemy materiały konferencyjne. Wkrótce opublikujemy białą księgę i demo.",
-      partners_title:"Dla partnerów", partners_text:"Eksploracja mechanizmów chorób, odkrywanie celów i hipotezy in-silico. Współpracujmy przy konkretnych, mechanistycznych problemach."
+      contact_note:"Przygotowujemy materiały konferencyjne. Wkrótce udostępnimy białą księgę i demo.",
+
+      partners_title:"Dla partnerów",
+      partners_text:"Badanie mechanizmów chorób, odkrywanie nowych celów terapeutycznych i weryfikacja hipotez in-silico. Współpracujmy nad konkretnymi, mechanistycznymi wyzwaniami."
     }
   };
 
@@ -445,16 +523,18 @@
     try { localStorage.setItem('lang', lang); } catch(e) {}
   }
 
-  // language toggle + persistence
+  // language toggle + persistence + auto-detect
   document.getElementById('lang-en').addEventListener('click', ()=>setLang('en'));
   document.getElementById('lang-pl').addEventListener('click', ()=>setLang('pl'));
-  let saved = null;
-  try { saved = localStorage.getItem('lang'); } catch(e) {}
-  if (!saved) {
-    const userLang = (navigator.language || 'en').toLowerCase();
-    saved = userLang.startsWith('pl') ? 'pl' : 'en';
-  }
-  setLang(saved);
+  (function initLang(){
+    let saved = null;
+    try { saved = localStorage.getItem('lang'); } catch(e) {}
+    if (!saved) {
+      const userLang = (navigator.language || 'en').toLowerCase();
+      saved = userLang.startsWith('pl') ? 'pl' : 'en';
+    }
+    setLang(saved);
+  })();
 </script>
 </body>
 </html>
