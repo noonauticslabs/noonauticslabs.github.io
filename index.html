@@ -261,6 +261,32 @@
 </footer>
 
 <script>
+function setLang(lang){
+  document.documentElement.setAttribute('lang', lang);
+  document.documentElement.dataset.lang = lang;
+  for (const el of document.querySelectorAll('[data-i18n]')) {
+    const key = el.getAttribute('data-i18n');
+    const html = dict[lang][key] || '';
+    if (html) el.innerHTML = html;
+  }
+  document.getElementById('lang-en').setAttribute('aria-pressed', lang==='en');
+  document.getElementById('lang-pl').setAttribute('aria-pressed', lang==='pl');
+  // save choice
+  localStorage.setItem('lang', lang);
+}
+
+// event listeners
+document.getElementById('lang-en').addEventListener('click', ()=>setLang('en'));
+document.getElementById('lang-pl').addEventListener('click', ()=>setLang('pl'));
+
+// on load: restore saved or detect
+let saved = localStorage.getItem('lang');
+if (!saved) {
+  const userLang = (navigator.language || 'en').toLowerCase();
+  saved = userLang.startsWith('pl') ? 'pl' : 'en';
+}
+setLang(saved);
+
   // Simple i18n
   const dict = {
     en: {
