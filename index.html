@@ -3,30 +3,26 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SimCell — by Noonautics Labs</title>
-  <meta name="description" content="SimCell is Noonautics Labs’ flagship project: emergent human cell simulations and a search engine for disease mechanisms and pharma targets." />
+  <title>SimCell - by Noonautics Labs</title>
+  <meta name="description" content="SimCell is Noonautics Labs’ flagship project: full human cell simulations and a search engine for disease mechanisms and pharma targets." />
   <meta name="theme-color" content="#0b0c10" />
-  <!-- Inline SVG favicon + .ico fallback to avoid 404 -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%231f6feb'/%3E%3Cstop offset='100%25' stop-color='%232bd4a1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='44' fill='url(%23g)'/%3E%3C/svg%3E" />
   <link rel="shortcut icon" href="/favicon.ico" />
   <style>
     :root{
-      --bg:#0b0c10;           /* page background */
-      --bg-soft:#0e1118;      /* section background */
-      --card:#121521;         /* card surface (opaque, removes bleed) */
-      --muted:#9aa3b2;
-      --text:#e6ebf2;
-      --accent:#1f6feb;
-      --accent-2:#2bd4a1;
-      --ring:rgba(31,111,235,.35);
-      --border:rgba(255,255,255,.08);
+      --bg:#0b0c10; --bg-soft:#0e1118; --card:#121521;
+      --muted:#a4adbd; --text:#e6ebf2;
+      --accent:#1f6feb; --accent-2:#2bd4a1; --ring:rgba(31,111,235,.35);
+      --border:rgba(255,255,255,.09);
+      --container: min(1200px, 92vw);
+      --radius:16px;
+      --pad: clamp(18px, 2.2vw, 28px);
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
       color:var(--text); line-height:1.6;
-      /* global background (subtle, doesn't interfere inside sections due to opaque surfaces) */
       background:
         radial-gradient(1200px 600px at 80% -10%, rgba(43,212,161,.08), transparent 60%),
         radial-gradient(900px 500px at -10% 10%, rgba(31,111,235,.12), transparent 60%),
@@ -34,33 +30,41 @@
     }
     a{color:var(--accent); text-decoration:none}
     a:hover{text-decoration:underline}
-    .container{max-width:1100px; margin:0 auto; padding:0 20px}
+    .container{width:var(--container); margin:0 auto; padding:0 8px}
 
     /* HEADER */
     header{
       position:sticky; top:0; z-index:50;
       backdrop-filter:saturate(140%) blur(6px);
-      background:linear-gradient(to bottom, rgba(11,12,16,.85), rgba(11,12,16,.55) 60%, transparent);
+      background:linear-gradient(to bottom, rgba(11,12,16,.86), rgba(11,12,16,.6) 60%, transparent);
       border-bottom:1px solid var(--border);
     }
-    .nav{display:flex; align-items:center; justify-content:space-between; padding:14px 0}
-    .brand{display:flex; align-items:center; gap:12px; font-weight:700; letter-spacing:.2px}
+    .nav{display:flex; align-items:center; justify-content:space-between; padding:12px 0}
+    .brand{display:flex; align-items:center; gap:12px; font-weight:700}
     .logo{
       width:28px; height:28px; border-radius:8px;
       background: conic-gradient(from 210deg, var(--accent), var(--accent-2) 40%, #6ee7ff 70%, var(--accent));
       box-shadow: 0 0 0 4px rgba(255,255,255,.03), 0 8px 30px var(--ring);
     }
-    .brand small{display:block; font-weight:600; color:var(--muted); letter-spacing:.3px}
+    .brand small{display:block; font-weight:600; color:var(--muted)}
     .menu{display:flex; gap:18px; align-items:center}
     .menu a{color:var(--text); opacity:.9}
     .menu a:hover{opacity:1}
     .lang{display:inline-flex; gap:6px; align-items:center; padding:6px 10px;
       border:1px solid var(--border); border-radius:10px; background:#141722; color:#d8e0ee; font-size:.9rem}
+    /* hamburger */
+    .hamb{display:none; background:#151a27; border:1px solid var(--border); color:#e6ebf2; padding:8px 10px; border-radius:10px}
+    @media (max-width:860px){
+      .menu{display:none; position:absolute; right:12px; top:58px; flex-direction:column; gap:10px;
+        background:#0e1118; border:1px solid var(--border); border-radius:12px; padding:12px; width:calc(100vw - 24px)}
+      .menu.open{display:flex}
+      .hamb{display:inline-flex}
+    }
 
-    /* SECTIONS (each has its own solid bg so no gradient bleed through) */
-    main > section{position:relative; padding:72px 0; background:var(--bg-soft); border-top:1px solid var(--border)}
+    /* SECTIONS */
+    main > section{position:relative; padding:80px 0; background:var(--bg-soft); border-top:1px solid var(--border)}
     main > section:first-of-type{border-top:none}
-    .hero{padding:96px 0 40px}
+    .hero{padding:100px 0 44px}
     .badge{
       display:inline-flex; align-items:center; gap:8px; font-size:.83rem; color:#cfe0ff;
       background:rgba(31,111,235,.12); border:1px solid rgba(31,111,235,.35);
@@ -76,43 +80,56 @@
     }
     .btn.ghost{background:#151a27; color:#d8e0ee; border:1px solid var(--border); box-shadow:none}
 
-    /* hero visual (self-contained gradient, no bleed outside) */
+    /* hero visual */
     .hero-visual{margin-top:36px; background:#0c0f15; border:1px solid var(--border); border-radius:18px; padding:18px}
     .hero-svg{width:100%; height:auto; display:block; border-radius:12px}
 
-    /* CARDS (opaque surface to avoid “cut off” artifacts) */
-    .grid{display:grid; grid-template-columns: 1.2fr 1fr; gap:28px}
-    @media (max-width:900px){ .grid{grid-template-columns:1fr} }
-    h2{font-size:1.6rem; margin:0 0 10px}
-    .card{
-      background: var(--card); /* more opaque */
-      border:1px solid var(--border); border-radius:16px; padding:18px;
-      box-shadow: 0 6px 22px rgba(0,0,0,.25);
+    /* CARDS */
+    h2{font-size:1.6rem; margin:0 0 12px}
+    .grid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr; /* asymmetry */
+      gap:clamp(18px, 3vw, 32px)
     }
-    .list{display:grid; gap:12px; margin:12px 0 0; padding:0; list-style:none}
-    .list li{display:flex; gap:10px}
-    .dot{width:10px; height:10px; border-radius:999px; background:linear-gradient(135deg, var(--accent), var(--accent-2))}
+    @media (max-width:980px){ .grid{grid-template-columns:1fr} }
+    .card{
+      background: var(--card);
+      border:1px solid var(--border); border-radius:var(--radius);
+      padding: var(--pad);
+      box-shadow: 0 10px 28px rgba(0,0,0,.28);
+    }
+
+    /* Lists with centered custom bullets */
+    .list{display:grid; gap:10px; margin:14px 0 0; padding:0; list-style:none}
+    .list li{display:grid; grid-template-columns: 14px 1fr; align-items:start; column-gap:10px}
+    .list li::before{
+      content:""; width:10px; height:10px; margin-top:.4em; /* centers with first line */
+      border-radius:999px; background:linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow:0 0 0 3px rgba(255,255,255,.03)
+    }
     .mono{font-family: ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:.95rem; color:#b7c3d4}
     .muted{color:var(--muted)}
 
-    /* CONTACT form */
+    /* FORM */
+    form{margin-top:12px}
     form .row{display:grid; gap:12px; grid-template-columns:1fr 1fr}
     @media (max-width:700px){form .row{grid-template-columns:1fr}}
     input, textarea{
-      width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--border);
+      width:100%; padding:14px 16px; border-radius:12px; border:1px solid var(--border);
       background:#0f1220; color:var(--text)
     }
-    textarea{min-height:120px; resize:vertical}
+    textarea{min-height:140px; resize:vertical}
 
     /* FOOTER */
-    footer{
-      background:#0a0c12; padding:40px 0; border-top:1px solid var(--border); color:var(--muted); font-size:.95rem
+    footer{background:#0a0c12; padding:42px 0; border-top:1px solid var(--border); color:var(--muted); font-size:.95rem}
+    .cols{
+      display:grid; gap:20px;
+      grid-template-columns: 1.3fr 1fr 1fr 1fr;
     }
-    .cols{display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:20px}
-    @media (max-width:900px){ .cols{grid-template-columns:1fr 1fr} }
+    @media (max-width:980px){ .cols{grid-template-columns:1fr 1fr} }
     @media (max-width:640px){ .cols{grid-template-columns:1fr} }
     .pill{display:inline-block; padding:6px 10px; border:1px solid var(--border); border-radius:999px; color:#d6deed}
-    .footer-links a{display:block; margin:4px 0; color:#cfd6e6; opacity:.9}
+    .footer-links a{display:block; margin:6px 0; color:#cfd6e6; opacity:.9}
     .footer-links a:hover{opacity:1; text-decoration:none}
     .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0}
   </style>
@@ -127,7 +144,8 @@
         <small data-i18n="tagline">R&amp;D • Cell Sim • Bioinformatics</small>
       </div>
     </div>
-    <nav class="menu" aria-label="Primary">
+    <button class="hamb" id="hamb" aria-expanded="false" aria-controls="menu">Menu</button>
+    <nav class="menu" id="menu" aria-label="Primary">
       <a href="#project" data-i18n="nav_project">Project</a>
       <a href="#technology" data-i18n="nav_tech">Technology</a>
       <a href="#company" data-i18n="nav_company">Company</a>
@@ -145,12 +163,12 @@
   <!-- HERO -->
   <section class="hero" id="project">
     <div class="container">
-      <span class="badge"><span class="sr-only">Project: </span><span data-i18n="hero_badge">SimCell — Flagship Project</span></span>
-      <h1 data-i18n="hero_title">Emergent simulations of living cells — from genes to phenotypes.</h1>
+      <span class="badge"><span class="sr-only">Project: </span><span data-i18n="hero_badge">SimCell - Flagship Project</span></span>
+      <h1 data-i18n="hero_title">Full human cell simulations - closing the gap between silicon and carbon.</h1>
       <p class="lead" data-i18n="hero_lead">
-        <strong>SimCell</strong> makes biology programmable: universal initial-state definitions,
-        mechanistic models, and a search engine to explore disease mechanisms and pharma targets —
-        as fast and iterative as software.
+        <strong>SimCell</strong> is our audacious step toward programmable biology:
+        universal initial-state definitions, mechanistic models, and a search engine
+        to explore disease mechanisms and pharma targets - as fast and iterative as software.
       </p>
       <div class="cta">
         <a class="btn" href="#contact" role="button" aria-label="Contact us" data-i18n="cta_contact">Contact us</a>
@@ -161,11 +179,11 @@
         <svg class="hero-svg" viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#1f6feb" stop-opacity="0.95"/>
-              <stop offset="100%" stop-color="#2bd4a1" stop-opacity="0.95"/>
+              <stop offset="0%" stop-color="#1f6feb" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#2bd4a1" stop-opacity="0.9"/>
             </linearGradient>
             <radialGradient id="bg" cx="50%" cy="50%" r="60%">
-              <stop offset="0%" stop-color="#0f1626"/><stop offset="100%" stop-color="#0c0f15"/>
+              <stop offset="0%" stop-color="#0f1626"/><stop offset="100%" stop-color="#0b0c10"/>
             </radialGradient>
             <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
               <feGaussianBlur stdDeviation="12" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
@@ -175,8 +193,8 @@
           <g filter="url(#glow)">
             <circle cx="260" cy="210" r="120" fill="none" stroke="url(#g1)" stroke-width="2"/>
             <circle cx="260" cy="210" r="170" fill="none" stroke="url(#g1)" stroke-opacity=".5" stroke-width="1.4" stroke-dasharray="4 6"/>
-            <circle cx="260" cy="210" r="60"  fill="none" stroke="url(#g1)" stroke-opacity=".8" stroke-width="2"/>
-            <circle cx="260" cy="210" r="6"   fill="url(#g1)"/>
+            <circle cx="260" cy="210" r="60" fill="none" stroke="url(#g1)" stroke-opacity=".8" stroke-width="2"/>
+            <circle cx="260" cy="210" r="6" fill="url(#g1)"/>
             <g stroke="#8dd" stroke-opacity=".6">
               <path d="M260,40 q30,60 0,120" fill="none"/>
               <path d="M260,400 q-40,-70 0,-120" fill="none"/>
@@ -205,17 +223,17 @@
           we synthesize structured knowledge into deterministic systems that run fast and compose cleanly.
         </p>
         <ul class="list">
-          <li><span class="dot"></span><span data-i18n="tech_point1">Universal <strong>initial state</strong>: genes, epigenetics, organelles, protein levels → any cell type (neuron, stem, cancer, engineered).</span></li>
-          <li><span class="dot"></span><span data-i18n="tech_point2">Mechanistic <strong>ODE/graph models</strong> with feedback loops; no trillion-param training needed.</span></li>
-          <li><span class="dot"></span><span data-i18n="tech_point3"><strong>Search engine</strong> to explore disease pathways, targets, apoptosis routes, and drug effects.</span></li>
-          <li><span class="dot"></span><span data-i18n="tech_point4">Simple <strong>APIs &amp; visuals</strong> for rapid prototyping, like software.</span></li>
+          <li><span data-i18n="tech_point1">Universal <strong>initial state</strong>: genes, epigenetics, organelles, protein levels → any cell type (neuron, stem, cancer, engineered).</span></li>
+          <li><span data-i18n="tech_point2">Mechanistic <strong>ODE/graph models</strong> with feedback loops; no trillion-param training needed.</span></li>
+          <li><span data-i18n="tech_point3"><strong>Search engine</strong> to explore disease pathways, targets, apoptosis routes, and drug effects.</span></li>
+          <li><span data-i18n="tech_point4">Simple <strong>APIs &amp; visuals</strong> for rapid prototyping, like software.</span></li>
         </ul>
       </div>
       <div class="card">
         <h2 data-i18n="why_title">Why now?</h2>
         <p class="muted" data-i18n="why_text">
-          AI shows emergence in trillion-parameter nets. Biology <em>is</em> emergence — yet tooling lags behind.
-          SimCell aims to close the gap between silicon and cells, bringing biology into the era of iterative, programmable workflows.
+          It’s a paradox: we run trillion-parameter AIs trained from scratch, yet biology -
+          where we already know so much - trails behind. We aim to close the gap between silicon on CPUs and carbon in cells, bringing biology into the era of emergent, iterative tooling.
         </p>
         <p class="mono" data-i18n="why_motto">“Make biology buildable.”</p>
       </div>
@@ -234,9 +252,9 @@
       <div class="card">
         <h2 data-i18n="focus_title">Focus</h2>
         <ul class="list">
-          <li><span class="dot"></span><span data-i18n="focus_1">Emergent human cell simulations (mechanistic).</span></li>
-          <li><span class="dot"></span><span data-i18n="focus_2">Bioinformatics pipelines &amp; knowledge synthesis.</span></li>
-          <li><span class="dot"></span><span data-i18n="focus_3">Developer-grade tools for biotech teams.</span></li>
+          <li><span data-i18n="focus_1">Full human cell simulations (mechanistic).</span></li>
+          <li><span data-i18n="focus_2">Bioinformatics pipelines &amp; knowledge synthesis.</span></li>
+          <li><span data-i18n="focus_3">Developer-grade tools for biotech teams.</span></li>
         </ul>
       </div>
     </div>
@@ -247,18 +265,18 @@
     <div class="container grid">
       <div class="card">
         <h2 data-i18n="team_title">Team</h2>
-        <p><strong>Marcel Tomaszek</strong> — <span data-i18n="team_affil">Cellular &amp; Molecular Biophysics, UJ</span></p>
+        <p><strong>Marcel Tomaszek</strong> - <span data-i18n="team_affil">Cellular &amp; Molecular Biophysics, UJ</span></p>
         <p><a href="mailto:marcel.tomaszek@student.uj.edu.pl">marcel.tomaszek@student.uj.edu.pl</a></p>
         <hr style="border:none;border-top:1px solid var(--border);margin:12px 0">
-        <p><strong>Oskar Lurka</strong> — <span data-i18n="team_affil">Cellular &amp; Molecular Biophysics, UJ</span></p>
+        <p><strong>Oskar Lurka</strong> - <span data-i18n="team_affil">Cellular &amp; Molecular Biophysics, UJ</span></p>
         <p><a href="mailto:oskar.lurka@student.uj.edu.pl">oskar.lurka@student.uj.edu.pl</a></p>
       </div>
       <div class="card">
         <h2 data-i18n="next_title">What we’re building next</h2>
         <ul class="list">
-          <li><span class="dot"></span><span data-i18n="next_1">Open APIs for state definitions and simulation control.</span></li>
-          <li><span class="dot"></span><span data-i18n="next_2">Interactive visuals for pathway exploration.</span></li>
-          <li><span class="dot"></span><span data-i18n="next_3">Whitepaper &amp; demo (in progress).</span></li>
+          <li><span data-i18n="next_1">Open APIs for state definitions and simulation control.</span></li>
+          <li><span data-i18n="next_2">Interactive visuals for pathway exploration.</span></li>
+          <li><span data-i18n="next_3">Whitepaper &amp; demo (in progress).</span></li>
         </ul>
       </div>
     </div>
@@ -271,13 +289,9 @@
         <h2 data-i18n="contact_title">Contact</h2>
         <p><span data-i18n="contact_general">General</span>:
           <a href="mailto:contact@noonauticslabs.org">contact@noonauticslabs.org</a></p>
-        <form action="https://formsubmit.co/contact@noonauticslabs.org" method="POST">
-          <input type="hidden" name="_subject" value="Noonautics Labs — Website Contact">
-          <input type="hidden" name="_template" value="table">
-          <input type="hidden" name="_captcha" value="false">
-          <!-- Redirect to a simple thank-you (create thanks.html later if you want) -->
-          <!-- <input type="hidden" name="_next" value="https://noonauticslabs.org/thanks.html"> -->
-          <input type="text" name="_honey" style="display:none">
+
+        <!-- Mailto form: no backend required -->
+        <form id="mailtoForm">
           <div class="row">
             <div>
               <label class="sr-only" for="name">Name</label>
@@ -294,9 +308,12 @@
             <button class="btn" type="submit" data-i18n="contact_send">Send</button>
             <a class="btn ghost" href="mailto:contact@noonauticslabs.org" data-i18n="contact_email">Email instead</a>
           </div>
+          <p class="muted" style="margin-top:8px">No backend needed - this opens your email client with the details prefilled.</p>
         </form>
-        <p class="muted" data-i18n="contact_note">We’re preparing our conference materials. A whitepaper and demo access will follow.</p>
+
+        <p class="muted" data-i18n="contact_note" style="margin-top:10px">We’re preparing our conference materials. A whitepaper and demo access will follow.</p>
       </div>
+
       <div class="card">
         <h2 data-i18n="partners_title">For partners</h2>
         <p class="muted" data-i18n="partners_text">
@@ -312,7 +329,7 @@
   <div class="container cols">
     <div>
       <span class="pill">SimCell</span>
-      <div style="margin-top:8px">© 2025 Noonautics Labs sp. z o.o. — Kraków, Poland</div>
+      <div style="margin-top:8px">© 2025 Noonautics Labs sp. z o.o. - Kraków, Poland</div>
     </div>
     <div class="footer-links">
       <div class="muted">Company</div>
@@ -334,16 +351,37 @@
   </div>
 </footer>
 
-<!-- Scripts at end to ensure DOM exists -->
+<!-- Scripts -->
 <script>
-  /* i18n dictionary */
+  // Mobile menu
+  const hamb = document.getElementById('hamb');
+  const menu = document.getElementById('menu');
+  hamb.addEventListener('click', () => {
+    const open = menu.classList.toggle('open');
+    hamb.setAttribute('aria-expanded', String(open));
+  });
+
+  // Mailto form handler (no backend)
+  const form = document.getElementById('mailtoForm');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = encodeURIComponent(document.getElementById('name').value.trim());
+    const email = encodeURIComponent(document.getElementById('email').value.trim());
+    const msg = encodeURIComponent(document.getElementById('message').value.trim());
+
+    const subject = encodeURIComponent('Noonautics Labs - Website Contact');
+    const body = `Name/Company: ${name}%0AEmail: ${email}%0A%0A${msg}`;
+    window.location.href = `mailto:contact@noonauticslabs.org?subject=${subject}&body=${body}`;
+  });
+
+  // i18n dictionary
   const dict = {
     en: {
       tagline:"R&D • Cell Sim • Bioinformatics",
       nav_project:"Project", nav_tech:"Technology", nav_company:"Company", nav_team:"Team", nav_contact:"Contact",
-      hero_badge:"SimCell — Flagship Project",
-      hero_title:"Emergent simulations of living cells — from genes to phenotypes.",
-      hero_lead:"<strong>SimCell</strong> makes biology programmable: universal initial-state definitions, mechanistic models, and a search engine to explore disease mechanisms and pharma targets — as fast and iterative as software.",
+      hero_badge:"SimCell - Flagship Project",
+      hero_title:"Full human cell simulations - closing the gap between silicon and carbon.",
+      hero_lead:"<strong>SimCell</strong> is our audacious step toward programmable biology: universal initial-state definitions, mechanistic models, and a search engine to explore disease mechanisms and pharma targets - as fast and iterative as software.",
       cta_contact:"Contact us", cta_whitepaper:"Whitepaper (soon)",
       tech_title:"Technology",
       tech_intro:"From curated databases to mechanistic graphs: we synthesize structured knowledge into deterministic systems that run fast and compose cleanly.",
@@ -352,12 +390,12 @@
       tech_point3:"<strong>Search engine</strong> to explore disease pathways, targets, apoptosis routes, and drug effects.",
       tech_point4:"Simple <strong>APIs & visuals</strong> for rapid prototyping, like software.",
       why_title:"Why now?",
-      why_text:"AI shows emergence in trillion-parameter nets. Biology is emergence — yet tooling lags behind. SimCell closes the gap between silicon and cells, enabling iterative, programmable workflows.",
+      why_text:"It’s a paradox: we run trillion-parameter AIs trained from scratch, yet biology - where we already know so much - trails behind. We aim to close the gap between silicon on CPUs and carbon in cells, bringing biology into the era of emergent, iterative tooling.",
       why_motto:"“Make biology buildable.”",
       about_title:"About Noonautics Labs",
       about_legal:"Legal form: sp. z o.o. • Kraków (Kraków-Podgórze), Małopolskie",
       about_desc:"BADANIA I ROZWÓJ W ZAKRESIE SYMULACJI KOMÓRKOWYCH, BIOINFORMATYKI I TWORZENIA NARZĘDZI DLA BIOTECHNOLOGII.",
-      focus_title:"Focus", focus_1:"Emergent human cell simulations (mechanistic).", focus_2:"Bioinformatics pipelines & knowledge synthesis.", focus_3:"Developer-grade tools for biotech teams.",
+      focus_title:"Focus", focus_1:"Full human cell simulations (mechanistic).", focus_2:"Bioinformatics pipelines & knowledge synthesis.", focus_3:"Developer-grade tools for biotech teams.",
       team_title:"Team", team_affil:"Cellular & Molecular Biophysics, UJ",
       next_title:"What we’re building next", next_1:"Open APIs for state definitions and simulation control.", next_2:"Interactive visuals for pathway exploration.", next_3:"Whitepaper & demo (in progress).",
       contact_title:"Contact", contact_general:"General", contact_send:"Send", contact_email:"Email instead",
@@ -367,23 +405,23 @@
     pl: {
       tagline:"B+R • Symulacje komórkowe • Bioinformatyka",
       nav_project:"Projekt", nav_tech:"Technologia", nav_company:"Spółka", nav_team:"Zespół", nav_contact:"Kontakt",
-      hero_badge:"SimCell — Projekt flagowy",
-      hero_title:"Emergentne symulacje żywych komórek — od genów do fenotypów.",
-      hero_lead:"<strong>SimCell</strong> sprawia, że biologia staje się programowalna: uniwersalny stan początkowy, modele mechanistyczne i wyszukiwarka do eksploracji mechanizmów chorób oraz celów farmaceutycznych — szybko i iteracyjnie jak w oprogramowaniu.",
+      hero_badge:"SimCell - Projekt flagowy",
+      hero_title:"Pełnoskalowe symulacje komórkowe - zbliżamy krzem do węgla.",
+      hero_lead:"<strong>SimCell</strong> to nasz odważny krok w stronę programowalnej biologii: uniwersalny stan początkowy, modele mechanistyczne i wyszukiwarka do eksploracji mechanizmów chorób oraz celów farmaceutycznych - szybko i iteracyjnie jak w oprogramowaniu.",
       cta_contact:"Skontaktuj się", cta_whitepaper:"Biała księga (wkrótce)",
       tech_title:"Technologia",
       tech_intro:"Od kuratorowanych baz danych do mechanistycznych grafów: syntetyzujemy wiedzę w deterministyczne systemy, które działają szybko i składają się elegancko.",
       tech_point1:"Uniwersalny <strong>stan początkowy</strong>: geny, epigenetyka, organella, poziomy białek → dowolny typ komórki (neuron, macierzysta, nowotworowa, inżynierowana).",
       tech_point2:"Mechanistyczne <strong>modele ODE/grafowe</strong> z pętlami sprzężeń; bez trenowania na bilionach parametrów.",
-      tech_point3:"<strong>Wyszukiwarka</strong> szlaków chorobowych, celów, apoptozy i efektów leków.",
+      tech_point3:"<strong>Wyszukiwarka</strong> do eksploracji szlaków chorobowych, celów, apoptozy i efektów leków.",
       tech_point4:"Proste <strong>API i wizualizacje</strong> do szybkiego prototypowania.",
       why_title:"Dlaczego teraz?",
-      why_text:"AI pokazuje emergencję w sieciach z bilionami parametrów. Biologia jest emergentna — a narzędzia wciąż odstają. SimCell domyka lukę między krzemem a komórką, umożliwiając iteracyjne, programowalne przepływy pracy.",
+      why_text:"Paradoks: uruchamiamy AIs z bilionami parametrów trenowane od zera, a biologia - gdzie wiemy już bardzo dużo - wciąż odstaje. Zamykamy lukę między krzemem a komórką, wprowadzając biologię w erę narzędzi emergentnych i iteracyjnych.",
       why_motto:"„Sprawmy, by biologia była budowalna.”",
       about_title:"O Noonautics Labs",
       about_legal:"Forma prawna: sp. z o.o. • Kraków (Kraków-Podgórze), Małopolskie",
       about_desc:"BADANIA I ROZWÓJ W ZAKRESIE SYMULACJI KOMÓRKOWYCH, BIOINFORMATYKI I TWORZENIA NARZĘDZI DLA BIOTECHNOLOGII.",
-      focus_title:"Zakres", focus_1:"Emergentne symulacje komórkowe (mechanistyczne).", focus_2:"Pipelines bioinformatyczne i synteza wiedzy.", focus_3:"Narzędzia deweloperskie dla zespołów biotech.",
+      focus_title:"Zakres", focus_1:"Pełnoskalowe symulacje komórkowe (mechanistyczne).", focus_2:"Pipelines bioinformatyczne i synteza wiedzy.", focus_3:"Narzędzia deweloperskie dla zespołów biotech.",
       team_title:"Zespół", team_affil:"Biofizyka komórki i molekularna, UJ",
       next_title:"Co budujemy dalej", next_1:"Otwarte API do definicji stanów i sterowania symulacją.", next_2:"Interaktywne wizualizacje szlaków.", next_3:"Biała księga i demo (w toku).",
       contact_title:"Kontakt", contact_general:"Ogólne", contact_send:"Wyślij", contact_email:"Wyślij e-mail",
@@ -407,20 +445,16 @@
     try { localStorage.setItem('lang', lang); } catch(e) {}
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const en = document.getElementById('lang-en');
-    const pl = document.getElementById('lang-pl');
-    if (en) en.addEventListener('click', () => setLang('en'));
-    if (pl) pl.addEventListener('click', () => setLang('pl'));
-
-    let saved = null;
-    try { saved = localStorage.getItem('lang'); } catch(e) {}
-    if (!saved) {
-      const userLang = (navigator.language || 'en').toLowerCase();
-      saved = userLang.startsWith('pl') ? 'pl' : 'en';
-    }
-    setLang(saved);
-  });
+  // language toggle + persistence
+  document.getElementById('lang-en').addEventListener('click', ()=>setLang('en'));
+  document.getElementById('lang-pl').addEventListener('click', ()=>setLang('pl'));
+  let saved = null;
+  try { saved = localStorage.getItem('lang'); } catch(e) {}
+  if (!saved) {
+    const userLang = (navigator.language || 'en').toLowerCase();
+    saved = userLang.startsWith('pl') ? 'pl' : 'en';
+  }
+  setLang(saved);
 </script>
 </body>
 </html>
