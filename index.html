@@ -64,7 +64,7 @@
       .menu.open{display:flex}
     }
 
-    /* HERO — full viewport minus header; content aligned to upper half */
+    /* HERO — full viewport minus header; content in upper half */
     .hero{
       position:relative; min-height:calc(100svh - var(--header-h));
       display:flex; align-items:flex-start;
@@ -73,21 +73,21 @@
       background: transparent;
       overflow: clip;
     }
-    .hero .container{
-      position:relative; z-index:3;
-      transform: translateY(0);
-      max-width: var(--container);
-    }
+    .hero .container{ position:relative; z-index:3; max-width: var(--container); }
     .hero .stack{
       display:flex; flex-direction:column; gap:10px;
       margin-top: min(8vh, 80px); /* push copy into upper half */
       max-width: 860px;
     }
+
+    /* Badge = shrink to content */
     .badge{
-      display:inline-flex; align-items:center; gap:8px; font-size:.83rem; color:#cfe0ff;
+      display:inline-flex; width:fit-content; /* <= fit-content */
+      align-items:center; gap:8px; font-size:.83rem; color:#cfe0ff;
       background:rgba(31,111,235,.12); border:1px solid rgba(31,111,235,.35);
       padding:6px 10px; border-radius:999px
     }
+
     h1{font-size:clamp(2rem, 5vw, 3.2rem); line-height:1.1; margin:6px 0 4px}
     .lead{font-size:clamp(1.05rem, 2.2vw, 1.25rem); color:var(--muted); max-width:780px}
     .cta{margin-top:18px; display:flex; gap:12px; flex-wrap:wrap}
@@ -112,28 +112,35 @@
       background: linear-gradient(to bottom, rgba(11,12,16,0), var(--bg));
     }
 
-    /* Full-height sections after hero */
+    /* Full-height sections after hero — denser layout */
     main > section:not(.hero){
       position:relative; min-height:100svh;
       display:flex; align-items:center;
-      padding: 10svh 0; background:var(--bg-soft); border-top:1px solid var(--border)
+      padding: 6svh 0; /* tighter than before */
+      background:var(--bg-soft); border-top:1px solid var(--border)
     }
+    .section-inner{
+      width:var(--container); margin:0 auto; padding:0 8px;
+      display:grid; grid-template-columns: 1.1fr .9fr; gap:clamp(18px, 2.6vw, 28px);
+      align-items:stretch;
+    }
+    @media (max-width:980px){ .section-inner{grid-template-columns:1fr} }
     h2{font-size:1.6rem; margin:0 0 12px}
-    .grid{display:grid; grid-template-columns: 1.15fr .85fr; gap:clamp(18px, 3vw, 32px)}
-    @media (max-width:980px){ .grid{grid-template-columns:1fr} }
     .card{background: var(--card); border:1px solid var(--border); border-radius:var(--radius); padding: var(--pad); box-shadow: 0 10px 28px rgba(0,0,0,.28)}
     .list{display:grid; gap:10px; margin:14px 0 0; padding:0; list-style:none}
     .list li{display:grid; grid-template-columns: 14px 1fr; align-items:start; column-gap:10px}
     .list li::before{content:""; width:10px; height:10px; margin-top:.4em; border-radius:999px; background:linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow:0 0 0 3px rgba(255,255,255,.03)}
     .mono{font-family: ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:.95rem; color:#b7c3d4}
     .muted{color:var(--muted)}
+
     form{margin-top:12px}
     form .row{display:grid; gap:12px; grid-template-columns:1fr 1fr}
     @media (max-width:700px){form .row{grid-template-columns:1fr}}
-    input, textarea{width:100%; padding:14px 16px; border-radius:12px; border:1px solid var(--border); background:#0f1220; color:#var(--text)}
+    input, textarea{width:100%; padding:14px 16px; border-radius:12px; border:1px solid var(--border); background:#0f1220; color: var(--text)}
     textarea{min-height:140px; resize:vertical}
+
     footer{background:#0a0c12; padding:42px 0; border-top:1px solid var(--border); color:#muted; font-size:.95rem}
-    .cols{display:grid; gap:20px; grid-template-columns: 1.3fr 1fr 1fr 1fr}
+    .cols{width:var(--container); margin:0 auto; padding:0 8px; display:grid; gap:20px; grid-template-columns: 1.3fr 1fr 1fr 1fr}
     @media (max-width:980px){ .cols{grid-template-columns:1fr 1fr} }
     @media (max-width:640px){ .cols{grid-template-columns:1fr} }
     .pill{display:inline-block; padding:6px 10px; border:1px solid var(--border); border-radius:999px; color:#d6deed}
@@ -194,8 +201,8 @@
   </section>
 
   <!-- TECHNOLOGY -->
-  <section id="technology">
-    <div class="container grid">
+  <section id="technology" aria-label="Technology">
+    <div class="section-inner">
       <div class="card">
         <h2 data-i18n="tech_title">Technology</h2>
         <p class="muted" data-i18n="tech_intro">
@@ -221,8 +228,8 @@
   </section>
 
   <!-- COMPANY -->
-  <section id="company">
-    <div class="container grid">
+  <section id="company" aria-label="Company">
+    <div class="section-inner">
       <div class="card">
         <h2 data-i18n="about_title">About Noonautics Labs</h2>
         <p><strong>NOONAUTICS LABS SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ</strong><br/>
@@ -241,8 +248,8 @@
   </section>
 
   <!-- TEAM -->
-  <section id="team">
-    <div class="container grid">
+  <section id="team" aria-label="Team">
+    <div class="section-inner">
       <div class="card">
         <h2 data-i18n="team_title">Team</h2>
         <p><strong>Marcel Tomaszek</strong> — <span data-i18n="team_affil">Cellular &amp; Molecular Biophysics, UJ</span></p>
@@ -261,8 +268,8 @@
   </section>
 
   <!-- CONTACT -->
-  <section id="contact">
-    <div class="container grid">
+  <section id="contact" aria-label="Contact">
+    <div class="section-inner">
       <div class="card">
         <h2 data-i18n="contact_title">Contact</h2>
         <p><span data-i18n="contact_general">General</span>:
@@ -303,7 +310,7 @@
 </main>
 
 <footer>
-  <div class="container cols">
+  <div class="cols">
     <div>
       <span class="pill">SiCell</span>
       <div style="margin-top:8px">© 2025 Noonautics Labs sp. z o.o. — Kraków, Poland</div>
@@ -372,7 +379,7 @@
     window.location.href = `mailto:contact@noonauticslabs.org?subject=${subject}&body=${body}`;
   });
 
-  // i18n (kept concise)
+  // i18n (concise)
   const dict = {
     en: {
       tagline:"R&D • Cell Sim • Bioinformatics",
@@ -405,8 +412,7 @@
       hero_title:"Symulacje komórek w pełnej skali — zamykamy lukę między krzemem a węglem.",
       hero_lead:"<strong>SiCell</strong> to nasz odważny krok w stronę programowalnej biologii: definicje stanów początkowych, modele mechanistyczne i wyszukiwarka do analizy mechanizmów chorób oraz celów farmaceutycznych.",
       cta_contact:"Skontaktuj się", cta_whitepaper:"Biała księga (wkrótce)",
-      tech_title:"Technologia",
-      tech_intro:"Od kuratorowanych baz do modeli mechanistycznych — wiedza jako deterministyczne systemy, które działają szybko i łączą się czysto.",
+      tech_title:"Technologia", tech_intro:"Od kuratorowanych baz do modeli mechanistycznych — szybkie i komponowalne systemy.",
       tech_point1:"Elastyczne <strong>stany początkowe</strong> → dowolny typ komórki.",
       tech_point2:"<strong>Modele ODE/grafowe</strong> ze sprzężeniami zwrotnymi.",
       tech_point3:"<strong>Wyszukiwarka</strong> szlaków i efektów leków.",
@@ -414,7 +420,7 @@
       why_title:"Dlaczego teraz?", why_text:"Domykamy lukę między krzemem a komórką.",
       why_motto:"„Sprawmy, by biologia stała się inżynierią.”",
       about_title:"O Noonautics Labs", about_legal:"Forma prawna: sp. z o.o. • Kraków (Kraków-Podgórze)",
-      about_desc:"Badania i rozwój: symulacje komórkowe, bioinformatyka, narzędzia dla biotech.",
+      about_desc:"Symulacje komórkowe, bioinformatyka, narzędzia dla biotech.",
       focus_title:"Zakres", focus_1:"Symulacje komórkowe.", focus_2:"Pipeline’y i synteza wiedzy.", focus_3:"Narzędzia deweloperskie.",
       team_title:"Zespół", team_affil:"Biofizyka komórkowa i molekularna, UJ",
       next_title:"Co dalej", next_1:"Otwarte API.", next_2:"Interaktywne wizualizacje.", next_3:"Biała księga i demo.",
@@ -451,7 +457,6 @@
   const gl = canvas.getContext('webgl', {antialias:true, alpha:false});
   if (!gl) return;
 
-  // HiDPI full screen
   const DPR = Math.min(2, window.devicePixelRatio || 1);
   function resize(){
     canvas.width = Math.max(800, innerWidth) * DPR | 0;
@@ -460,7 +465,6 @@
   }
   resize(); addEventListener('resize', resize);
 
-  // Matrices
   const M = {
     perspective(fov, aspect, near, far){
       const f = 1/Math.tan(fov/2), nf = 1/(near-far);
@@ -507,10 +511,7 @@
     vec3 L = normalize(vec3(0.6, 0.9, 1.0));
     float diff = 0.5 + 0.5*max(0.0, dot(N,L));
     float spec = pow(max(0.0, dot(reflect(-L,N), vec3(0.0,0.0,1.0))), 42.0) * 0.4;
-
-    // pulse halo
-    float halo = smoothstep(0.85, 0.0, r2) * vPulse;
-
+    float halo = smoothstep(0.85, 0.0, r2) * vPulse; /* pulse halo */
     float fog = clamp((vDepth-1.0) / 9.0, 0.0, 1.0);
     vec3 base = vColor*(diff + 0.15*halo) + spec*vec3(1.0);
     base = mix(base, vec3(0.03,0.05,0.09), fog);
@@ -527,9 +528,7 @@
   void main(){
     vec4 world = uModel * vec4(position, 1.0);
     vec4 view = uView * world;
-    vDepth = -view.z;
-    vColor = color;
-    vPulse = pulse;
+    vDepth = -view.z; vColor = color; vPulse = pulse;
     gl_Position = uProj * view;
   }`;
   const F_LINES = `
@@ -572,25 +571,22 @@
     gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0);
   }
 
-  // Torus "tire" layout for infinite dive
+  /* --- Torus "tire dive" graph --- */
   const N = 110;
   const MAX_EDGES = 260;
   const positions = new Float32Array(N*3);
   const velocities = new Float32Array(N*3);
   const colors = new Float32Array(N*3);
-  const pulsesAttrib = new Float32Array(N); // per-node pulse intensity
+  const pulsesAttrib = new Float32Array(N);
   const tmpF = new Float32Array(N*3);
 
-  // Torus params
-  const R = 1.7;   // major radius
-  const r = 0.55;  // minor radius
+  const R = 1.7, r = 0.55;
   function torusPoint(a,b){
     const x = (R + r*Math.cos(b))*Math.cos(a);
     const y = (R + r*Math.cos(b))*Math.sin(a);
     const z = r*Math.sin(b);
     return [x,y,z];
   }
-  // init nodes distributed on torus
   for (let i=0;i<N;i++){
     const a = Math.random()*Math.PI*2;
     const b = Math.random()*Math.PI*2;
@@ -602,11 +598,10 @@
     colors.set([0.16,0.78,0.72], i*3);
   }
 
-  // Edges (keep constant count)
   const edges = new Uint16Array(MAX_EDGES*2);
   const springRest = new Float32Array(MAX_EDGES);
   const edgeColor = new Float32Array(MAX_EDGES*2*3);
-  const edgePulse = new Float32Array(MAX_EDGES*2); // per-vertex pulse intensity
+  const edgePulse = new Float32Array(MAX_EDGES*2);
   let edgeCount = 0;
 
   function addEdge(a,b){
@@ -615,19 +610,15 @@
       if ((edges[e*2]===a && edges[e*2+1]===b) || (edges[e*2]===b && edges[e*2+1]===a)) return false;
     }
     edges[edgeCount*2]=a; edges[edgeCount*2+1]=b;
-    // rest length based on current distance
     const dx=positions[a*3]-positions[b*3], dy=positions[a*3+1]-positions[b*3+1], dz=positions[a*3+2]-positions[b*3+2];
     springRest[edgeCount] = Math.max(0.4, Math.min(0.9, Math.hypot(dx,dy,dz)));
-    // fresh edge accent (cyan→teal or magenta)
     const c1 = [0.10,0.58,0.96], c2 = Math.random()<0.12 ? [0.92,0.18,0.56] : [0.17,0.85,0.66];
     edgeColor.set(c1, edgeCount*6+0); edgeColor.set(c2, edgeCount*6+3);
-    // zero pulse initially
     edgePulse[edgeCount*2] = 0.0; edgePulse[edgeCount*2+1] = 0.0;
     edgeCount++;
     return true;
   }
 
-  // Seed edges by proximity
   function degree(){
     const d=new Uint16Array(N);
     for(let e=0;e<edgeCount;e++){ d[edges[e*2]]++; d[edges[e*2+1]]++; }
@@ -642,7 +633,6 @@
     }
     if (edgeCount>=MAX_EDGES) break;
   }
-  // If under target, fill randomly nearby
   while (edgeCount < MAX_EDGES){
     const i=(Math.random()*N)|0, j=(Math.random()*N)|0;
     if (i!==j){
@@ -652,7 +642,6 @@
     }
   }
 
-  // GL buffers
   function makeBuf(type, data, usage){ const b=gl.createBuffer(); gl.bindBuffer(type,b); gl.bufferData(type,data,usage||gl.DYNAMIC_DRAW); return b; }
   const posBuf   = makeBuf(gl.ARRAY_BUFFER, positions);
   const colBuf   = makeBuf(gl.ARRAY_BUFFER, colors);
@@ -661,14 +650,12 @@
   const lineColBuf  = makeBuf(gl.ARRAY_BUFFER, edgeColor);
   const linePulseBuf= makeBuf(gl.ARRAY_BUFFER, edgePulse);
 
-  // Build/update line positions
   const lineVerts = new Float32Array(MAX_EDGES*2*3);
   function updateLineVerts(){
     for (let e=0;e<edgeCount;e++){
       const a = edges[e*2], b = edges[e*2+1];
       lineVerts.set(positions.subarray(a*3,a*3+3), e*6+0);
       lineVerts.set(positions.subarray(b*3,b*3+3), e*6+3);
-      // pulses on edges — set as avg of endpoints
       edgePulse[e*2]   = nodePulse[a];
       edgePulse[e*2+1] = nodePulse[b];
     }
@@ -678,20 +665,19 @@
     gl.bufferSubData(gl.ARRAY_BUFFER, 0, edgePulse.subarray(0, edgeCount*2));
   }
 
-  // Physics constants
+  /* Physics + pulses */
   let timeScale = 0.12;
   const REPULSE = 0.024, SPRING_K = 0.13, DAMP = 0.935, BOX=3.2, BREAK_STRETCH=1.95;
 
-  // Pulses: expanding waves from seed nodes
-  const pulses = []; // {i:seedIndex, t0:ms}
-  const nodePulse = new Float32Array(N); // computed each frame
-  const PULSE_SPEED = 0.75; // units/sec
-  const PULSE_FADE  = 1.2;  // width
+  const pulses = []; // {i, t0}
+  const nodePulse = new Float32Array(N);
+  const PULSE_SPEED = 0.75; const PULSE_FADE = 1.2;
+
   let lastPulse = performance.now();
+  let pulseInterval = 2200; /* <-- declared BEFORE onScroll to avoid ReferenceError */
 
   function spawnPulse(){
     const deg = degree();
-    // pick a low-degree node preferentially
     let best = 0, bestScore = -1;
     for (let k=0;k<12;k++){
       const i = (Math.random()*N)|0;
@@ -712,16 +698,14 @@
       for (let i=0;i<N;i++){
         const dx=positions[i*3]-sx, dy=positions[i*3+1]-sy, dz=positions[i*3+2]-sz;
         const d = Math.hypot(dx,dy,dz);
-        const band = Math.exp(-((d-rad)*(d-rad))/(2*PULSE_FADE*PULSE_FADE)); // gaussian band
+        const band = Math.exp(-((d-rad)*(d-rad))/(2*PULSE_FADE*PULSE_FADE));
         nodePulse[i] = Math.max(nodePulse[i], band);
       }
     }
-    // upload node pulse attribute
     gl.bindBuffer(gl.ARRAY_BUFFER, pulseBuf);
     gl.bufferSubData(gl.ARRAY_BUFFER, 0, nodePulse);
   }
 
-  // Rewiring with constant edge count
   let lastRewire = performance.now();
   let rewireInterval = 3200;
 
@@ -730,11 +714,9 @@
     if (now - lastRewire < rewireInterval) return;
     lastRewire = now;
 
-    // Decide how many to break (small number)
     const toChange = Math.max(1, Math.floor(MAX_EDGES * 0.04));
     const willBreak = [];
 
-    // mark overstretched priorities
     for (let e=0;e<edgeCount;e++){
       const a=edges[e*2], b=edges[e*2+1];
       const dx=positions[a*3]-positions[b*3], dy=positions[a*3+1]-positions[b*3+1], dz=positions[a*3+2]-positions[b*3+2];
@@ -742,13 +724,11 @@
       if (d > springRest[e]*BREAK_STRETCH) willBreak.push(e);
       if (willBreak.length>=toChange) break;
     }
-    // fill remaining randomly
     while (willBreak.length<toChange){
       const e = (Math.random()*edgeCount)|0;
       if (!willBreak.includes(e)) willBreak.push(e);
     }
 
-    // Break edges by swapping with tail
     let breaks = 0;
     willBreak.sort((a,b)=>b-a);
     for (const e of willBreak){
@@ -760,24 +740,19 @@
       breaks++;
     }
 
-    // Add exactly the same number of edges back, preferring low-degree & nearby, and connecting isolated bits
     const deg = degree();
     let added = 0, tries=0;
     while (added<breaks && tries<breaks*400){
       tries++;
       const i=(Math.random()*N)|0, j=(Math.random()*N)|0;
       if (i===j) continue;
-      // prefer low-degree
       const wI = 1/(1+deg[i]); const wJ = 1/(1+deg[j]);
       if (Math.random() > (0.65*wI + 0.65*wJ)) continue;
-      // prefer spatial proximity on torus
       const dx=positions[i*3]-positions[j*3], dy=positions[i*3+1]-positions[j*3+1], dz=positions[i*3+2]-positions[j*3+2];
       const d2=dx*dx+dy*dy+dz*dz;
       if (d2<0.25 || d2>2.2) continue;
       if (addEdge(i,j)) added++;
     }
-
-    // Maintain constant edgeCount by filling if needed
     while (edgeCount < MAX_EDGES){
       const i=(Math.random()*N)|0, j=(Math.random()*N)|0;
       if (i!==j){
@@ -788,10 +763,8 @@
     }
   }
 
-  // Physics step
   function step(dt){
     tmpF.fill(0);
-    // repulsion (N~110 OK)
     for (let i=0;i<N;i++){
       const ix=i*3, x=positions[ix], y=positions[ix+1], z=positions[ix+2];
       for (let j=i+1;j<N;j++){
@@ -799,54 +772,47 @@
         let dx = x - positions[jx], dy = y - positions[jx+1], dz = z - positions[jx+2];
         let d2 = dx*dx+dy*dy+dz*dz + 0.001;
         let inv = 1.0/Math.sqrt(d2);
-        let f = REPULSE * inv*inv;
+        let f = 0.024 * inv*inv;
         dx*=f; dy*=f; dz*=f;
         tmpF[ix]+=dx; tmpF[ix+1]+=dy; tmpF[ix+2]+=dz;
         tmpF[jx]-=dx; tmpF[jx+1]-=dy; tmpF[jx+2]-=dz;
       }
     }
-    // springs
     for (let e=0;e<edgeCount;e++){
       const a=edges[e*2], b=edges[e*2+1], ax=a*3, bx=b*3;
       let dx = positions[bx]-positions[ax];
       let dy = positions[bx+1]-positions[ax+1];
       let dz = positions[bx+2]-positions[ax+2];
       let d = Math.hypot(dx,dy,dz)+1e-6;
-      const k = SPRING_K*(d - springRest[e]);
+      const k = 0.13*(d - springRest[e]);
       const fx=(dx/d)*k, fy=(dy/d)*k, fz=(dz/d)*k;
       tmpF[ax]+=fx; tmpF[ax+1]+=fy; tmpF[ax+2]+=fz;
       tmpF[bx]-=fx; tmpF[bx+1]-=fy; tmpF[bx+2]-=fz;
     }
-
-    // integrate + soft center pull
     for (let i=0;i<N;i++){
       const ix=i*3;
-      velocities[ix]   = (velocities[ix]   + tmpF[ix]*dt) * DAMP;
-      velocities[ix+1] = (velocities[ix+1] + tmpF[ix+1]*dt) * DAMP;
-      velocities[ix+2] = (velocities[ix+2] + tmpF[ix+2]*dt) * DAMP;
-
+      velocities[ix]   = (velocities[ix]   + tmpF[ix]*dt) * 0.935;
+      velocities[ix+1] = (velocities[ix+1] + tmpF[ix+1]*dt) * 0.935;
+      velocities[ix+2] = (velocities[ix+2] + tmpF[ix+2]*dt) * 0.935;
       positions[ix]   += velocities[ix]*dt;
       positions[ix+1] += velocities[ix+1]*dt;
       positions[ix+2] += velocities[ix+2]*dt;
-
       const pull = 0.014;
       positions[ix]   -= positions[ix]*pull*dt;
       positions[ix+1] -= positions[ix+1]*pull*dt;
       positions[ix+2] -= positions[ix+2]*pull*dt;
 
-      // color blend by speed, pulses are added in shader via attribute
       const sp = Math.min(1.0, Math.hypot(velocities[ix],velocities[ix+1],velocities[ix+2])*9.0);
       const cool=[0.16,0.78,0.72], warm=[0.92,0.18,0.56];
       colors[ix]   = cool[0]*(1-sp) + warm[0]*sp*0.55;
       colors[ix+1] = cool[1]*(1-sp) + warm[1]*sp*0.55;
       colors[ix+2] = cool[2]*(1-sp) + warm[2]*sp*0.55;
     }
-
     gl.bindBuffer(gl.ARRAY_BUFFER, posBuf); gl.bufferSubData(gl.ARRAY_BUFFER, 0, positions);
     gl.bindBuffer(gl.ARRAY_BUFFER, colBuf); gl.bufferSubData(gl.ARRAY_BUFFER, 0, colors);
   }
 
-  // Scroll-linked dynamics + "infinite dive" along torus
+  /* Scroll-linked dynamics */
   let scrollProg = 0;
   function onScroll(){
     const vh = Math.max(1, window.innerHeight);
@@ -855,43 +821,31 @@
     const ease = scrollProg*scrollProg*(3 - 2*scrollProg);
     timeScale = 0.05 + 0.45*ease;
     rewireInterval = 4200 - 3000*ease;
-    // trigger pulses more often as we scroll
-    pulseInterval = 2200 - 1600*ease;
-    // slight content parallax handled by CSS transform set in earlier code (kept minimal here)
+    pulseInterval = 2200 - 1600*ease; /* safe: variable declared above */
   }
   addEventListener('scroll', () => requestAnimationFrame(onScroll), {passive:true}); onScroll();
 
-  // Camera path: inside the torus, moving forward like a tire roll
+  /* Camera: inside torus, forward drift */
   function getCamera(ts){
-    const t = ts*0.00004; // slow
-    // advance along major circle (angle A) and roll around minor circle (angle B) to fake "dive"
-    const A = t*2.0; // forward along ring
-    const B = t*3.2; // gentle roll
-    // position on torus centerline
+    const t = ts*0.00004;
+    const A = t*2.0; const B = t*3.2;
     const cx = R*Math.cos(A), cy = R*Math.sin(A), cz = 0;
-    // tangent direction along major ring
     const tx = -Math.sin(A), ty = Math.cos(A), tz = 0;
-    // minor offset (camera slightly inside)
-    const ox = 0.0, oy = 0.0, oz = -0.4; // inward along -Z to look through the donut
-    // camera eye slightly offset by minor angle to create subtle roll
     const ex = cx + 0.15*Math.cos(B);
     const ey = cy + 0.15*Math.sin(B);
-    const ez = cz + oz;
-    // look forward along tangent
+    const ez = 0 - 0.4;
     const center = [ex + tx*1.0, ey + ty*1.0, ez + tz*1.0];
     return {eye:[ex,ey,ez], center};
   }
 
-  // Pulses timing
-  let pulseInterval = 2200;
+  const uPoints = { uProj: gl.getUniformLocation(PROG_POINTS,'uProj'), uView: gl.getUniformLocation(PROG_POINTS,'uView'), uModel: gl.getUniformLocation(PROG_POINTS,'uModel') };
+  const uLines  = { uProj: gl.getUniformLocation(PROG_LINES,'uProj'),  uView: gl.getUniformLocation(PROG_LINES,'uView'),  uModel: gl.getUniformLocation(PROG_LINES,'uModel') };
 
-  // Render loop
   let lastTS = performance.now();
   function frame(ts){
     const rawDt = Math.min(40, ts - lastTS); lastTS = ts;
     const dt = (rawDt/1000) * timeScale;
 
-    // pulses
     const now = performance.now();
     if (now - lastPulse > pulseInterval){ lastPulse = now; spawnPulse(); }
     updatePulses(now);
@@ -904,7 +858,7 @@
     const proj = M.perspective(50*Math.PI/180, aspect, 0.1, 100.0);
     const cam = getCamera(ts);
     const view = M.lookAt(cam.eye, cam.center, [0,1,0]);
-    const model = new Float32Array([1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]); // no global rotation (immersive)
+    const model = new Float32Array([1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]);
 
     gl.enable(gl.DEPTH_TEST);
     gl.enable(gl.BLEND);
@@ -912,7 +866,6 @@
     gl.clearColor(0.02,0.03,0.06,1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    // lines
     gl.useProgram(PROG_LINES);
     gl.uniformMatrix4fv(uLines.uProj,false,proj);
     gl.uniformMatrix4fv(uLines.uView,false,view);
@@ -922,7 +875,6 @@
     attrib(PROG_LINES,'pulse',    linePulseBuf, 1);
     gl.drawArrays(gl.LINES, 0, edgeCount*2);
 
-    // points
     gl.useProgram(PROG_POINTS);
     gl.uniformMatrix4fv(uPoints.uProj,false,proj);
     gl.uniformMatrix4fv(uPoints.uView,false,view);
@@ -936,7 +888,6 @@
   }
   requestAnimationFrame(frame);
 
-  // Reduced motion support
   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
     timeScale = 0.0; rewireInterval = 1e9; pulseInterval = 1e9;
   }
