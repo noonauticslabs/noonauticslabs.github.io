@@ -29,7 +29,7 @@
     a:hover{text-decoration:underline}
     .container{width:var(--container); margin:0 auto; padding:0 8px}
 
-    /* Header */
+    /* Header (sticky + hide-on-scroll) */
     header{
       position: fixed; top: 0; left: 0; right: 0; z-index: 200;
       backdrop-filter: saturate(140%) blur(6px);
@@ -64,45 +64,47 @@
       .menu.open{display:flex}
     }
 
-    /* HERO — full viewport, graph is fixed background */
+    /* HERO — full viewport minus header; content aligned to upper half */
     .hero{
-      position:relative; min-height:100svh;
-      display:flex; align-items:center;
-      padding: calc(var(--header-h) + 24px) 0 80px;
-      isolation:isolate; /* so overlay filters don’t affect header */
+      position:relative; min-height:calc(100svh - var(--header-h));
+      display:flex; align-items:flex-start;
+      padding: calc(var(--header-h) + 24px) 0 10svh;
+      isolation:isolate;
       background: transparent;
-      overflow: clip; /* allow bottom fade to overlay */
+      overflow: clip;
     }
     .hero .container{
       position:relative; z-index:3;
-      will-change: transform, opacity;
+      transform: translateY(0);
+      max-width: var(--container);
+    }
+    .hero .stack{
+      display:flex; flex-direction:column; gap:10px;
+      margin-top: min(8vh, 80px); /* push copy into upper half */
+      max-width: 860px;
     }
     .badge{
       display:inline-flex; align-items:center; gap:8px; font-size:.83rem; color:#cfe0ff;
       background:rgba(31,111,235,.12); border:1px solid rgba(31,111,235,.35);
       padding:6px 10px; border-radius:999px
     }
-    h1{font-size:clamp(2rem, 5vw, 3.2rem); line-height:1.1; margin:16px 0 10px}
+    h1{font-size:clamp(2rem, 5vw, 3.2rem); line-height:1.1; margin:6px 0 4px}
     .lead{font-size:clamp(1.05rem, 2.2vw, 1.25rem); color:var(--muted); max-width:780px}
-    .cta{margin-top:24px; display:flex; gap:12px; flex-wrap:wrap}
+    .cta{margin-top:18px; display:flex; gap:12px; flex-wrap:wrap}
     .btn{display:inline-flex; align-items:center; gap:10px; padding:12px 16px; border-radius:12px; font-weight:700;
       background:linear-gradient(135deg, var(--accent), #3aa0ff); color:white; border:none; cursor:pointer;
       box-shadow:0 10px 30px var(--ring)}
     .btn.ghost{background:#151a27; color:#d8e0ee; border:1px solid var(--border); box-shadow:none}
 
-    /* FIXED full-bleed background canvas + blending layers */
-    .hero-bg{
-      position:fixed; inset:0; z-index:1; pointer-events:none;
-    }
+    /* FIXED full-bleed background canvas + vignette + fade */
+    .hero-bg{ position:fixed; inset:0; z-index:1; pointer-events:none; }
     #viz3d{ display:block; width:100%; height:100%; }
-
-    /* Vignette + bottom fade into page background */
     .hero-bg::after{
       content:""; position:absolute; inset:0; pointer-events:none;
       background:
         radial-gradient(1200px 700px at 70% -10%, rgba(43,212,161,.10), transparent 60%),
         radial-gradient(1000px 600px at -10% 0%, rgba(31,111,235,.14), transparent 60%),
-        linear-gradient(to bottom, rgba(11,12,16,.35), rgba(11,12,16,.0) 35%, rgba(11,12,16,.0) 70%, rgba(11,12,16,.65));
+        linear-gradient(to bottom, rgba(11,12,16,.25), rgba(11,12,16,.0) 35%, rgba(11,12,16,.0) 70%, rgba(11,12,16,.65));
       mix-blend-mode: screen;
     }
     .hero-fade{
@@ -110,8 +112,12 @@
       background: linear-gradient(to bottom, rgba(11,12,16,0), var(--bg));
     }
 
-    /* Sections after hero */
-    main > section:not(.hero){position:relative; padding:80px 0; background:var(--bg-soft); border-top:1px solid var(--border)}
+    /* Full-height sections after hero */
+    main > section:not(.hero){
+      position:relative; min-height:100svh;
+      display:flex; align-items:center;
+      padding: 10svh 0; background:var(--bg-soft); border-top:1px solid var(--border)
+    }
     h2{font-size:1.6rem; margin:0 0 12px}
     .grid{display:grid; grid-template-columns: 1.15fr .85fr; gap:clamp(18px, 3vw, 32px)}
     @media (max-width:980px){ .grid{grid-template-columns:1fr} }
@@ -124,7 +130,7 @@
     form{margin-top:12px}
     form .row{display:grid; gap:12px; grid-template-columns:1fr 1fr}
     @media (max-width:700px){form .row{grid-template-columns:1fr}}
-    input, textarea{width:100%; padding:14px 16px; border-radius:12px; border:1px solid var(--border); background:#0f1220; color:var(--text)}
+    input, textarea{width:100%; padding:14px 16px; border-radius:12px; border:1px solid var(--border); background:#0f1220; color:#var(--text)}
     textarea{min-height:140px; resize:vertical}
     footer{background:#0a0c12; padding:42px 0; border-top:1px solid var(--border); color:#muted; font-size:.95rem}
     .cols{display:grid; gap:20px; grid-template-columns: 1.3fr 1fr 1fr 1fr}
@@ -135,7 +141,6 @@
     .footer-links a:hover{opacity:1; text-decoration:none}
     .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0}
 
-    /* Reduce motion friendly */
     @media (prefers-reduced-motion: reduce){
       .hero .container{transform:none !important}
     }
@@ -167,26 +172,23 @@
 </header>
 
 <main>
-  <!-- HERO (full-viewport, background graph) -->
-  <section class="hero" id="project" aria-label="SiCell hero section">
-    <!-- fixed background -->
-    <div class="hero-bg" aria-hidden="true">
-      <canvas id="viz3d"></canvas>
-    </div>
+  <!-- HERO -->
+  <section class="hero" id="project" aria-label="SiCell hero">
+    <div class="hero-bg" aria-hidden="true"><canvas id="viz3d"></canvas></div>
     <div class="hero-fade" aria-hidden="true"></div>
-
-    <!-- foreground content -->
-    <div class="container" id="heroContent">
-      <span class="badge"><span class="sr-only">Project: </span><span data-i18n="hero_badge">SiCell — Flagship Project</span></span>
-      <h1 data-i18n="hero_title">Full human cell simulations — closing the gap between silicon and carbon.</h1>
-      <p class="lead" data-i18n="hero_lead">
-        <strong>SiCell</strong> is our audacious step toward programmable biology:
-        universal initial-state definitions, mechanistic models, and a search engine
-        to explore disease mechanisms and pharma targets — as fast and iterative as software.
-      </p>
-      <div class="cta">
-        <a class="btn" href="#contact" role="button" aria-label="Contact us" data-i18n="cta_contact">Contact us</a>
-        <button class="btn ghost" type="button" disabled title="Whitepaper coming soon" data-i18n="cta_whitepaper">Whitepaper (soon)</button>
+    <div class="container">
+      <div class="stack">
+        <span class="badge"><span class="sr-only">Project: </span><span data-i18n="hero_badge">SiCell — Flagship Project</span></span>
+        <h1 data-i18n="hero_title">Full human cell simulations — closing the gap between silicon and carbon.</h1>
+        <p class="lead" data-i18n="hero_lead">
+          <strong>SiCell</strong> is our audacious step toward programmable biology:
+          universal initial-state definitions, mechanistic models, and a search engine
+          to explore disease mechanisms and pharma targets — as fast and iterative as software.
+        </p>
+        <div class="cta">
+          <a class="btn" href="#contact" role="button" aria-label="Contact us" data-i18n="cta_contact">Contact us</a>
+          <button class="btn ghost" type="button" disabled title="Whitepaper coming soon" data-i18n="cta_whitepaper">Whitepaper (soon)</button>
+        </div>
       </div>
     </div>
   </section>
@@ -245,9 +247,7 @@
         <h2 data-i18n="team_title">Team</h2>
         <p><strong>Marcel Tomaszek</strong> — <span data-i18n="team_affil">Cellular &amp; Molecular Biophysics, UJ</span></p>
         <p><a href="mailto:marcel.tomaszek@student.uj.edu.pl">marcel.tomaszek@student.uj.edu.pl</a></p>
-        <hr style="border:none;border-top:1px solid var(--border);margin:12px 0">
-        <p><strong>Oskar Lurka</strong> — <span data-i18n="team_affil">Cellular &amp; Molecular Biophysics, UJ</span></p>
-        <p><a href="mailto:oskar.lurka@student.uj.edu.pl">oskar.lurka@student.uj.edu.pl</a></p>
+        <!-- Oskar removed per request -->
       </div>
       <div class="card">
         <h2 data-i18n="next_title">What we’re building next</h2>
@@ -328,7 +328,7 @@
   </div>
 </footer>
 
-<!-- Core UI scripts (unchanged basics + i18n) -->
+<!-- Core UI scripts -->
 <script>
   const hamb = document.getElementById('hamb');
   const menu = document.getElementById('menu');
@@ -372,7 +372,7 @@
     window.location.href = `mailto:contact@noonauticslabs.org?subject=${subject}&body=${body}`;
   });
 
-  // i18n dictionary (same as before, shortened for brevity)
+  // i18n (kept concise)
   const dict = {
     en: {
       tagline:"R&D • Cell Sim • Bioinformatics",
@@ -403,19 +403,19 @@
       nav_project:"Projekt", nav_tech:"Technologia", nav_company:"Spółka", nav_team:"Zespół", nav_contact:"Kontakt",
       hero_badge:"SiCell — projekt flagowy",
       hero_title:"Symulacje komórek w pełnej skali — zamykamy lukę między krzemem a węglem.",
-      hero_lead:"<strong>SiCell</strong> to nasz odważny krok w stronę programowalnej biologii: własne definicje stanów początkowych, modele mechanistyczne i wyszukiwarka do analizy chorób oraz celów farmaceutycznych — tak szybkie i iteracyjne jak rozwój oprogramowania.",
+      hero_lead:"<strong>SiCell</strong> to nasz odważny krok w stronę programowalnej biologii: definicje stanów początkowych, modele mechanistyczne i wyszukiwarka do analizy mechanizmów chorób oraz celów farmaceutycznych.",
       cta_contact:"Skontaktuj się", cta_whitepaper:"Biała księga (wkrótce)",
       tech_title:"Technologia",
-      tech_intro:"Łączymy dane z kuratorowanych baz i mechanistyczne modele: przekształcamy wiedzę biologiczną w deterministyczne systemy, które działają szybko i łączą się ze sobą jak klocki.",
-      tech_point1:"Elastyczne <strong>stany początkowe</strong>: geny, epigenetyka, organella, poziomy białek → dowolny typ komórki.",
-      tech_point2:"Mechanistyczne <strong>modele ODE/grafowe</strong> ze sprzężeniami zwrotnymi.",
-      tech_point3:"<strong>Wyszukiwarka</strong> szlaków chorobowych i efektów leków.",
-      tech_point4:"Proste <strong>API i wizualizacje</strong> do szybkiego prototypowania.",
-      why_title:"Dlaczego teraz?", why_text:"Paradoks: budujemy AI z bilionami parametrów, a biologia wciąż zostaje w tyle. Domykamy lukę między krzemem a komórką.",
+      tech_intro:"Od kuratorowanych baz do modeli mechanistycznych — wiedza jako deterministyczne systemy, które działają szybko i łączą się czysto.",
+      tech_point1:"Elastyczne <strong>stany początkowe</strong> → dowolny typ komórki.",
+      tech_point2:"<strong>Modele ODE/grafowe</strong> ze sprzężeniami zwrotnymi.",
+      tech_point3:"<strong>Wyszukiwarka</strong> szlaków i efektów leków.",
+      tech_point4:"Proste <strong>API i wizualizacje</strong>.",
+      why_title:"Dlaczego teraz?", why_text:"Domykamy lukę między krzemem a komórką.",
       why_motto:"„Sprawmy, by biologia stała się inżynierią.”",
-      about_title:"O Noonautics Labs", about_legal:"Forma prawna: sp. z o.o. • Kraków (Kraków-Podgórze), Małopolskie",
-      about_desc:"Badania i rozwój w zakresie symulacji komórkowych, bioinformatyki i narzędzi dla biotech.",
-      focus_title:"Zakres", focus_1:"Symulacje komórek (mechanistyczne).", focus_2:"Pipeline’y i synteza wiedzy.", focus_3:"Narzędzia deweloperskie.",
+      about_title:"O Noonautics Labs", about_legal:"Forma prawna: sp. z o.o. • Kraków (Kraków-Podgórze)",
+      about_desc:"Badania i rozwój: symulacje komórkowe, bioinformatyka, narzędzia dla biotech.",
+      focus_title:"Zakres", focus_1:"Symulacje komórkowe.", focus_2:"Pipeline’y i synteza wiedzy.", focus_3:"Narzędzia deweloperskie.",
       team_title:"Zespół", team_affil:"Biofizyka komórkowa i molekularna, UJ",
       next_title:"Co dalej", next_1:"Otwarte API.", next_2:"Interaktywne wizualizacje.", next_3:"Biała księga i demo.",
       contact_title:"Kontakt", contact_general:"Ogólne", contact_send:"Wyślij", contact_email:"Wyślij e-mail",
@@ -438,12 +438,12 @@
   document.getElementById('lang-pl').addEventListener('click', ()=>setLang('pl'));
   (function initLang(){
     let saved = null; try { saved = localStorage.getItem('lang'); } catch(e) {}
-    if (!saved) { const userLang = (navigator.language || 'en').toLowerCase(); saved = userLang.startsWith('pl') ? 'pl' : 'en'; }
+    if (!saved) { const ul = (navigator.language||'en').toLowerCase(); saved = ul.startsWith('pl') ? 'pl' : 'en'; }
     setLang(saved);
   })();
 </script>
 
-<!-- Full-bleed immersive WebGL background with scroll-linked dynamics -->
+<!-- Full-bleed immersive WebGL background: torus "tire dive", constant-edge rewiring with pulses -->
 <script>
 (() => {
   const canvas = document.getElementById('viz3d');
@@ -451,17 +451,16 @@
   const gl = canvas.getContext('webgl', {antialias:true, alpha:false});
   if (!gl) return;
 
-  // HiDPI sizing for full screen
+  // HiDPI full screen
   const DPR = Math.min(2, window.devicePixelRatio || 1);
   function resize(){
-    const w = Math.max(800, innerWidth) * DPR | 0;
-    const h = Math.max(500, innerHeight) * DPR | 0;
-    canvas.width = w; canvas.height = h;
-    gl.viewport(0,0,w,h);
+    canvas.width = Math.max(800, innerWidth) * DPR | 0;
+    canvas.height = Math.max(500, innerHeight) * DPR | 0;
+    gl.viewport(0,0,canvas.width, canvas.height);
   }
   resize(); addEventListener('resize', resize);
 
-  // Minimal mat4 utils
+  // Matrices
   const M = {
     perspective(fov, aspect, near, far){
       const f = 1/Math.tan(fov/2), nf = 1/(near-far);
@@ -474,29 +473,32 @@
       let xl=Math.hypot(xx,xy,xz); xx/=xl; xy/=xl; xz/=xl;
       const yx = zy*xz - zz*xy, yy = zz*xx - zx*xz, yz = zx*xy - zy*xx;
       return new Float32Array([xx,yx,zx,0, xy,yy,zy,0, xz,yz,zz,0, -(xx*ex+xy*ey+xz*ez), -(yx*ex+yy*ey+yz*ez), -(zx*ex+zy*ey+zz*ez), 1]);
-    },
-    rotY(a){ const c=Math.cos(a), s=Math.sin(a); return new Float32Array([c,0,s,0, 0,1,0,0, -s,0,c,0, 0,0,0,1]); }
+    }
   };
 
   // Shaders
   const V_SRC = `
   attribute vec3 position;
   attribute vec3 color;
+  attribute float pulse;
   uniform mat4 uProj, uView, uModel;
   varying vec3 vColor;
   varying float vDepth;
+  varying float vPulse;
   void main(){
     vec4 world = uModel * vec4(position, 1.0);
     vec4 view = uView * world;
     vDepth = -view.z;
     vColor = color;
+    vPulse = pulse;
     gl_Position = uProj * view;
-    gl_PointSize = 42.0 / (0.4 + vDepth*0.25);
+    gl_PointSize = 44.0 / (0.45 + vDepth*0.25);
   }`;
   const F_POINTS = `
   precision mediump float;
   varying vec3 vColor;
   varying float vDepth;
+  varying float vPulse;
   void main(){
     vec2 p = gl_PointCoord*2.0 - 1.0;
     float r2 = dot(p,p);
@@ -504,32 +506,41 @@
     vec3 N = normalize(vec3(p.x, p.y, sqrt(max(0.0, 1.0 - r2))));
     vec3 L = normalize(vec3(0.6, 0.9, 1.0));
     float diff = 0.5 + 0.5*max(0.0, dot(N,L));
-    float spec = pow(max(0.0, dot(reflect(-L,N), vec3(0.0,0.0,1.0))), 40.0) * 0.35;
+    float spec = pow(max(0.0, dot(reflect(-L,N), vec3(0.0,0.0,1.0))), 42.0) * 0.4;
+
+    // pulse halo
+    float halo = smoothstep(0.85, 0.0, r2) * vPulse;
+
     float fog = clamp((vDepth-1.0) / 9.0, 0.0, 1.0);
-    vec3 col = vColor*diff + spec;
-    col = mix(col, vec3(0.03,0.05,0.09), fog);
-    gl_FragColor = vec4(col, 0.95);
+    vec3 base = vColor*(diff + 0.15*halo) + spec*vec3(1.0);
+    base = mix(base, vec3(0.03,0.05,0.09), fog);
+    gl_FragColor = vec4(base, 0.97);
   }`;
   const V_LINES = `
   attribute vec3 position;
   attribute vec3 color;
+  attribute float pulse;
   uniform mat4 uProj, uView, uModel;
   varying vec3 vColor;
   varying float vDepth;
+  varying float vPulse;
   void main(){
     vec4 world = uModel * vec4(position, 1.0);
     vec4 view = uView * world;
-    vDepth = -view.z; vColor = color;
+    vDepth = -view.z;
+    vColor = color;
+    vPulse = pulse;
     gl_Position = uProj * view;
   }`;
   const F_LINES = `
   precision mediump float;
   varying vec3 vColor;
   varying float vDepth;
+  varying float vPulse;
   void main(){
     float fog = clamp((vDepth-1.0) / 9.0, 0.0, 1.0);
-    vec3 col = mix(vColor, vec3(0.03,0.05,0.09), fog);
-    gl_FragColor = vec4(col, 0.45);
+    vec3 col = mix(vColor + vPulse*vec3(0.4,0.6,0.9), vec3(0.03,0.05,0.09), fog);
+    gl_FragColor = vec4(col, 0.52 + 0.35*min(1.0, vPulse));
   }`;
 
   function compile(src, type){ const s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s);
@@ -540,63 +551,19 @@
     gl.linkProgram(p); if(!gl.getProgramParameter(p, gl.LINK_STATUS)) console.error(gl.getProgramInfoLog(p));
     return p;
   }
-  const P_POINTS = program(V_SRC, F_POINTS);
-  const P_LINES  = program(V_LINES, F_LINES);
+  const PROG_POINTS = program(V_SRC, F_POINTS);
+  const PROG_LINES  = program(V_LINES, F_LINES);
 
-  // Graph + physics (sparser)
-  const N = 96;
-  const MAX_EDGES = 240;
-  const positions = new Float32Array(N*3);
-  const velocities = new Float32Array(N*3);
-  const colors = new Float32Array(N*3);
-  const tmpF = new Float32Array(N*3);
-
-  for (let i=0;i<N;i++){
-    const phi = Math.acos(2*Math.random()-1);
-    const th = 2*Math.PI*Math.random();
-    const r = 1.4 + Math.random()*0.6;
-    positions[i*3+0] = r*Math.sin(phi)*Math.cos(th);
-    positions[i*3+1] = r*Math.sin(phi)*Math.sin(th);
-    positions[i*3+2] = r*Math.cos(phi);
-    velocities[i*3+0] = (Math.random()-0.5)*0.01;
-    velocities[i*3+1] = (Math.random()-0.5)*0.01;
-    velocities[i*3+2] = (Math.random()-0.5)*0.01;
-    colors.set([0.16,0.78,0.72], i*3);
-  }
-
-  const edges = new Uint16Array(MAX_EDGES*2);
-  const edgeColor = new Float32Array(MAX_EDGES*2*3);
-  const springRest = new Float32Array(MAX_EDGES);
-  let edgeCount = 0;
-
-  function addEdge(a,b){
-    if (a===b || edgeCount>=MAX_EDGES) return;
-    for(let e=0;e<edgeCount;e++){
-      if ((edges[e*2]===a && edges[e*2+1]===b) || (edges[e*2]===b && edges[e*2+1]===a)) return;
-    }
-    edges[edgeCount*2]=a; edges[edgeCount*2+1]=b;
-    springRest[edgeCount]= 0.5 + Math.random()*0.6;
-    const c1 = [0.10,0.58,0.96], c2 = Math.random()<0.14 ? [0.92,0.18,0.56] : [0.17,0.85,0.66];
-    edgeColor.set(c1, edgeCount*6+0); edgeColor.set(c2, edgeCount*6+3);
-    edgeCount++;
-  }
-  // seed by proximity
-  for (let i=0;i<N;i++){
-    for (let j=i+1;j<N;j++){
-      if (edgeCount>=MAX_EDGES) break;
-      const dx=positions[i*3]-positions[j*3], dy=positions[i*3+1]-positions[j*3+1], dz=positions[i*3+2]-positions[j*3+2];
-      const d2=dx*dx+dy*dy+dz*dz;
-      if (d2 < 1.8) addEdge(i,j);
-    }
-    if (edgeCount>=MAX_EDGES) break;
-  }
-
-  // Buffers
-  function makeBuf(type, data, usage){ const b=gl.createBuffer(); gl.bindBuffer(type,b); gl.bufferData(type,data,usage||gl.DYNAMIC_DRAW); return b; }
-  const posBuf = makeBuf(gl.ARRAY_BUFFER, positions);
-  const colBuf = makeBuf(gl.ARRAY_BUFFER, colors);
-  const linePosBuf = makeBuf(gl.ARRAY_BUFFER, new Float32Array(MAX_EDGES*2*3));
-  const lineColBuf = makeBuf(gl.ARRAY_BUFFER, edgeColor);
+  const uPoints = {
+    uProj: gl.getUniformLocation(PROG_POINTS,'uProj'),
+    uView: gl.getUniformLocation(PROG_POINTS,'uView'),
+    uModel: gl.getUniformLocation(PROG_POINTS,'uModel')
+  };
+  const uLines = {
+    uProj: gl.getUniformLocation(PROG_LINES,'uProj'),
+    uView: gl.getUniformLocation(PROG_LINES,'uView'),
+    uModel: gl.getUniformLocation(PROG_LINES,'uModel')
+  };
 
   function attrib(p, name, buf, size){
     const loc = gl.getAttribLocation(p, name);
@@ -605,60 +572,226 @@
     gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0);
   }
 
-  // Uniforms
-  const uPP = { uProj: gl.getUniformLocation(P_POINTS,'uProj'), uView: gl.getUniformLocation(P_POINTS,'uView'), uModel: gl.getUniformLocation(P_POINTS,'uModel') };
-  const uPL = { uProj: gl.getUniformLocation(P_LINES,'uProj'),  uView: gl.getUniformLocation(P_LINES,'uView'),  uModel: gl.getUniformLocation(P_LINES,'uModel') };
+  // Torus "tire" layout for infinite dive
+  const N = 110;
+  const MAX_EDGES = 260;
+  const positions = new Float32Array(N*3);
+  const velocities = new Float32Array(N*3);
+  const colors = new Float32Array(N*3);
+  const pulsesAttrib = new Float32Array(N); // per-node pulse intensity
+  const tmpF = new Float32Array(N*3);
 
-  // Physics
-  let timeScale = 0.15; // base slow
-  const REPULSE = 0.028, SPRING_K = 0.14, DAMP = 0.93, BOX=3.2, BREAK_STRETCH=1.9;
+  // Torus params
+  const R = 1.7;   // major radius
+  const r = 0.55;  // minor radius
+  function torusPoint(a,b){
+    const x = (R + r*Math.cos(b))*Math.cos(a);
+    const y = (R + r*Math.cos(b))*Math.sin(a);
+    const z = r*Math.sin(b);
+    return [x,y,z];
+  }
+  // init nodes distributed on torus
+  for (let i=0;i<N;i++){
+    const a = Math.random()*Math.PI*2;
+    const b = Math.random()*Math.PI*2;
+    const p = torusPoint(a,b);
+    positions[i*3+0]=p[0]; positions[i*3+1]=p[1]; positions[i*3+2]=p[2];
+    velocities[i*3+0]=(Math.random()-0.5)*0.008;
+    velocities[i*3+1]=(Math.random()-0.5)*0.008;
+    velocities[i*3+2]=(Math.random()-0.5)*0.008;
+    colors.set([0.16,0.78,0.72], i*3);
+  }
+
+  // Edges (keep constant count)
+  const edges = new Uint16Array(MAX_EDGES*2);
+  const springRest = new Float32Array(MAX_EDGES);
+  const edgeColor = new Float32Array(MAX_EDGES*2*3);
+  const edgePulse = new Float32Array(MAX_EDGES*2); // per-vertex pulse intensity
+  let edgeCount = 0;
+
+  function addEdge(a,b){
+    if (a===b || edgeCount>=MAX_EDGES) return false;
+    for(let e=0;e<edgeCount;e++){
+      if ((edges[e*2]===a && edges[e*2+1]===b) || (edges[e*2]===b && edges[e*2+1]===a)) return false;
+    }
+    edges[edgeCount*2]=a; edges[edgeCount*2+1]=b;
+    // rest length based on current distance
+    const dx=positions[a*3]-positions[b*3], dy=positions[a*3+1]-positions[b*3+1], dz=positions[a*3+2]-positions[b*3+2];
+    springRest[edgeCount] = Math.max(0.4, Math.min(0.9, Math.hypot(dx,dy,dz)));
+    // fresh edge accent (cyan→teal or magenta)
+    const c1 = [0.10,0.58,0.96], c2 = Math.random()<0.12 ? [0.92,0.18,0.56] : [0.17,0.85,0.66];
+    edgeColor.set(c1, edgeCount*6+0); edgeColor.set(c2, edgeCount*6+3);
+    // zero pulse initially
+    edgePulse[edgeCount*2] = 0.0; edgePulse[edgeCount*2+1] = 0.0;
+    edgeCount++;
+    return true;
+  }
+
+  // Seed edges by proximity
+  function degree(){
+    const d=new Uint16Array(N);
+    for(let e=0;e<edgeCount;e++){ d[edges[e*2]]++; d[edges[e*2+1]]++; }
+    return d;
+  }
+  for (let i=0;i<N;i++){
+    for (let j=i+1;j<N;j++){
+      if (edgeCount>=MAX_EDGES) break;
+      const dx=positions[i*3]-positions[j*3], dy=positions[i*3+1]-positions[j*3+1], dz=positions[i*3+2]-positions[j*3+2];
+      const d2=dx*dx+dy*dy+dz*dz;
+      if (d2 < 1.6) addEdge(i,j);
+    }
+    if (edgeCount>=MAX_EDGES) break;
+  }
+  // If under target, fill randomly nearby
+  while (edgeCount < MAX_EDGES){
+    const i=(Math.random()*N)|0, j=(Math.random()*N)|0;
+    if (i!==j){
+      const dx=positions[i*3]-positions[j*3], dy=positions[i*3+1]-positions[j*3+1], dz=positions[i*3+2]-positions[j*3+2];
+      const d2=dx*dx+dy*dy+dz*dz;
+      if (d2<2.5) addEdge(i,j);
+    }
+  }
+
+  // GL buffers
+  function makeBuf(type, data, usage){ const b=gl.createBuffer(); gl.bindBuffer(type,b); gl.bufferData(type,data,usage||gl.DYNAMIC_DRAW); return b; }
+  const posBuf   = makeBuf(gl.ARRAY_BUFFER, positions);
+  const colBuf   = makeBuf(gl.ARRAY_BUFFER, colors);
+  const pulseBuf = makeBuf(gl.ARRAY_BUFFER, pulsesAttrib);
+  const linePosBuf  = makeBuf(gl.ARRAY_BUFFER, new Float32Array(MAX_EDGES*2*3));
+  const lineColBuf  = makeBuf(gl.ARRAY_BUFFER, edgeColor);
+  const linePulseBuf= makeBuf(gl.ARRAY_BUFFER, edgePulse);
+
+  // Build/update line positions
   const lineVerts = new Float32Array(MAX_EDGES*2*3);
-  let lastRewire = performance.now();
-  let rewireInterval = 3200; // ms (gets shorter with scroll)
-
   function updateLineVerts(){
     for (let e=0;e<edgeCount;e++){
       const a = edges[e*2], b = edges[e*2+1];
       lineVerts.set(positions.subarray(a*3,a*3+3), e*6+0);
       lineVerts.set(positions.subarray(b*3,b*3+3), e*6+3);
+      // pulses on edges — set as avg of endpoints
+      edgePulse[e*2]   = nodePulse[a];
+      edgePulse[e*2+1] = nodePulse[b];
     }
     gl.bindBuffer(gl.ARRAY_BUFFER, linePosBuf);
     gl.bufferSubData(gl.ARRAY_BUFFER, 0, lineVerts.subarray(0, edgeCount*6));
+    gl.bindBuffer(gl.ARRAY_BUFFER, linePulseBuf);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, edgePulse.subarray(0, edgeCount*2));
   }
+
+  // Physics constants
+  let timeScale = 0.12;
+  const REPULSE = 0.024, SPRING_K = 0.13, DAMP = 0.935, BOX=3.2, BREAK_STRETCH=1.95;
+
+  // Pulses: expanding waves from seed nodes
+  const pulses = []; // {i:seedIndex, t0:ms}
+  const nodePulse = new Float32Array(N); // computed each frame
+  const PULSE_SPEED = 0.75; // units/sec
+  const PULSE_FADE  = 1.2;  // width
+  let lastPulse = performance.now();
+
+  function spawnPulse(){
+    const deg = degree();
+    // pick a low-degree node preferentially
+    let best = 0, bestScore = -1;
+    for (let k=0;k<12;k++){
+      const i = (Math.random()*N)|0;
+      const score = (6 - Math.min(6, deg[i])) + Math.random()*0.5;
+      if (score>bestScore){ bestScore=score; best=i; }
+    }
+    pulses.push({i:best, t0:performance.now()});
+    if (pulses.length>6) pulses.shift();
+  }
+
+  function updatePulses(now){
+    nodePulse.fill(0);
+    for (const p of pulses){
+      const age = (now - p.t0)/1000;
+      const rad = age * PULSE_SPEED;
+      if (age>6) continue;
+      const sx=positions[p.i*3], sy=positions[p.i*3+1], sz=positions[p.i*3+2];
+      for (let i=0;i<N;i++){
+        const dx=positions[i*3]-sx, dy=positions[i*3+1]-sy, dz=positions[i*3+2]-sz;
+        const d = Math.hypot(dx,dy,dz);
+        const band = Math.exp(-((d-rad)*(d-rad))/(2*PULSE_FADE*PULSE_FADE)); // gaussian band
+        nodePulse[i] = Math.max(nodePulse[i], band);
+      }
+    }
+    // upload node pulse attribute
+    gl.bindBuffer(gl.ARRAY_BUFFER, pulseBuf);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, nodePulse);
+  }
+
+  // Rewiring with constant edge count
+  let lastRewire = performance.now();
+  let rewireInterval = 3200;
 
   function rewire(){
     const now = performance.now();
     if (now - lastRewire < rewireInterval) return;
     lastRewire = now;
-    // remove overstretched or random few
-    for (let e=0;e<edgeCount;){
+
+    // Decide how many to break (small number)
+    const toChange = Math.max(1, Math.floor(MAX_EDGES * 0.04));
+    const willBreak = [];
+
+    // mark overstretched priorities
+    for (let e=0;e<edgeCount;e++){
       const a=edges[e*2], b=edges[e*2+1];
       const dx=positions[a*3]-positions[b*3], dy=positions[a*3+1]-positions[b*3+1], dz=positions[a*3+2]-positions[b*3+2];
       const d = Math.hypot(dx,dy,dz);
-      if (d > springRest[e]*BREAK_STRETCH || Math.random() < 0.025){
-        edgeCount--;
-        edges[e*2]=edges[edgeCount*2]; edges[e*2+1]=edges[edgeCount*2+1];
-        springRest[e]=springRest[edgeCount];
-        edgeColor.set(edgeColor.subarray(edgeCount*6, edgeCount*6+6), e*6);
-        continue;
-      }
-      e++;
+      if (d > springRest[e]*BREAK_STRETCH) willBreak.push(e);
+      if (willBreak.length>=toChange) break;
     }
-    // add some nearby
-    let added=0, tries=0;
-    while(added<8 && tries<160){
+    // fill remaining randomly
+    while (willBreak.length<toChange){
+      const e = (Math.random()*edgeCount)|0;
+      if (!willBreak.includes(e)) willBreak.push(e);
+    }
+
+    // Break edges by swapping with tail
+    let breaks = 0;
+    willBreak.sort((a,b)=>b-a);
+    for (const e of willBreak){
+      if (edgeCount<=0) break;
+      edgeCount--;
+      edges[e*2]=edges[edgeCount*2]; edges[e*2+1]=edges[edgeCount*2+1];
+      springRest[e]=springRest[edgeCount];
+      edgeColor.set(edgeColor.subarray(edgeCount*6, edgeCount*6+6), e*6);
+      breaks++;
+    }
+
+    // Add exactly the same number of edges back, preferring low-degree & nearby, and connecting isolated bits
+    const deg = degree();
+    let added = 0, tries=0;
+    while (added<breaks && tries<breaks*400){
       tries++;
       const i=(Math.random()*N)|0, j=(Math.random()*N)|0;
       if (i===j) continue;
+      // prefer low-degree
+      const wI = 1/(1+deg[i]); const wJ = 1/(1+deg[j]);
+      if (Math.random() > (0.65*wI + 0.65*wJ)) continue;
+      // prefer spatial proximity on torus
       const dx=positions[i*3]-positions[j*3], dy=positions[i*3+1]-positions[j*3+1], dz=positions[i*3+2]-positions[j*3+2];
       const d2=dx*dx+dy*dy+dz*dz;
-      if (d2>0.25 && d2<1.6){ addEdge(i,j); added++; }
+      if (d2<0.25 || d2>2.2) continue;
+      if (addEdge(i,j)) added++;
+    }
+
+    // Maintain constant edgeCount by filling if needed
+    while (edgeCount < MAX_EDGES){
+      const i=(Math.random()*N)|0, j=(Math.random()*N)|0;
+      if (i!==j){
+        const dx=positions[i*3]-positions[j*3], dy=positions[i*3+1]-positions[j*3+1], dz=positions[i*3+2]-positions[j*3+2];
+        const d2=dx*dx+dy*dy+dz*dz;
+        if (d2>0.35 && d2<2.4) addEdge(i,j);
+      }
     }
   }
 
-  function stepPhysics(dt){
+  // Physics step
+  function step(dt){
     tmpF.fill(0);
-    // repulsion
+    // repulsion (N~110 OK)
     for (let i=0;i<N;i++){
       const ix=i*3, x=positions[ix], y=positions[ix+1], z=positions[ix+2];
       for (let j=i+1;j<N;j++){
@@ -684,7 +817,8 @@
       tmpF[ax]+=fx; tmpF[ax+1]+=fy; tmpF[ax+2]+=fz;
       tmpF[bx]-=fx; tmpF[bx+1]-=fy; tmpF[bx+2]-=fz;
     }
-    // integrate, soft pull to origin, color by speed
+
+    // integrate + soft center pull
     for (let i=0;i<N;i++){
       const ix=i*3;
       velocities[ix]   = (velocities[ix]   + tmpF[ix]*dt) * DAMP;
@@ -695,67 +829,74 @@
       positions[ix+1] += velocities[ix+1]*dt;
       positions[ix+2] += velocities[ix+2]*dt;
 
-      const pull = 0.018;
+      const pull = 0.014;
       positions[ix]   -= positions[ix]*pull*dt;
       positions[ix+1] -= positions[ix+1]*pull*dt;
       positions[ix+2] -= positions[ix+2]*pull*dt;
 
-      for (let k=0;k<3;k++){
-        const p = positions[ix+k];
-        if (p > BOX){ positions[ix+k]=BOX; velocities[ix+k]*=-0.4; }
-        if (p < -BOX){ positions[ix+k]=-BOX; velocities[ix+k]*=-0.4; }
-      }
-      const sp = Math.min(1.0, Math.hypot(velocities[ix],velocities[ix+1],velocities[ix+2])*10.0);
+      // color blend by speed, pulses are added in shader via attribute
+      const sp = Math.min(1.0, Math.hypot(velocities[ix],velocities[ix+1],velocities[ix+2])*9.0);
       const cool=[0.16,0.78,0.72], warm=[0.92,0.18,0.56];
-      colors[ix]   = cool[0]*(1-sp) + warm[0]*sp*0.6;
-      colors[ix+1] = cool[1]*(1-sp) + warm[1]*sp*0.6;
-      colors[ix+2] = cool[2]*(1-sp) + warm[2]*sp*0.6;
+      colors[ix]   = cool[0]*(1-sp) + warm[0]*sp*0.55;
+      colors[ix+1] = cool[1]*(1-sp) + warm[1]*sp*0.55;
+      colors[ix+2] = cool[2]*(1-sp) + warm[2]*sp*0.55;
     }
+
     gl.bindBuffer(gl.ARRAY_BUFFER, posBuf); gl.bufferSubData(gl.ARRAY_BUFFER, 0, positions);
     gl.bindBuffer(gl.ARRAY_BUFFER, colBuf); gl.bufferSubData(gl.ARRAY_BUFFER, 0, colors);
   }
 
-  // Scroll-linked dynamics (parallax & speed)
-  const hero = document.querySelector('.hero');
-  const heroContent = document.getElementById('heroContent');
+  // Scroll-linked dynamics + "infinite dive" along torus
   let scrollProg = 0;
-  function onScrollDyn(){
+  function onScroll(){
     const vh = Math.max(1, window.innerHeight);
     const y = window.scrollY;
-    // progress through the first viewport (0..1)
     scrollProg = Math.max(0, Math.min(1, y / vh));
-    // ease in/out speed
-    const ease = scrollProg*scrollProg*(3 - 2*scrollProg); // smoothstep
-    timeScale = 0.06 + 0.5*ease; // very slow at top, more active as you scroll
-    rewireInterval = 4200 - 3000*ease; // rewire a bit faster as we scroll
-    // parallax: content drifts slightly upward as you scroll
-    heroContent.style.transform = `translateY(${(-24*ease).toFixed(2)}px)`;
-    heroContent.style.opacity = `${1 - 0.08*ease}`;
+    const ease = scrollProg*scrollProg*(3 - 2*scrollProg);
+    timeScale = 0.05 + 0.45*ease;
+    rewireInterval = 4200 - 3000*ease;
+    // trigger pulses more often as we scroll
+    pulseInterval = 2200 - 1600*ease;
+    // slight content parallax handled by CSS transform set in earlier code (kept minimal here)
   }
-  onScrollDyn();
-  addEventListener('scroll', () => requestAnimationFrame(onScrollDyn), {passive:true});
+  addEventListener('scroll', () => requestAnimationFrame(onScroll), {passive:true}); onScroll();
 
-  // Matrices
-  function getCamera(t){
-    // camera sits "inside" the net, gentle drift; depth changes with scroll
-    const baseDepth = 2.2 - 0.5*scrollProg; // closer as you scroll
-    const radius = 0.5 + 0.15*scrollProg;
-    const ang = t*0.00008; // slow
-    const eye = [Math.cos(ang)*radius, 0.12*Math.sin(ang*1.7), Math.sin(ang)*radius];
-    const center = [0.0, 0.02*Math.sin(ang*0.9), -baseDepth];
-    return {eye, center};
+  // Camera path: inside the torus, moving forward like a tire roll
+  function getCamera(ts){
+    const t = ts*0.00004; // slow
+    // advance along major circle (angle A) and roll around minor circle (angle B) to fake "dive"
+    const A = t*2.0; // forward along ring
+    const B = t*3.2; // gentle roll
+    // position on torus centerline
+    const cx = R*Math.cos(A), cy = R*Math.sin(A), cz = 0;
+    // tangent direction along major ring
+    const tx = -Math.sin(A), ty = Math.cos(A), tz = 0;
+    // minor offset (camera slightly inside)
+    const ox = 0.0, oy = 0.0, oz = -0.4; // inward along -Z to look through the donut
+    // camera eye slightly offset by minor angle to create subtle roll
+    const ex = cx + 0.15*Math.cos(B);
+    const ey = cy + 0.15*Math.sin(B);
+    const ez = cz + oz;
+    // look forward along tangent
+    const center = [ex + tx*1.0, ey + ty*1.0, ez + tz*1.0];
+    return {eye:[ex,ey,ez], center};
   }
 
-  // Uniform setters and draw
-  const uPP = { uProj: gl.getUniformLocation(P_POINTS,'uProj'), uView: gl.getUniformLocation(P_POINTS,'uView'), uModel: gl.getUniformLocation(P_POINTS,'uModel') };
-  const uPL = { uProj: gl.getUniformLocation(P_LINES,'uProj'),  uView: gl.getUniformLocation(P_LINES,'uView'),  uModel: gl.getUniformLocation(P_LINES,'uModel') };
+  // Pulses timing
+  let pulseInterval = 2200;
 
+  // Render loop
   let lastTS = performance.now();
   function frame(ts){
     const rawDt = Math.min(40, ts - lastTS); lastTS = ts;
     const dt = (rawDt/1000) * timeScale;
 
-    stepPhysics(dt);
+    // pulses
+    const now = performance.now();
+    if (now - lastPulse > pulseInterval){ lastPulse = now; spawnPulse(); }
+    updatePulses(now);
+
+    step(dt);
     rewire();
     updateLineVerts();
 
@@ -763,7 +904,7 @@
     const proj = M.perspective(50*Math.PI/180, aspect, 0.1, 100.0);
     const cam = getCamera(ts);
     const view = M.lookAt(cam.eye, cam.center, [0,1,0]);
-    const model = M.rotY(ts*0.00008); // subtle world rotation
+    const model = new Float32Array([1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]); // no global rotation (immersive)
 
     gl.enable(gl.DEPTH_TEST);
     gl.enable(gl.BLEND);
@@ -772,30 +913,32 @@
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     // lines
-    gl.useProgram(P_LINES);
-    gl.uniformMatrix4fv(uPL.uProj,false,proj);
-    gl.uniformMatrix4fv(uPL.uView,false,view);
-    gl.uniformMatrix4fv(uPL.uModel,false,model);
-    attrib(P_LINES,'position', linePosBuf, 3);
-    attrib(P_LINES,'color',    lineColBuf, 3);
+    gl.useProgram(PROG_LINES);
+    gl.uniformMatrix4fv(uLines.uProj,false,proj);
+    gl.uniformMatrix4fv(uLines.uView,false,view);
+    gl.uniformMatrix4fv(uLines.uModel,false,model);
+    attrib(PROG_LINES,'position', linePosBuf, 3);
+    attrib(PROG_LINES,'color',    lineColBuf, 3);
+    attrib(PROG_LINES,'pulse',    linePulseBuf, 1);
     gl.drawArrays(gl.LINES, 0, edgeCount*2);
 
     // points
-    gl.useProgram(P_POINTS);
-    gl.uniformMatrix4fv(uPP.uProj,false,proj);
-    gl.uniformMatrix4fv(uPP.uView,false,view);
-    gl.uniformMatrix4fv(uPP.uModel,false,model);
-    attrib(P_POINTS,'position', posBuf, 3);
-    attrib(P_POINTS,'color',    colBuf, 3);
+    gl.useProgram(PROG_POINTS);
+    gl.uniformMatrix4fv(uPoints.uProj,false,proj);
+    gl.uniformMatrix4fv(uPoints.uView,false,view);
+    gl.uniformMatrix4fv(uPoints.uModel,false,model);
+    attrib(PROG_POINTS,'position', posBuf, 3);
+    attrib(PROG_POINTS,'color',    colBuf, 3);
+    attrib(PROG_POINTS,'pulse',    pulseBuf, 1);
     gl.drawArrays(gl.POINTS, 0, N);
 
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
 
-  // Reduced motion: freeze dynamics but keep render
+  // Reduced motion support
   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-    timeScale = 0.0; rewireInterval = 1e9;
+    timeScale = 0.0; rewireInterval = 1e9; pulseInterval = 1e9;
   }
 })();
 </script>
