@@ -108,7 +108,9 @@
 
     /* FIXED full-bleed background canvas + vignette + fade */
     .hero-bg{ position:fixed; inset:0; z-index:1; pointer-events:none; }
-    #viz3d{ display:block; width:100%; height:100%; }
+    .hero-bg canvas{display:block; width:100%; height:100%; position:absolute; inset:0;}
+    #viz3d{ position:absolute; inset:0; }
+    #vizLabels{ position:absolute; inset:0; }
     .hero-bg::after{
       content:""; position:absolute; inset:0; pointer-events:none;
       background:
@@ -219,7 +221,10 @@
 <main>
   <!-- HERO -->
   <section class="hero" id="project" aria-label="SiCell hero">
-    <div class="hero-bg" aria-hidden="true"><canvas id="viz3d"></canvas></div>
+    <div class="hero-bg" aria-hidden="true">
+      <canvas id="viz3d"></canvas>
+      <canvas id="vizLabels"></canvas>
+    </div>
     <div class="hero-fade" aria-hidden="true"></div>
     <div class="container">
       <div class="stack">
@@ -498,11 +503,13 @@
 (() => {
   "use strict";
   const canvas = document.getElementById('viz3d');
+  const overlay = document.getElementById('vizLabels');
   if (!canvas) return;
   const gl = canvas.getContext('webgl', {
     antialias:true, alpha:false, premultipliedAlpha:true, powerPreference:'high-performance'
   });
   if (!gl) return;
+  const overlayCtx = overlay ? overlay.getContext('2d') : null;
 
   const DPR = Math.min(2, window.devicePixelRatio || 1);
   function resize(){
@@ -511,6 +518,14 @@
     canvas.width = Math.round(w * DPR);
     canvas.height = Math.round(h * DPR);
     gl.viewport(0,0,canvas.width, canvas.height);
+    if (overlay){
+      overlay.width = canvas.width;
+      overlay.height = canvas.height;
+      if (overlayCtx){
+        overlayCtx.setTransform(1,0,0,1,0,0);
+        overlayCtx.clearRect(0,0,overlay.width, overlay.height);
+      }
+    }
   }
   resize(); addEventListener('resize', resize);
 
@@ -533,6 +548,29 @@
       return new Float32Array([c,-s,0,0, s,c,0,0, 0,0,1,0, 0,0,0,1]);
     }
   };
+
+  function transformPoint(mat, x, y, z){
+    return {
+      x: mat[0]*x + mat[4]*y + mat[8]*z + mat[12],
+      y: mat[1]*x + mat[5]*y + mat[9]*z + mat[13],
+      z: mat[2]*x + mat[6]*y + mat[10]*z + mat[14],
+      w: mat[3]*x + mat[7]*y + mat[11]*z + mat[15]
+    };
+  }
+
+  function drawBadge(ctx, x, y, w, h, r){
+    ctx.beginPath();
+    ctx.moveTo(x+r, y);
+    ctx.lineTo(x+w-r, y);
+    ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+    ctx.lineTo(x+w, y+h-r);
+    ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+    ctx.lineTo(x+r, y+h);
+    ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+    ctx.lineTo(x, y+r);
+    ctx.quadraticCurveTo(x, y, x+r, y);
+    ctx.closePath();
+  }
 
   /* Shaders (alpha softened, bigger points) */
   const V_SRC = `
@@ -640,6 +678,15 @@
   const colors = new Float32Array(N*3);
   const pulsesAttrib = new Float32Array(N);
   const tmpF = new Float32Array(N*3);
+  const LABEL_SNIPPETS = [
+    'f(x)=x^2', 'dV/dt', 'exp(-t)', 'n!/(n-k)!', 'curl F', 'grad phi',
+    'lim t->0', 'P(E|H)', 'dH/dt', 'sin(2t)', 'Re(z)', '|psi|^2',
+    'det(A)', 'trace(M)', 'cov(x,y)', 'eig(A)=lambda'
+  ];
+  const labelText = new Array(N);
+  const labelOffset = new Float32Array(N*3);
+  const labelFreq = new Float32Array(N);
+  const labelPhase = new Float32Array(N);
 
   const R = 1.7, r = 0.55;                      // torus major/minor radii
   const TORUS_K = 1.4;                           // surface pull strength
@@ -670,6 +717,15 @@
     velocities[i*3+1]=(Math.random()-0.5)*0.003;
     velocities[i*3+2]=(Math.random()-0.5)*0.003;
     colors.set([0.16,0.78,0.72], i*3);
+    labelText[i] = LABEL_SNIPPETS[(Math.random()*LABEL_SNIPPETS.length)|0];
+    const amp = 0.14 + Math.random()*0.12;
+    const theta = Math.random()*Math.PI*2;
+    const phi = (Math.random()*0.6) - 0.3;
+    labelOffset[i*3+0] = amp*Math.cos(theta)*Math.cos(phi);
+    labelOffset[i*3+1] = amp*Math.sin(theta)*Math.cos(phi);
+    labelOffset[i*3+2] = amp*Math.sin(phi);
+    labelFreq[i] = 0.3 + Math.random()*0.35;
+    labelPhase[i] = Math.random()*Math.PI*2;
   }
 
   /* Edges with fade in/out for smooth breaking */
@@ -921,29 +977,35 @@
   function onScroll(){
     const vh = Math.max(1, window.innerHeight);
     const y = window.scrollY;
-    scrollTarget = Math.max(0, Math.min(0.95, y / (vh*1.6)));
-    // target dynamics linked to scroll
-    const ease = scrollTarget*scrollTarget*(3 - 2*scrollTarget);
-    timeScaleTarget = 0.045 + 0.12*ease;
-    rewireIntervalTarget = 6200 - 1800*ease;
-    pulseIntervalTarget  = 3600 - 900*ease;
+    scrollTarget = Math.max(0, Math.min(0.35, y / (vh*8)));
+    const ease = scrollTarget * 0.35;
+    timeScaleTarget = 0.055 + ease*0.012;
+    rewireIntervalTarget = 6600 - ease*420;
+    pulseIntervalTarget  = 3800 - ease*260;
   }
   addEventListener('scroll', () => requestAnimationFrame(onScroll), {passive:true}); onScroll();
 
   /* Camera: inside torus, spin + forward; phase is scroll-scrubbed + gentle autoplay */
   let autoPhase = 0.0;
   function getCamera(dt){
-    autoPhase += dt * 0.35; // gentle autoplay
-    // blend scroll (dominant) with autoplay
-    const phase = scrollProg*Math.PI*2.1 + autoPhase;
-    const A = phase, B = phase*1.35 + 1.2; // twist in tube
-    const cx = R*Math.cos(A), cy = R*Math.sin(A), cz = 0;
-    const tx = -Math.sin(A), ty = Math.cos(A), tz = 0;
-    const ex = cx + 0.16*Math.cos(B);
-    const ey = cy + 0.16*Math.sin(B);
-    const ez = 0 - 0.42;
-    const center = [ex + tx*1.05, ey + ty*1.05, ez + tz*0.9];
-    return {eye:[ex,ey,ez], center, spin: phase*0.25};
+    autoPhase += dt * 0.42; // steady autopilot drift
+    const spiral = scrollProg * 0.6;
+    const phase = autoPhase + spiral;
+    const twist = phase*1.2 + 1.1;
+    const cx = R*Math.cos(phase), cy = R*Math.sin(phase), cz = 0;
+    const tx = -Math.sin(phase), ty = Math.cos(phase), tz = 0;
+    const radial = 0.18 + 0.02*Math.sin(autoPhase*0.8);
+    const ex = cx + radial*Math.cos(twist);
+    const ey = cy + radial*Math.sin(twist);
+    const ez = -0.48 + Math.sin(autoPhase*0.45)*0.08;
+    const forwardPush = 1.22 + 0.06*Math.sin(autoPhase*0.3);
+    const upDrift = Math.sin(phase*0.5)*0.35;
+    const center = [
+      ex + tx*forwardPush,
+      ey + ty*forwardPush,
+      ez + upDrift
+    ];
+    return {eye:[ex,ey,ez], center, spin: phase*0.22};
   }
 
   /* Points need an alpha of 1 (constant), edges get per-vertex alpha */
@@ -959,8 +1021,8 @@
     const dt = (rawDt/1000);
 
     // smooth scroll & targets to avoid flicker
-    scrollProg += (scrollTarget - scrollProg) * Math.min(1, 2.4*dt);
-    timeScale += (timeScaleTarget - timeScale) * Math.min(1, 2.1*dt);
+    scrollProg += (scrollTarget - scrollProg) * Math.min(1, 1.6*dt);
+    timeScale += (timeScaleTarget - timeScale) * Math.min(1, 1.8*dt);
     rewireInterval += (rewireIntervalTarget - rewireInterval) * Math.min(1, 1.6*dt);
     pulseInterval += (pulseIntervalTarget - pulseInterval) * Math.min(1, 1.6*dt);
 
@@ -1008,6 +1070,82 @@
     attrib(PROG_POINTS,'pulse',    pulseBuf, 1);
     attrib(PROG_POINTS,'alpha',    pointAlphaBuf, 1);
     gl.drawArrays(gl.POINTS, 0, N);
+
+    if (overlayCtx && overlay){
+      overlayCtx.clearRect(0,0,overlay.width, overlay.height);
+      const fontSizePx = Math.max(12, Math.round(12 * DPR));
+      overlayCtx.font = `${fontSizePx}px "SFMono-Regular", "Menlo", monospace`;
+      overlayCtx.textBaseline = 'middle';
+      overlayCtx.lineJoin = 'round';
+      overlayCtx.shadowColor = 'rgba(6,14,28,0.45)';
+      overlayCtx.shadowBlur = 8 * DPR;
+      const padX = 6 * DPR;
+      const padY = 4 * DPR;
+      const offset = 12 * DPR;
+      const radius = 6 * DPR;
+      const outline = Math.max(1, DPR*0.75);
+      overlayCtx.lineWidth = outline;
+      const nowSec = now * 0.001;
+
+      for (let i=0;i<N;i++){
+        const idx = i*3;
+        const baseX = positions[idx];
+        const baseY = positions[idx+1];
+        const baseZ = positions[idx+2];
+        const ox = labelOffset[idx];
+        const oy = labelOffset[idx+1];
+        const oz = labelOffset[idx+2];
+        const phase = labelPhase[i] + nowSec * labelFreq[i];
+        const swingCos = Math.cos(phase);
+        const swingSin = Math.sin(phase);
+        const offsetX = ox * swingCos - oy * swingSin * 0.6;
+        const offsetY = oy * swingCos + ox * swingSin * 0.6;
+        const offsetZ = oz + Math.sin(phase*0.5)*0.06;
+        const worldX = baseX + offsetX;
+        const worldY = baseY + offsetY;
+        const worldZ = baseZ + offsetZ;
+
+        const modelPos = transformPoint(model, worldX, worldY, worldZ);
+        const viewPos = transformPoint(view, modelPos.x, modelPos.y, modelPos.z);
+        const clipPos = transformPoint(proj, viewPos.x, viewPos.y, viewPos.z);
+        if (clipPos.w <= 0) continue;
+        const invW = 1 / clipPos.w;
+        const ndcX = clipPos.x * invW;
+        const ndcY = clipPos.y * invW;
+        const ndcZ = clipPos.z * invW;
+        if (ndcZ < -1 || ndcZ > 1) continue;
+        if (ndcX < -1.2 || ndcX > 1.2 || ndcY < -1.2 || ndcY > 1.2) continue;
+
+        const screenX = (ndcX * 0.5 + 0.5) * overlay.width;
+        const screenY = (1 - (ndcY * 0.5 + 0.5)) * overlay.height;
+
+        const text = labelText[i];
+        if (!text) continue;
+        const metrics = overlayCtx.measureText(text);
+        const textWidth = metrics.width;
+        const boxW = textWidth + padX*2;
+        const boxH = fontSizePx + padY*2;
+        let boxX = screenX + offset;
+        if (boxX + boxW > overlay.width - 4 * DPR){
+          boxX = screenX - offset - boxW;
+        }
+        if (boxX < 4 * DPR) boxX = 4 * DPR;
+        let boxY = screenY - boxH/2;
+        if (boxY < 4 * DPR) boxY = 4 * DPR;
+        if (boxY + boxH > overlay.height - 4 * DPR) boxY = overlay.height - 4 * DPR - boxH;
+
+        overlayCtx.fillStyle = 'rgba(8,12,22,0.82)';
+        overlayCtx.strokeStyle = 'rgba(44,78,130,0.45)';
+        drawBadge(overlayCtx, boxX, boxY, boxW, boxH, radius);
+        overlayCtx.fill();
+        overlayCtx.stroke();
+        overlayCtx.fillStyle = 'rgba(215,228,250,0.92)';
+        overlayCtx.shadowColor = 'rgba(6,14,28,0.3)';
+        overlayCtx.fillText(text, boxX + padX, screenY);
+      }
+
+      overlayCtx.shadowBlur = 0;
+    }
 
     requestAnimationFrame(frame);
   }
