@@ -69,9 +69,7 @@
       position:relative; min-height:calc(100svh - var(--header-h));
       display:flex; align-items:flex-start;
       padding: calc(var(--header-h) + 24px) 0 10svh;
-      isolation:isolate;
-      background: transparent;
-      overflow: clip;
+      isolation:isolate; overflow: clip;
     }
     .hero .container{ position:relative; z-index:3; max-width: var(--container); }
     .hero .stack{
@@ -119,7 +117,7 @@
     main > section:not(.hero){
       position:relative; min-height:100svh;
       display:flex; align-items:center;
-      padding: 4svh 0; /* tighter to reduce emptiness */
+      padding: 4svh 0;
       background:
         radial-gradient(800px 400px at 10% 10%, rgba(31,111,235,.06), transparent 60%),
         radial-gradient(700px 380px at 90% 80%, rgba(43,212,161,.05), transparent 60%),
@@ -133,9 +131,7 @@
     }
     @media (max-width:980px){ .section-inner{grid-template-columns:1fr} }
     h2{font-size:1.6rem; margin:0 0 12px}
-    .section-inner h2{
-      position:relative; padding-top:6px;
-    }
+    .section-inner h2{ position:relative; padding-top:6px; }
     .section-inner h2::before{
       content:""; position:absolute; left:0; top:0; height:4px; width:56px;
       border-radius:999px;
@@ -275,7 +271,6 @@
         <h2 data-i18n="team_title">Team</h2>
         <p><strong>Marcel Tomaszek</strong> — <span data-i18n="team_affil">Cellular &amp; Molecular Biophysics, UJ</span></p>
         <p><a href="mailto:marcel.tomaszek@student.uj.edu.pl">marcel.tomaszek@student.uj.edu.pl</a></p>
-        <!-- Oskar removed per request -->
       </div>
       <div class="card">
         <h2 data-i18n="next_title">What we’re building next</h2>
@@ -359,7 +354,6 @@
 <!-- Core UI scripts -->
 <script>
   "use strict";
-
   const hamb = document.getElementById('hamb');
   const menu = document.getElementById('menu');
   const header = document.querySelector('header');
@@ -472,13 +466,15 @@
   })();
 </script>
 
-<!-- WebGL background: torus “tire dive”, rewiring + pulses -->
+<!-- WebGL background: torus “tire dive”, scroll-scrub + fade edges -->
 <script>
 (() => {
   "use strict";
   const canvas = document.getElementById('viz3d');
   if (!canvas) return;
-  const gl = canvas.getContext('webgl', {antialias:true, alpha:false, powerPreference:'high-performance'});
+  const gl = canvas.getContext('webgl', {
+    antialias:true, alpha:false, premultipliedAlpha:true, powerPreference:'high-performance'
+  });
   if (!gl) return;
 
   const DPR = Math.min(2, window.devicePixelRatio || 1);
@@ -504,32 +500,40 @@
       let xl=Math.hypot(xx,xy,xz); xx/=xl; xy/=xl; xz/=xl;
       const yx = zy*xz - zz*xy, yy = zz*xx - zx*xz, yz = zx*xy - zy*xx;
       return new Float32Array([xx,yx,zx,0, xy,yy,zy,0, xz,yz,zz,0, -(xx*ex+xy*ey+xz*ez), -(yx*ex+yy*ey+yz*ez), -(zx*ex+zy*ey+zz*ez), 1]);
+    },
+    rotateZ(a){
+      const c=Math.cos(a), s=Math.sin(a);
+      return new Float32Array([c,-s,0,0, s,c,0,0, 0,0,1,0, 0,0,0,1]);
     }
   };
 
-  /* Shaders */
+  /* Shaders (alpha softened, bigger points) */
   const V_SRC = `
   attribute vec3 position;
   attribute vec3 color;
   attribute float pulse;
+  attribute float alpha;
   uniform mat4 uProj, uView, uModel;
   varying vec3 vColor;
   varying float vDepth;
   varying float vPulse;
+  varying float vAlpha;
   void main(){
     vec4 world = uModel * vec4(position, 1.0);
     vec4 view = uView * world;
     vDepth = -view.z;
     vColor = color;
     vPulse = pulse;
+    vAlpha = alpha;
     gl_Position = uProj * view;
-    gl_PointSize = 44.0 / (0.45 + vDepth*0.25);
+    gl_PointSize = 56.0 / (0.45 + vDepth*0.25); /* bigger dots */
   }`;
   const F_POINTS = `
   precision mediump float;
   varying vec3 vColor;
   varying float vDepth;
   varying float vPulse;
+  varying float vAlpha;
   void main(){
     vec2 p = gl_PointCoord*2.0 - 1.0;
     float r2 = dot(p,p);
@@ -537,25 +541,27 @@
     vec3 N = normalize(vec3(p.x, p.y, sqrt(max(0.0, 1.0 - r2))));
     vec3 L = normalize(vec3(0.6, 0.9, 1.0));
     float diff = 0.5 + 0.5*max(0.0, dot(N,L));
-    float spec = pow(max(0.0, dot(reflect(-L,N), vec3(0.0,0.0,1.0))), 42.0) * 0.4;
-    float halo = smoothstep(0.85, 0.0, r2) * vPulse;
+    float spec = pow(max(0.0, dot(reflect(-L,N), vec3(0.0,0.0,1.0))), 42.0) * 0.35;
+    float halo = smoothstep(0.9, 0.0, r2) * vPulse * 0.9;
     float fog = clamp((vDepth-1.0) / 9.0, 0.0, 1.0);
-    vec3 base = vColor*(diff + 0.15*halo) + spec*vec3(1.0);
+    vec3 base = vColor*(diff + 0.12*halo) + spec*vec3(1.0);
     base = mix(base, vec3(0.03,0.05,0.09), fog);
-    gl_FragColor = vec4(base, 0.97);
+    gl_FragColor = vec4(base, 0.86 * vAlpha);
   }`;
   const V_LINES = `
   attribute vec3 position;
   attribute vec3 color;
   attribute float pulse;
+  attribute float alpha;
   uniform mat4 uProj, uView, uModel;
   varying vec3 vColor;
   varying float vDepth;
   varying float vPulse;
+  varying float vAlpha;
   void main(){
     vec4 world = uModel * vec4(position, 1.0);
     vec4 view = uView * world;
-    vDepth = -view.z; vColor = color; vPulse = pulse;
+    vDepth = -view.z; vColor = color; vPulse = pulse; vAlpha = alpha;
     gl_Position = uProj * view;
   }`;
   const F_LINES = `
@@ -563,29 +569,24 @@
   varying vec3 vColor;
   varying float vDepth;
   varying float vPulse;
+  varying float vAlpha;
   void main(){
     float fog = clamp((vDepth-1.0) / 9.0, 0.0, 1.0);
-    vec3 col = mix(vColor + vPulse*vec3(0.4,0.6,0.9), vec3(0.03,0.05,0.09), fog);
-    gl_FragColor = vec4(col, 0.52 + 0.35*min(1.0, vPulse));
+    vec3 col = mix(vColor + vPulse*vec3(0.35,0.55,0.9), vec3(0.03,0.05,0.09), fog);
+    gl_FragColor = vec4(col, (0.35 + 0.35*min(1.0, vPulse)) * vAlpha);
   }`;
 
-  function compile(src, type){
-    const s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s);
-    if(!gl.getShaderParameter(s, gl. COMPILE_STATUS)) console.error(gl.getShaderInfoLog(s));
-    return s;
-  }
-  function program(vs, fs){
-    const p=gl.createProgram();
+  function compile(src, type){ const s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s);
+    if(!gl.getShaderParameter(s, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(s)); return s; }
+  function program(vs, fs){ const p=gl.createProgram();
     gl.attachShader(p, compile(vs, gl.VERTEX_SHADER));
     gl.attachShader(p, compile(fs, gl.FRAGMENT_SHADER));
-    gl.linkProgram(p);
-    if(!gl.getProgramParameter(p, gl.LINK_STATUS)) console.error(gl.getProgramInfoLog(p));
+    gl.linkProgram(p); if(!gl.getProgramParameter(p, gl.LINK_STATUS)) console.error(gl.getProgramInfoLog(p));
     return p;
   }
   const PROG_POINTS = program(V_SRC, F_POINTS);
   const PROG_LINES  = program(V_LINES, F_LINES);
 
-  /* Uniform handles (single declaration) */
   const uPoints = {
     uProj: gl.getUniformLocation(PROG_POINTS,'uProj'),
     uView: gl.getUniformLocation(PROG_POINTS,'uView'),
@@ -604,7 +605,7 @@
     gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0);
   }
 
-  /* --- Torus graph --- */
+  /* --- Torus “air in tire” graph with soft surface constraint --- */
   const N = 110;
   const MAX_EDGES = 260;
   const positions = new Float32Array(N*3);
@@ -613,41 +614,60 @@
   const pulsesAttrib = new Float32Array(N);
   const tmpF = new Float32Array(N*3);
 
-  const R = 1.7, r = 0.55;
+  const R = 1.7, r = 0.55;                      // torus major/minor radii
+  const TORUS_K = 1.4;                           // surface pull strength
+  const PULL=0.012, DAMP=0.938, REPULSE=0.022, SPRING_K=0.12, BREAK_STRETCH=1.9;
+
   function torusPoint(a,b){
     const x = (R + r*Math.cos(b))*Math.cos(a);
     const y = (R + r*Math.cos(b))*Math.sin(a);
     const z = r*Math.sin(b);
     return [x,y,z];
   }
+  function nearestOnTorus(x,y,z){
+    const a = Math.atan2(y, x);
+    const radial = Math.hypot(x,y) - R;
+    const b = Math.atan2(z, radial);
+    const tx = (R + r*Math.cos(b))*Math.cos(a);
+    const ty = (R + r*Math.cos(b))*Math.sin(a);
+    const tz = r*Math.sin(b);
+    return [tx,ty,tz];
+  }
+
   for (let i=0;i<N;i++){
     const a = Math.random()*Math.PI*2;
     const b = Math.random()*Math.PI*2;
     const p = torusPoint(a,b);
     positions[i*3+0]=p[0]; positions[i*3+1]=p[1]; positions[i*3+2]=p[2];
-    velocities[i*3+0]=(Math.random()-0.5)*0.008;
-    velocities[i*3+1]=(Math.random()-0.5)*0.008;
-    velocities[i*3+2]=(Math.random()-0.5)*0.008;
+    velocities[i*3+0]=(Math.random()-0.5)*0.006;
+    velocities[i*3+1]=(Math.random()-0.5)*0.006;
+    velocities[i*3+2]=(Math.random()-0.5)*0.006;
     colors.set([0.16,0.78,0.72], i*3);
   }
 
+  /* Edges with fade in/out for smooth breaking */
   const edges = new Uint16Array(MAX_EDGES*2);
   const springRest = new Float32Array(MAX_EDGES);
   const edgeColor = new Float32Array(MAX_EDGES*2*3);
   const edgePulse = new Float32Array(MAX_EDGES*2);
+  const edgeAlpha = new Float32Array(MAX_EDGES*2);   // per-vertex alpha (fade)
+  const edgeLife  = new Float32Array(MAX_EDGES);     // 1 = alive target, 0 = removed target
+  const edgeFade  = new Float32Array(MAX_EDGES);     // current fade 0..1
   let edgeCount = 0;
 
-  function addEdge(a,b){
+  function addEdge(a,b, startFade=0){
     if (a===b || edgeCount>=MAX_EDGES) return false;
     for(let e=0;e<edgeCount;e++){
       if ((edges[e*2]===a && edges[e*2+1]===b) || (edges[e*2]===b && edges[e*2+1]===a)) return false;
     }
     edges[edgeCount*2]=a; edges[edgeCount*2+1]=b;
     const dx=positions[a*3]-positions[b*3], dy=positions[a*3+1]-positions[b*3+1], dz=positions[a*3+2]-positions[b*3+2];
-    springRest[edgeCount] = Math.max(0.4, Math.min(0.9, Math.hypot(dx,dy,dz)));
-    const c1 = [0.10,0.58,0.96], c2 = Math.random()<0.12 ? [0.92,0.18,0.56] : [0.17,0.85,0.66];
+    springRest[edgeCount] = Math.max(0.42, Math.min(0.92, Math.hypot(dx,dy,dz)));
+    const c1 = [0.12,0.62,0.98], c2 = Math.random()<0.12 ? [0.92,0.18,0.56] : [0.17,0.85,0.66];
     edgeColor.set(c1, edgeCount*6+0); edgeColor.set(c2, edgeCount*6+3);
     edgePulse[edgeCount*2] = 0.0; edgePulse[edgeCount*2+1] = 0.0;
+    edgeLife[edgeCount] = 1.0;
+    edgeFade[edgeCount] = startFade; // start small, fade in
     edgeCount++;
     return true;
   }
@@ -662,7 +682,7 @@
       if (edgeCount>=MAX_EDGES) break;
       const dx=positions[i*3]-positions[j*3], dy=positions[i*3+1]-positions[j*3+1], dz=positions[i*3+2]-positions[j*3+2];
       const d2=dx*dx+dy*dy+dz*dz;
-      if (d2 < 1.6) addEdge(i,j);
+      if (d2 < 1.6) addEdge(i,j, Math.random()*0.5);
     }
     if (edgeCount>=MAX_EDGES) break;
   }
@@ -671,7 +691,7 @@
     if (i!==j){
       const dx=positions[i*3]-positions[j*3], dy=positions[i*3+1]-positions[j*3+1], dz=positions[i*3+2]-positions[j*3+2];
       const d2=dx*dx+dy*dy+dz*dz;
-      if (d2<2.5) addEdge(i,j);
+      if (d2<2.5) addEdge(i,j, Math.random()*0.4);
     }
   }
 
@@ -679,9 +699,10 @@
   const posBuf   = makeBuf(gl.ARRAY_BUFFER, positions);
   const colBuf   = makeBuf(gl.ARRAY_BUFFER, colors);
   const pulseBuf = makeBuf(gl.ARRAY_BUFFER, pulsesAttrib);
-  const linePosBuf  = makeBuf(gl.ARRAY_BUFFER, new Float32Array(MAX_EDGES*2*3));
-  const lineColBuf  = makeBuf(gl.ARRAY_BUFFER, edgeColor);
-  const linePulseBuf= makeBuf(gl.ARRAY_BUFFER, edgePulse);
+  const linePosBuf   = makeBuf(gl.ARRAY_BUFFER, new Float32Array(MAX_EDGES*2*3));
+  const lineColBuf   = makeBuf(gl.ARRAY_BUFFER, edgeColor);
+  const linePulseBuf = makeBuf(gl.ARRAY_BUFFER, edgePulse);
+  const lineAlphaBuf = makeBuf(gl.ARRAY_BUFFER, edgeAlpha);
 
   const lineVerts = new Float32Array(MAX_EDGES*2*3);
   function updateLineVerts(){
@@ -689,25 +710,28 @@
       const a = edges[e*2], b = edges[e*2+1];
       lineVerts.set(positions.subarray(a*3,a*3+3), e*6+0);
       lineVerts.set(positions.subarray(b*3,b*3+3), e*6+3);
+      const fade = edgeFade[e];
       edgePulse[e*2]   = nodePulse[a];
       edgePulse[e*2+1] = nodePulse[b];
+      edgeAlpha[e*2]   = fade;
+      edgeAlpha[e*2+1] = fade;
     }
     gl.bindBuffer(gl.ARRAY_BUFFER, linePosBuf);
     gl.bufferSubData(gl.ARRAY_BUFFER, 0, lineVerts.subarray(0, edgeCount*6));
     gl.bindBuffer(gl.ARRAY_BUFFER, linePulseBuf);
     gl.bufferSubData(gl.ARRAY_BUFFER, 0, edgePulse.subarray(0, edgeCount*2));
+    gl.bindBuffer(gl.ARRAY_BUFFER, lineAlphaBuf);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, edgeAlpha.subarray(0, edgeCount*2));
   }
 
   /* Physics + pulses */
-  let timeScale = 0.12;
-  const REPULSE = 0.024, SPRING_K = 0.13, DAMP = 0.935, PULL=0.014, BREAK_STRETCH=1.95;
-
+  let timeScale = 0.12, timeScaleTarget = 0.12;
   const pulses = []; // {i, t0}
   const nodePulse = new Float32Array(N);
   const PULSE_SPEED = 0.75; const PULSE_FADE = 1.2;
 
   let lastPulse = performance.now();
-  let pulseInterval = 2200; /* declared BEFORE onScroll */
+  let pulseInterval = 2000, pulseIntervalTarget = 2000;
 
   function spawnPulse(){
     const deg = degree();
@@ -740,7 +764,7 @@
   }
 
   let lastRewire = performance.now();
-  let rewireInterval = 3200;
+  let rewireInterval = 3200, rewireIntervalTarget = 3200;
 
   function rewire(){
     const now = performance.now();
@@ -762,45 +786,50 @@
       if (!willBreak.includes(e)) willBreak.push(e);
     }
 
-    /* break */
-    willBreak.sort((a,b)=>b-a);
-    let breaks = 0;
-    for (const e of willBreak){
-      if (edgeCount<=0) break;
-      edgeCount--;
-      edges[e*2]=edges[edgeCount*2]; edges[e*2+1]=edges[edgeCount*2+1];
-      springRest[e]=springRest[edgeCount];
-      edgeColor.set(edgeColor.subarray(edgeCount*6, edgeCount*6+6), e*6);
-      breaks++;
-    }
+    /* mark for fade-out instead of instant removal */
+    for (const e of willBreak){ edgeLife[e] = 0.0; }
+  }
 
-    /* reconnect (preferentially towards low-degree/isolated) */
+  function fadeEdges(dt){
+    /* fade current edges toward their target state */
+    for (let e=0;e<edgeCount;e++){
+      const target = edgeLife[e];
+      const cur = edgeFade[e];
+      const rate = target>cur ? 1.5 : 1.2; // fade-in a bit faster than fade-out
+      const next = cur + (target - cur) * Math.min(1, rate*dt);
+      edgeFade[e] = Math.max(0, Math.min(1, next));
+    }
+    /* physically remove edges whose fade reached ~0, and add new ones fading in */
+    for (let idx=edgeCount-1; idx>=0; idx--){
+      if (edgeLife[idx]===0 && edgeFade[idx] < 0.03){
+        // remove by swapping last
+        edgeCount--;
+        edges[idx*2]=edges[edgeCount*2]; edges[idx*2+1]=edges[edgeCount*2+1];
+        springRest[idx]=springRest[edgeCount];
+        edgeFade[idx]=edgeFade[edgeCount];
+        edgeLife[idx]=edgeLife[edgeCount];
+        for(let k=0;k<6;k++) edgeColor[idx*6+k]=edgeColor[edgeCount*6+k];
+      }
+    }
+    // add back up to MAX_EDGES with fade-in
     const deg = degree();
-    let added = 0, tries=0;
-    while (added<breaks && tries<breaks*400){
-      tries++;
+    while (edgeCount < MAX_EDGES){
       const i=(Math.random()*N)|0, j=(Math.random()*N)|0;
       if (i===j) continue;
       const wI = 1/(1+deg[i]); const wJ = 1/(1+deg[j]);
       if (Math.random() > (0.65*wI + 0.65*wJ)) continue;
       const dx=positions[i*3]-positions[j*3], dy=positions[i*3+1]-positions[j*3+1], dz=positions[i*3+2]-positions[j*3+2];
       const d2=dx*dx+dy*dy+dz*dz;
-      if (d2<0.25 || d2>2.2) continue;
-      if (addEdge(i,j)) added++;
-    }
-    while (edgeCount < MAX_EDGES){
-      const i=(Math.random()*N)|0, j=(Math.random()*N)|0;
-      if (i!==j){
-        const dx=positions[i*3]-positions[j*3], dy=positions[i*3+1]-positions[j*3+1], dz=positions[i*3+2]-positions[j*3+2];
-        const d2=dx*dx+dy*dy+dz*dz;
-        if (d2>0.35 && d2<2.4) addEdge(i,j);
+      if (d2>0.35 && d2<2.4){
+        addEdge(i,j, 0.05); // start faded, will fade in
       }
+      if (Math.random()<0.3) break; // spread additions over frames
     }
   }
 
   function step(dt){
-    /* pairwise repulsion (naive O(N^2) fine for N=110) */
     tmpF.fill(0);
+    // pairwise repulsion
     for (let i=0;i<N;i++){
       const ix=i*3, x=positions[ix], y=positions[ix+1], z=positions[ix+2];
       for (let j=i+1;j<N;j++){
@@ -814,7 +843,7 @@
         tmpF[jx]-=dx; tmpF[jx+1]-=dy; tmpF[jx+2]-=dz;
       }
     }
-    /* springs */
+    // springs
     for (let e=0;e<edgeCount;e++){
       const a=edges[e*2], b=edges[e*2+1], ax=a*3, bx=b*3;
       let dx = positions[bx]-positions[ax];
@@ -826,7 +855,17 @@
       tmpF[ax]+=fx; tmpF[ax+1]+=fy; tmpF[ax+2]+=fz;
       tmpF[bx]-=fx; tmpF[bx+1]-=fy; tmpF[bx+2]-=fz;
     }
-    /* integrate */
+    // torus surface constraint (soft)
+    for (let i=0;i<N;i++){
+      const ix=i*3;
+      const x=positions[ix], y=positions[ix+1], z=positions[ix+2];
+      const t = nearestOnTorus(x,y,z);
+      const dx=t[0]-x, dy=t[1]-y, dz=t[2]-z;
+      tmpF[ix]   += dx*TORUS_K;
+      tmpF[ix+1] += dy*TORUS_K;
+      tmpF[ix+2] += dz*TORUS_K;
+    }
+    // integrate + center pull + colors
     for (let i=0;i<N;i++){
       const ix=i*3;
       velocities[ix]   = (velocities[ix]   + tmpF[ix]*dt) * DAMP;
@@ -835,12 +874,12 @@
       positions[ix]   += velocities[ix]*dt;
       positions[ix+1] += velocities[ix+1]*dt;
       positions[ix+2] += velocities[ix+2]*dt;
-      positions[ix]   -= positions[ix]*PULL*dt;
-      positions[ix+1] -= positions[ix+1]*PULL*dt;
-      positions[ix+2] -= positions[ix+2]*PULL*dt;
 
-      /* color from speed */
-      const sp = Math.min(1.0, Math.hypot(velocities[ix],velocities[ix+1],velocities[ix+2])*9.0);
+      positions[ix]   -= positions[ix]*PULL*dt*0.8;
+      positions[ix+1] -= positions[ix+1]*PULL*dt*0.8;
+      positions[ix+2] -= positions[ix+2]*PULL*dt*0.8;
+
+      const sp = Math.min(1.0, Math.hypot(velocities[ix],velocities[ix+1],velocities[ix+2])*8.5);
       const cool=[0.16,0.78,0.72], warm=[0.92,0.18,0.56];
       colors[ix]   = cool[0]*(1-sp) + warm[0]*sp*0.55;
       colors[ix+1] = cool[1]*(1-sp) + warm[1]*sp*0.55;
@@ -850,73 +889,98 @@
     gl.bindBuffer(gl.ARRAY_BUFFER, colBuf); gl.bufferSubData(gl.ARRAY_BUFFER, 0, colors);
   }
 
-  /* Scroll-linked dynamics */
-  let scrollProg = 0;
+  /* Scroll-scrubbed motion (video-like), with smoothed targets to avoid flicker */
+  let scrollProg=0, scrollTarget=0;
   function onScroll(){
     const vh = Math.max(1, window.innerHeight);
     const y = window.scrollY;
-    scrollProg = Math.max(0, Math.min(1, y / vh));
-    const ease = scrollProg*scrollProg*(3 - 2*scrollProg);
-    timeScale = 0.05 + 0.45*ease;
-    rewireInterval = 4200 - 3000*ease;
-    pulseInterval = 2200 - 1600*ease;
+    scrollTarget = Math.max(0, Math.min(1, y / vh));
+    // target dynamics linked to scroll
+    const ease = scrollTarget*scrollTarget*(3 - 2*scrollTarget);
+    timeScaleTarget = 0.05 + 0.45*ease;
+    rewireIntervalTarget = 4200 - 3000*ease;
+    pulseIntervalTarget  = 2200 - 1600*ease;
   }
   addEventListener('scroll', () => requestAnimationFrame(onScroll), {passive:true}); onScroll();
 
-  /* Camera: inside torus, forward drift */
+  /* Camera: inside torus, spin + forward; phase is scroll-scrubbed + gentle autoplay */
+  let autoPhase = 0.0;
   function getCamera(ts){
-    const t = ts*0.00004;
-    const A = t*2.0; const B = t*3.2;
+    const aspectDrift = ts*0.00002;
+    autoPhase += aspectDrift; // gentle autoplay
+    // blend scroll (dominant) with autoplay
+    const phase = scrollProg*Math.PI*4 + autoPhase*0.6;
+    const A = phase, B = phase*1.6 + 1.2; // twist in tube
     const cx = R*Math.cos(A), cy = R*Math.sin(A), cz = 0;
     const tx = -Math.sin(A), ty = Math.cos(A), tz = 0;
-    const ex = cx + 0.15*Math.cos(B);
-    const ey = cy + 0.15*Math.sin(B);
-    const ez = 0 - 0.4;
-    const center = [ex + tx*1.0, ey + ty*1.0, ez + tz*1.0];
-    return {eye:[ex,ey,ez], center};
+    const ex = cx + 0.16*Math.cos(B);
+    const ey = cy + 0.16*Math.sin(B);
+    const ez = 0 - 0.42;
+    const center = [ex + tx*1.1, ey + ty*1.1, ez + tz*1.0];
+    return {eye:[ex,ey,ez], center, spin: phase*0.25};
   }
+
+  /* Points need an alpha of 1 (constant), edges get per-vertex alpha */
+  const pointAlpha = new Float32Array(N).fill(1.0);
+  const pointAlphaBuf = makeBuf(gl.ARRAY_BUFFER, pointAlpha);
+
+  const uPointsLoc = { uProj: uPoints.uProj, uView: uPoints.uView, uModel: uPoints.uModel };
+  const uLinesLoc  = { uProj: uLines.uProj,  uView: uLines.uView,  uModel: uLines.uModel };
 
   let lastTS = performance.now();
   function frame(ts){
     const rawDt = Math.min(40, ts - lastTS); lastTS = ts;
-    const dt = (rawDt/1000) * timeScale;
+    const dt = (rawDt/1000);
+
+    // smooth scroll & targets to avoid flicker
+    scrollProg += (scrollTarget - scrollProg) * Math.min(1, 6*dt);
+    timeScale += (timeScaleTarget - timeScale) * Math.min(1, 4*dt);
+    rewireInterval += (rewireIntervalTarget - rewireInterval) * Math.min(1, 3*dt);
+    pulseInterval += (pulseIntervalTarget - pulseInterval) * Math.min(1, 3*dt);
+
+    const simDt = dt * timeScale;
 
     const now = performance.now();
     if (now - lastPulse > pulseInterval){ lastPulse = now; spawnPulse(); }
     updatePulses(now);
 
-    step(dt);
+    step(simDt);
     rewire();
+    fadeEdges(dt);
     updateLineVerts();
 
     const aspect = canvas.width/canvas.height;
     const proj = M.perspective(50*Math.PI/180, aspect, 0.1, 100.0);
     const cam = getCamera(ts);
     const view = M.lookAt(cam.eye, cam.center, [0,1,0]);
-    const model = new Float32Array([1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]);
+    const model = M.rotateZ(cam.spin); // the “tire” spins around us for an immersive feel
 
     gl.enable(gl.DEPTH_TEST);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-    gl.clearColor(0.02,0.03,0.06,1);
+    gl.clearColor(0.015,0.02,0.05,1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+    // LINES
     gl.useProgram(PROG_LINES);
-    gl.uniformMatrix4fv(uLines.uProj,false,proj);
-    gl.uniformMatrix4fv(uLines.uView,false,view);
-    gl.uniformMatrix4fv(uLines.uModel,false,model);
+    gl.uniformMatrix4fv(uLinesLoc.uProj,false,proj);
+    gl.uniformMatrix4fv(uLinesLoc.uView,false,view);
+    gl.uniformMatrix4fv(uLinesLoc.uModel,false,model);
     attrib(PROG_LINES,'position', linePosBuf, 3);
     attrib(PROG_LINES,'color',    lineColBuf, 3);
     attrib(PROG_LINES,'pulse',    linePulseBuf, 1);
+    attrib(PROG_LINES,'alpha',    lineAlphaBuf, 1);
     gl.drawArrays(gl.LINES, 0, edgeCount*2);
 
+    // POINTS
     gl.useProgram(PROG_POINTS);
-    gl.uniformMatrix4fv(uPoints.uProj,false,proj);
-    gl.uniformMatrix4fv(uPoints.uView,false,view);
-    gl.uniformMatrix4fv(uPoints.uModel,false,model);
+    gl.uniformMatrix4fv(uPointsLoc.uProj,false,proj);
+    gl.uniformMatrix4fv(uPointsLoc.uView,false,view);
+    gl.uniformMatrix4fv(uPointsLoc.uModel,false,model);
     attrib(PROG_POINTS,'position', posBuf, 3);
     attrib(PROG_POINTS,'color',    colBuf, 3);
     attrib(PROG_POINTS,'pulse',    pulseBuf, 1);
+    attrib(PROG_POINTS,'alpha',    pointAlphaBuf, 1);
     gl.drawArrays(gl.POINTS, 0, N);
 
     requestAnimationFrame(frame);
@@ -924,7 +988,9 @@
   requestAnimationFrame(frame);
 
   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-    timeScale = 0.0; rewireInterval = 1e9; pulseInterval = 1e9;
+    timeScale = 0.0; timeScaleTarget = 0.0;
+    rewireInterval = rewireIntervalTarget = 1e9;
+    pulseInterval = pulseIntervalTarget = 1e9;
   }
 })();
 </script>
