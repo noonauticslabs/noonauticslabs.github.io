@@ -29,7 +29,7 @@
     a:hover{text-decoration:underline}
     .container{width:var(--container); margin:0 auto; padding:0 8px}
 
-    /* Header (sticky + hide-on-scroll) */
+    /* Header */
     header{
       position: fixed; top: 0; left: 0; right: 0; z-index: 200;
       backdrop-filter: saturate(140%) blur(6px);
@@ -64,7 +64,7 @@
       .menu.open{display:flex}
     }
 
-    /* HERO — full viewport minus header; content in upper half */
+    /* HERO */
     .hero{
       position:relative; min-height:calc(100svh - var(--header-h));
       display:flex; align-items:flex-start;
@@ -76,13 +76,16 @@
     .hero .container{ position:relative; z-index:3; max-width: var(--container); }
     .hero .stack{
       display:flex; flex-direction:column; gap:10px;
-      margin-top: min(8vh, 80px); /* push copy into upper half */
+      margin-top: min(8vh, 80px);
       max-width: 860px;
     }
 
-    /* Badge = shrink to content */
+    /* Badge = true fit-content + nowrap */
     .badge{
-      display:inline-flex; width:fit-content; /* <= fit-content */
+      display:inline-flex;
+      width:max-content;
+      white-space:nowrap;
+      align-self:flex-start;
       align-items:center; gap:8px; font-size:.83rem; color:#cfe0ff;
       background:rgba(31,111,235,.12); border:1px solid rgba(31,111,235,.35);
       padding:6px 10px; border-radius:999px
@@ -112,21 +115,35 @@
       background: linear-gradient(to bottom, rgba(11,12,16,0), var(--bg));
     }
 
-    /* Full-height sections after hero — denser layout */
+    /* Sections */
     main > section:not(.hero){
       position:relative; min-height:100svh;
       display:flex; align-items:center;
-      padding: 6svh 0; /* tighter than before */
-      background:var(--bg-soft); border-top:1px solid var(--border)
+      padding: 4svh 0; /* tighter to reduce emptiness */
+      background:
+        radial-gradient(800px 400px at 10% 10%, rgba(31,111,235,.06), transparent 60%),
+        radial-gradient(700px 380px at 90% 80%, rgba(43,212,161,.05), transparent 60%),
+        var(--bg-soft);
+      border-top:1px solid var(--border)
     }
     .section-inner{
       width:var(--container); margin:0 auto; padding:0 8px;
-      display:grid; grid-template-columns: 1.1fr .9fr; gap:clamp(18px, 2.6vw, 28px);
+      display:grid; grid-template-columns: 1fr 1fr; gap:clamp(16px, 2vw, 24px);
       align-items:stretch;
     }
     @media (max-width:980px){ .section-inner{grid-template-columns:1fr} }
     h2{font-size:1.6rem; margin:0 0 12px}
-    .card{background: var(--card); border:1px solid var(--border); border-radius:var(--radius); padding: var(--pad); box-shadow: 0 10px 28px rgba(0,0,0,.28)}
+    .section-inner h2{
+      position:relative; padding-top:6px;
+    }
+    .section-inner h2::before{
+      content:""; position:absolute; left:0; top:0; height:4px; width:56px;
+      border-radius:999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      opacity:.9;
+    }
+    .card{background: var(--card); border:1px solid var(--border); border-radius:var(--radius); padding: var(--pad); box-shadow: 0 10px 28px rgba(0,0,0,.28);
+      display:flex; flex-direction:column; gap:10px}
     .list{display:grid; gap:10px; margin:14px 0 0; padding:0; list-style:none}
     .list li{display:grid; grid-template-columns: 14px 1fr; align-items:start; column-gap:10px}
     .list li::before{content:""; width:10px; height:10px; margin-top:.4em; border-radius:999px; background:linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow:0 0 0 3px rgba(255,255,255,.03)}
@@ -150,6 +167,10 @@
 
     @media (prefers-reduced-motion: reduce){
       .hero .container{transform:none !important}
+      main > section:not(.hero){min-height:auto}
+    }
+    @media (max-height: 720px){
+      main > section:not(.hero){ min-height:auto; }
     }
   </style>
 </head>
@@ -163,14 +184,14 @@
         <small data-i18n="tagline">R&amp;D • Cell Sim • Bioinformatics</small>
       </div>
     </div>
-    <button class="hamb" id="hamb" aria-expanded="false" aria-controls="menu">Menu</button>
+    <button class="hamb" id="hamb" aria-expanded="false" aria-controls="menu" aria-label="Open main menu">Menu</button>
     <nav class="menu" id="menu" aria-label="Primary">
       <a href="#project" data-i18n="nav_project">Project</a>
       <a href="#technology" data-i18n="nav_tech">Technology</a>
       <a href="#company" data-i18n="nav_company">Company</a>
       <a href="#team" data-i18n="nav_team">Team</a>
       <a href="#contact" data-i18n="nav_contact">Contact</a>
-      <span class="lang">
+      <span class="lang" role="group" aria-label="Language">
         <button type="button" id="lang-en" aria-pressed="true">EN</button>|
         <button type="button" id="lang-pl" aria-pressed="false">PL</button>
       </span>
@@ -337,6 +358,8 @@
 
 <!-- Core UI scripts -->
 <script>
+  "use strict";
+
   const hamb = document.getElementById('hamb');
   const menu = document.getElementById('menu');
   const header = document.querySelector('header');
@@ -449,22 +472,26 @@
   })();
 </script>
 
-<!-- Full-bleed immersive WebGL background: torus "tire dive", constant-edge rewiring with pulses -->
+<!-- WebGL background: torus “tire dive”, rewiring + pulses -->
 <script>
 (() => {
+  "use strict";
   const canvas = document.getElementById('viz3d');
   if (!canvas) return;
-  const gl = canvas.getContext('webgl', {antialias:true, alpha:false});
+  const gl = canvas.getContext('webgl', {antialias:true, alpha:false, powerPreference:'high-performance'});
   if (!gl) return;
 
   const DPR = Math.min(2, window.devicePixelRatio || 1);
   function resize(){
-    canvas.width = Math.max(800, innerWidth) * DPR | 0;
-    canvas.height = Math.max(500, innerHeight) * DPR | 0;
+    const w = Math.max(800, innerWidth);
+    const h = Math.max(500, innerHeight);
+    canvas.width = (w * DPR) | 0;
+    canvas.height = (h * DPR) | 0;
     gl.viewport(0,0,canvas.width, canvas.height);
   }
   resize(); addEventListener('resize', resize);
 
+  /* Matrices */
   const M = {
     perspective(fov, aspect, near, far){
       const f = 1/Math.tan(fov/2), nf = 1/(near-far);
@@ -480,7 +507,7 @@
     }
   };
 
-  // Shaders
+  /* Shaders */
   const V_SRC = `
   attribute vec3 position;
   attribute vec3 color;
@@ -511,7 +538,7 @@
     vec3 L = normalize(vec3(0.6, 0.9, 1.0));
     float diff = 0.5 + 0.5*max(0.0, dot(N,L));
     float spec = pow(max(0.0, dot(reflect(-L,N), vec3(0.0,0.0,1.0))), 42.0) * 0.4;
-    float halo = smoothstep(0.85, 0.0, r2) * vPulse; /* pulse halo */
+    float halo = smoothstep(0.85, 0.0, r2) * vPulse;
     float fog = clamp((vDepth-1.0) / 9.0, 0.0, 1.0);
     vec3 base = vColor*(diff + 0.15*halo) + spec*vec3(1.0);
     base = mix(base, vec3(0.03,0.05,0.09), fog);
@@ -542,17 +569,23 @@
     gl_FragColor = vec4(col, 0.52 + 0.35*min(1.0, vPulse));
   }`;
 
-  function compile(src, type){ const s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s);
-    if(!gl.getShaderParameter(s, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(s)); return s; }
-  function program(vs, fs){ const p=gl.createProgram();
+  function compile(src, type){
+    const s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s);
+    if(!gl.getShaderParameter(s, gl. COMPILE_STATUS)) console.error(gl.getShaderInfoLog(s));
+    return s;
+  }
+  function program(vs, fs){
+    const p=gl.createProgram();
     gl.attachShader(p, compile(vs, gl.VERTEX_SHADER));
     gl.attachShader(p, compile(fs, gl.FRAGMENT_SHADER));
-    gl.linkProgram(p); if(!gl.getProgramParameter(p, gl.LINK_STATUS)) console.error(gl.getProgramInfoLog(p));
+    gl.linkProgram(p);
+    if(!gl.getProgramParameter(p, gl.LINK_STATUS)) console.error(gl.getProgramInfoLog(p));
     return p;
   }
   const PROG_POINTS = program(V_SRC, F_POINTS);
   const PROG_LINES  = program(V_LINES, F_LINES);
 
+  /* Uniform handles (single declaration) */
   const uPoints = {
     uProj: gl.getUniformLocation(PROG_POINTS,'uProj'),
     uView: gl.getUniformLocation(PROG_POINTS,'uView'),
@@ -571,7 +604,7 @@
     gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0);
   }
 
-  /* --- Torus "tire dive" graph --- */
+  /* --- Torus graph --- */
   const N = 110;
   const MAX_EDGES = 260;
   const positions = new Float32Array(N*3);
@@ -667,14 +700,14 @@
 
   /* Physics + pulses */
   let timeScale = 0.12;
-  const REPULSE = 0.024, SPRING_K = 0.13, DAMP = 0.935, BOX=3.2, BREAK_STRETCH=1.95;
+  const REPULSE = 0.024, SPRING_K = 0.13, DAMP = 0.935, PULL=0.014, BREAK_STRETCH=1.95;
 
   const pulses = []; // {i, t0}
   const nodePulse = new Float32Array(N);
   const PULSE_SPEED = 0.75; const PULSE_FADE = 1.2;
 
   let lastPulse = performance.now();
-  let pulseInterval = 2200; /* <-- declared BEFORE onScroll to avoid ReferenceError */
+  let pulseInterval = 2200; /* declared BEFORE onScroll */
 
   function spawnPulse(){
     const deg = degree();
@@ -729,8 +762,9 @@
       if (!willBreak.includes(e)) willBreak.push(e);
     }
 
-    let breaks = 0;
+    /* break */
     willBreak.sort((a,b)=>b-a);
+    let breaks = 0;
     for (const e of willBreak){
       if (edgeCount<=0) break;
       edgeCount--;
@@ -740,6 +774,7 @@
       breaks++;
     }
 
+    /* reconnect (preferentially towards low-degree/isolated) */
     const deg = degree();
     let added = 0, tries=0;
     while (added<breaks && tries<breaks*400){
@@ -764,6 +799,7 @@
   }
 
   function step(dt){
+    /* pairwise repulsion (naive O(N^2) fine for N=110) */
     tmpF.fill(0);
     for (let i=0;i<N;i++){
       const ix=i*3, x=positions[ix], y=positions[ix+1], z=positions[ix+2];
@@ -772,36 +808,38 @@
         let dx = x - positions[jx], dy = y - positions[jx+1], dz = z - positions[jx+2];
         let d2 = dx*dx+dy*dy+dz*dz + 0.001;
         let inv = 1.0/Math.sqrt(d2);
-        let f = 0.024 * inv*inv;
+        let f = REPULSE * inv*inv;
         dx*=f; dy*=f; dz*=f;
         tmpF[ix]+=dx; tmpF[ix+1]+=dy; tmpF[ix+2]+=dz;
         tmpF[jx]-=dx; tmpF[jx+1]-=dy; tmpF[jx+2]-=dz;
       }
     }
+    /* springs */
     for (let e=0;e<edgeCount;e++){
       const a=edges[e*2], b=edges[e*2+1], ax=a*3, bx=b*3;
       let dx = positions[bx]-positions[ax];
       let dy = positions[bx+1]-positions[ax+1];
       let dz = positions[bx+2]-positions[ax+2];
       let d = Math.hypot(dx,dy,dz)+1e-6;
-      const k = 0.13*(d - springRest[e]);
+      const k = SPRING_K*(d - springRest[e]);
       const fx=(dx/d)*k, fy=(dy/d)*k, fz=(dz/d)*k;
       tmpF[ax]+=fx; tmpF[ax+1]+=fy; tmpF[ax+2]+=fz;
       tmpF[bx]-=fx; tmpF[bx+1]-=fy; tmpF[bx+2]-=fz;
     }
+    /* integrate */
     for (let i=0;i<N;i++){
       const ix=i*3;
-      velocities[ix]   = (velocities[ix]   + tmpF[ix]*dt) * 0.935;
-      velocities[ix+1] = (velocities[ix+1] + tmpF[ix+1]*dt) * 0.935;
-      velocities[ix+2] = (velocities[ix+2] + tmpF[ix+2]*dt) * 0.935;
+      velocities[ix]   = (velocities[ix]   + tmpF[ix]*dt) * DAMP;
+      velocities[ix+1] = (velocities[ix+1] + tmpF[ix+1]*dt) * DAMP;
+      velocities[ix+2] = (velocities[ix+2] + tmpF[ix+2]*dt) * DAMP;
       positions[ix]   += velocities[ix]*dt;
       positions[ix+1] += velocities[ix+1]*dt;
       positions[ix+2] += velocities[ix+2]*dt;
-      const pull = 0.014;
-      positions[ix]   -= positions[ix]*pull*dt;
-      positions[ix+1] -= positions[ix+1]*pull*dt;
-      positions[ix+2] -= positions[ix+2]*pull*dt;
+      positions[ix]   -= positions[ix]*PULL*dt;
+      positions[ix+1] -= positions[ix+1]*PULL*dt;
+      positions[ix+2] -= positions[ix+2]*PULL*dt;
 
+      /* color from speed */
       const sp = Math.min(1.0, Math.hypot(velocities[ix],velocities[ix+1],velocities[ix+2])*9.0);
       const cool=[0.16,0.78,0.72], warm=[0.92,0.18,0.56];
       colors[ix]   = cool[0]*(1-sp) + warm[0]*sp*0.55;
@@ -821,7 +859,7 @@
     const ease = scrollProg*scrollProg*(3 - 2*scrollProg);
     timeScale = 0.05 + 0.45*ease;
     rewireInterval = 4200 - 3000*ease;
-    pulseInterval = 2200 - 1600*ease; /* safe: variable declared above */
+    pulseInterval = 2200 - 1600*ease;
   }
   addEventListener('scroll', () => requestAnimationFrame(onScroll), {passive:true}); onScroll();
 
@@ -837,9 +875,6 @@
     const center = [ex + tx*1.0, ey + ty*1.0, ez + tz*1.0];
     return {eye:[ex,ey,ez], center};
   }
-
-  const uPoints = { uProj: gl.getUniformLocation(PROG_POINTS,'uProj'), uView: gl.getUniformLocation(PROG_POINTS,'uView'), uModel: gl.getUniformLocation(PROG_POINTS,'uModel') };
-  const uLines  = { uProj: gl.getUniformLocation(PROG_LINES,'uProj'),  uView: gl.getUniformLocation(PROG_LINES,'uView'),  uModel: gl.getUniformLocation(PROG_LINES,'uModel') };
 
   let lastTS = performance.now();
   function frame(ts){
