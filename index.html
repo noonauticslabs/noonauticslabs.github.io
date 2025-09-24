@@ -95,9 +95,41 @@
     }
     .btn.ghost{background:#151a27; color:#d8e0ee; border:1px solid var(--border); box-shadow:none}
 
-    /* hero visual */
-    .hero-visual{margin-top:36px; background:#0c0f15; border:1px solid var(--border); border-radius:18px; padding:18px}
-    .hero-svg{width:100%; height:auto; display:block; border-radius:12px}
+    /* hero visual (container) */
+    .hero-visual{
+      margin-top:36px; background:#0c0f15; border:1px solid var(--border); border-radius:18px; padding:18px;
+      position: relative; isolation: isolate; overflow: hidden;
+    }
+    /* animated tensor/topology/automaton canvas + overlay */
+    #viz {
+      width: 100%;
+      height: clamp(260px, 44vw, 460px);
+      display: block;
+      border-radius: 12px;
+      background: #0b0f16;
+      border: 1px solid var(--border);
+    }
+    .viz-overlay {
+      position: absolute; inset: 12px;
+      display: flex; align-items: flex-start; justify-content: space-between;
+      pointer-events: none;
+    }
+    .viz-badge {
+      font: 700 .8rem/1 ui-sans-serif, system-ui;
+      color: #cfe0ff; letter-spacing: .04em;
+      background: rgba(31,111,235,.12);
+      border: 1px solid rgba(31,111,235,.35);
+      border-radius: 999px; padding: 6px 10px;
+      box-shadow: 0 8px 20px var(--ring);
+    }
+    .viz-legend {
+      display: grid; gap: 6px; text-align: right;
+    }
+    .viz-legend small { color: var(--muted); font-size: .78rem }
+    .viz-legend .pill {
+      display: inline-block; padding: 4px 8px; border-radius: 999px;
+      border: 1px solid var(--border); color:#d6deed; background:#0e1118cc;
+    }
 
     /* CARDS + GRID */
     h2{font-size:1.6rem; margin:0 0 12px}
@@ -136,7 +168,7 @@
     textarea{min-height:140px; resize:vertical}
 
     /* FOOTER */
-    footer{background:#0a0c12; padding:42px 0; border-top:1px solid var(--border); color:var(--muted); font-size:.95rem}
+    footer{background:#0a0c12; padding:42px 0; border-top:1px solid var(--border); color:#muted; font-size:.95rem}
     .cols{
       display:grid; gap:20px;
       grid-template-columns: 1.3fr 1fr 1fr 1fr;
@@ -190,40 +222,37 @@
         <button class="btn ghost" type="button" disabled title="Whitepaper coming soon" data-i18n="cta_whitepaper">Whitepaper (soon)</button>
       </div>
 
-      <div class="hero-visual" aria-hidden="true">
-        <svg class="hero-svg" viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#1f6feb" stop-opacity="0.9"/>
-              <stop offset="100%" stop-color="#2bd4a1" stop-opacity="0.9"/>
-            </linearGradient>
-            <radialGradient id="bg" cx="50%" cy="50%" r="60%">
-              <stop offset="0%" stop-color="#0f1626"/><stop offset="100%" stop-color="#0b0c10"/>
-            </radialGradient>
-            <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
-              <feGaussianBlur stdDeviation="12" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-            </filter>
-          </defs>
-          <rect width="1200" height="420" fill="url(#bg)"/>
-          <g filter="url(#glow)">
-            <circle cx="260" cy="210" r="120" fill="none" stroke="url(#g1)" stroke-width="2"/>
-            <circle cx="260" cy="210" r="170" fill="none" stroke="url(#g1)" stroke-opacity=".5" stroke-width="1.4" stroke-dasharray="4 6"/>
-            <circle cx="260" cy="210" r="60" fill="none" stroke="url(#g1)" stroke-opacity=".8" stroke-width="2"/>
-            <circle cx="260" cy="210" r="6" fill="url(#g1)"/>
-            <g stroke="#8dd" stroke-opacity=".6">
-              <path d="M260,40 q30,60 0,120" fill="none"/>
-              <path d="M260,400 q-40,-70 0,-120" fill="none"/>
-              <path d="M100,210 q80,-20 160,0" fill="none"/>
-              <path d="M420,210 q-80,20 -160,0" fill="none"/>
+      <!-- NEW animated hero visual -->
+      <div class="hero-visual">
+        <canvas id="viz" aria-label="Animated visualization: tensor grid, topology graph, cellular automaton"></canvas>
+        <div class="viz-overlay" aria-hidden="true">
+          <span class="viz-badge">Tensor • Topology • Automaton</span>
+          <div class="viz-legend">
+            <span class="pill">Graph packets →</span>
+            <small>Adjacency heatmap background</small>
+          </div>
+        </div>
+        <noscript>
+          <svg viewBox="0 0 1200 420" width="100%" height="auto" role="img" aria-label="Static tensor grid with graph overlay">
+            <defs>
+              <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#1f6feb"/><stop offset="100%" stop-color="#2bd4a1"/>
+              </linearGradient>
+            </defs>
+            <rect width="1200" height="420" fill="#0b0f16"/>
+            <g opacity=".28" stroke="#1f2a3a">
+              <path d="M0 60 H1200"/><path d="M0 120 H1200"/><path d="M0 180 H1200"/>
+              <path d="M0 240 H1200"/><path d="M0 300 H1200"/><path d="M0 360 H1200"/>
+              <path d="M100 0 V420"/><path d="M200 0 V420"/><path d="M300 0 V420"/><path d="M400 0 V420"/>
+              <path d="M500 0 V420"/><path d="M600 0 V420"/><path d="M700 0 V420"/><path d="M800 0 V420"/>
+              <path d="M900 0 V420"/><path d="M1000 0 V420"/><path d="M1100 0 V420"/>
             </g>
-            <g stroke="rgba(255,255,255,.07)">
-              <path d="M560 80 H1100"/><path d="M560 140 H1100"/><path d="M560 200 H1100"/><path d="M560 260 H1100"/><path d="M560 320 H1100"/>
-              <path d="M640 40 V380"/><path d="M760 40 V380"/><path d="M880 40 V380"/><path d="M1000 40 V380"/>
+            <g fill="none" stroke="url(#g)" stroke-width="3">
+              <path d="M160,300 C260,180 340,220 420,180 S620,140 720,200 880,320 1040,180"/>
             </g>
-            <polyline points="580,320 700,200 820,260 940,160 1060,220" fill="none" stroke="url(#g1)" stroke-width="3"/>
-            <circle cx="700" cy="200" r="6" fill="url(#g1)"/><circle cx="940" cy="160" r="6" fill="url(#g1)"/>
-          </g>
-        </svg>
+            <g fill="url(#g)"><circle cx="420" cy="180" r="6"/><circle cx="720" cy="200" r="6"/></g>
+          </svg>
+        </noscript>
       </div>
     </div>
   </section>
@@ -535,6 +564,211 @@
     }
     setLang(saved);
   })();
+</script>
+
+<!-- Animated hero visualization script -->
+<script>
+/* === SiCell hero viz: tensors + topology graph + automaton === */
+(() => {
+  const canvas = document.getElementById('viz');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  // DPI-aware resize
+  const state = { w: 0, h: 0, dpr: Math.min(2, window.devicePixelRatio || 1) };
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    state.w = Math.max(320, rect.width|0);
+    state.h = Math.max(200, rect.height|0);
+    canvas.width = (state.w * state.dpr)|0;
+    canvas.height = (state.h * state.dpr)|0;
+    ctx.setTransform(state.dpr,0,0,state.dpr,0,0);
+  }
+  resize(); addEventListener('resize', resize);
+
+  // -------- Tensor background (adjacency-style heatmap) --------
+  const grid = {
+    cols: 48, rows: 20,
+    t: 0.0,
+    sample(i, j, t){
+      // smoothly varying “rank-3 tensor slice”
+      const x = i / this.cols, y = j / this.rows;
+      const a = Math.sin(6.283*(x*2.0 + t*0.15)) * Math.cos(6.283*(y*1.5 - t*0.12));
+      const b = Math.sin(6.283*(x*3.0 - y*0.5 + t*0.07));
+      const c = Math.cos(6.283*(x*0.5 + y*2.0 + t*0.03));
+      return 0.5 + 0.5*(0.55*a + 0.3*b + 0.15*c);
+    }
+  };
+
+  // -------- Topology graph (curved edges + moving packets) --------
+  const N = 18;
+  let nodes = [];
+  function makeNodes(){
+    nodes = Array.from({length:N}, (_,k) => {
+      const theta = (k / N) * Math.PI * 2;
+      const R = Math.min(state.w, state.h) * 0.36;
+      const cx = state.w*0.5 + Math.cos(theta)*R + (Math.random()-0.5)*18;
+      const cy = state.h*0.46 + Math.sin(theta)*R*0.62 + (Math.random()-0.5)*12;
+      return { x:cx, y:cy, r: 5.5 + Math.random()*1.5 };
+    });
+  }
+  makeNodes();
+
+  const edges = [];
+  for (let i=0;i<N;i++){
+    edges.push([i, (i+1)%N]);
+    if (Math.random()<0.45) edges.push([i, (i+3)%N]);
+  }
+  const packets = edges.flatMap(([a,b]) => {
+    const n = 1 + (Math.random()<0.5?1:0);
+    return Array.from({length:n}, () => ({
+      a, b, t: Math.random(), speed: 0.25 + Math.random()*0.6
+    }));
+  });
+
+  // -------- Cellular Automaton (Rule 110) ribbon --------
+  const ca = {
+    cols: 240,
+    row: [],
+    y: 0,
+    init() {
+      this.row = Array.from({length:this.cols}, () => 0);
+      this.row[(this.cols/2)|0] = 1;
+      this.y = state.h - 34;
+    },
+    step() {
+      const next = new Array(this.cols).fill(0);
+      // Rule 110 mapping
+      for (let i=0;i<this.cols;i++){
+        const L = this.row[(i-1+this.cols)%this.cols];
+        const C = this.row[i];
+        const R = this.row[(i+1)%this.cols];
+        const n = (L<<2)|(C<<1)|R;
+        next[i] = (n===6||n===5||n===3||n===2||n===1)?1:0;
+      }
+      this.row = next;
+    },
+    draw(ctx){
+      const pw = state.w / this.cols;
+      const py = this.y;
+      for (let i=0;i<this.cols;i++){
+        if (!this.row[i]) continue;
+        ctx.fillStyle = 'rgba(43,212,161,.85)';
+        ctx.fillRect(i*pw, py, Math.ceil(pw), 18);
+      }
+      ctx.fillStyle = 'rgba(255,255,255,.08)';
+      ctx.fillRect(0, py+18, state.w, 1);
+    }
+  };
+  ca.init();
+
+  const c1 = '#1f6feb', c2 = '#2bd4a1';
+
+  function drawTensorBackground(t) {
+    const {cols, rows} = grid;
+    const cw = state.w / cols, ch = (state.h-28) / rows;
+    for (let j=0;j<rows;j++){
+      for (let i=0;i<cols;i++){
+        const v = grid.sample(i, j, t);
+        const rb = Math.floor(16 + 80*v);
+        const gb = Math.floor(120 + 100*v);
+        const bb = Math.floor(180 + 30*v);
+        ctx.fillStyle = `rgba(${rb},${gb},${bb},${0.22 + 0.18*v})`;
+        ctx.fillRect(i*cw, j*ch, Math.ceil(cw)+1, Math.ceil(ch)+1);
+      }
+    }
+    ctx.strokeStyle = 'rgba(255,255,255,.05)';
+    ctx.lineWidth = 1;
+    for (let i=0;i<=cols;i++){ ctx.beginPath(); ctx.moveTo(i*cw,0); ctx.lineTo(i*cw, rows*ch); ctx.stroke(); }
+    for (let j=0;j<=rows;j++){ ctx.beginPath(); ctx.moveTo(0,j*ch); ctx.lineTo(cols*cw, j*ch); ctx.stroke(); }
+  }
+
+  function quadThrough(p0, p1, p2, t){
+    const u = 1 - t;
+    const x = u*u*p0.x + 2*u*t*p1.x + t*t*p2.x;
+    const y = u*u*p0.y + 2*u*t*p1.y + t*t*p2.y;
+    return {x,y};
+  }
+
+  function drawGraph() {
+    ctx.lineWidth = 1.5;
+    for (const [ai,bi] of edges){
+      const a = nodes[ai], b = nodes[bi];
+      const mx = (a.x + b.x)/2, my = (a.y + b.y)/2;
+      const cx = state.w*0.5 + (mx - state.w*0.5)*0.78;
+      const cy = state.h*0.46 + (my - state.h*0.46)*0.78 - 18*Math.sin((ai*13.7+bi*7.3)*0.2);
+      const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+      grad.addColorStop(0, c1); grad.addColorStop(1, c2);
+      ctx.strokeStyle = grad; ctx.globalAlpha = 0.9;
+      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.quadraticCurveTo(cx, cy, b.x, b.y); ctx.stroke();
+
+      ctx.strokeStyle = 'rgba(31,111,235,.15)';
+      ctx.lineWidth = 4; ctx.globalAlpha = 0.35;
+      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.quadraticCurveTo(cx, cy, b.x, b.y); ctx.stroke();
+      ctx.globalAlpha = 1; ctx.lineWidth = 1.5;
+    }
+
+    for (const p of packets){
+      p.t = (p.t + p.speed*0.0025) % 1;
+      const a = nodes[p.a], b = nodes[p.b];
+      const mx = (a.x + b.x)/2, my = (a.y + b.y)/2;
+      const cx = state.w*0.5 + (mx - state.w*0.5)*0.78;
+      const cy = state.h*0.46 + (my - state.h*0.46)*0.78 - 18*Math.sin((p.a*13.7+p.b*7.3)*0.2);
+      const P = quadThrough(a, {x:cx,y:cy}, b, p.t);
+      ctx.beginPath();
+      ctx.fillStyle = (p.t<0.5)? c1 : c2;
+      ctx.arc(P.x, P.y, 2.4, 0, Math.PI*2);
+      ctx.fill();
+    }
+
+    for (const n of nodes){
+      ctx.beginPath();
+      const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r+8);
+      g.addColorStop(0, 'rgba(43,212,161,.95)');
+      g.addColorStop(1, 'rgba(43,212,161,.0)');
+      ctx.fillStyle = g;
+      ctx.arc(n.x, n.y, n.r+8, 0, Math.PI*2);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.fillStyle = '#0b0f16';
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI*2);
+      ctx.fill();
+
+      ctx.strokeStyle = 'rgba(255,255,255,.7)';
+      ctx.lineWidth = 1.25;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI*2);
+      ctx.stroke();
+    }
+  }
+
+  let last = performance.now();
+  function tick(ts){
+    const dt = Math.min(0.1, (ts - last)/1000); last = ts;
+    grid.t += dt;
+    ctx.clearRect(0,0,state.w,state.h);
+
+    drawTensorBackground(grid.t);
+    drawGraph();
+
+    ca.draw(ctx);
+    if (Math.floor(ts/120)%2===0){ ca.step(); }
+
+    const gr = ctx.createLinearGradient(0,0,0,state.h);
+    gr.addColorStop(0,'rgba(11,12,16,.65)');
+    gr.addColorStop(0.2,'rgba(11,12,16,.0)');
+    gr.addColorStop(0.85,'rgba(11,12,16,.0)');
+    gr.addColorStop(1,'rgba(11,12,16,.55)');
+    ctx.fillStyle = gr; ctx.fillRect(0,0,state.w,state.h);
+
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+
+  // Remake nodes on resize for better layout
+  window.addEventListener('resize', () => { makeNodes(); ca.init(); });
+})();
 </script>
 </body>
 </html>
