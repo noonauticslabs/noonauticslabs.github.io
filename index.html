@@ -6,9 +6,7 @@
   <title>SiCell — by Noonautics Labs</title>
   <meta name="description" content="SiCell is Noonautics Labs’ flagship project: full human cell simulations and a search engine for disease mechanisms and pharma targets." />
   <meta name="theme-color" content="#0b0c10" />
-  <!-- Inline SVG favicon + .ico fallback -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%231f6feb'/%3E%3Cstop offset='100%25' stop-color='%232bd4a1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='44' fill='url(%23g)'/%3E%3C/svg%3E" />
-  <link rel="shortcut icon" href="/favicon.ico" />
   <style>
     :root{
       --bg:#0b0c10; --bg-soft:#0e1118; --card:#121521;
@@ -18,7 +16,7 @@
       --container: min(1200px, 92vw);
       --radius:16px;
       --pad: clamp(18px, 2.2vw, 28px);
-      --header-h: 64px; /* updated on load */
+      --header-h: 64px;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -36,8 +34,7 @@
     .container{width:var(--container); margin:0 auto; padding:0 8px}
 
     header{
-      position: fixed; top: 0; left: 0; right: 0;
-      z-index: 100;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       backdrop-filter: saturate(140%) blur(6px);
       background: linear-gradient(to bottom, rgba(11,12,16,.86), rgba(11,12,16,.6) 60%, transparent);
       border-bottom: 1px solid var(--border);
@@ -62,7 +59,6 @@
     .lang{display:inline-flex; gap:6px; align-items:center; padding:6px 10px;
       border:1px solid var(--border); border-radius:10px; background:#141722; color:#d8e0ee; font-size:.9rem}
     .hamb{display:none; background:#151a27; border:1px solid var(--border); color:#e6ebf2; padding:8px 10px; border-radius:10px}
-
     @media (max-width:860px){
       .hamb{display:inline-flex}
       .menu{
@@ -93,16 +89,13 @@
     }
     .btn.ghost{background:#151a27; color:#d8e0ee; border:1px solid var(--border); box-shadow:none}
 
-    /* HERO VISUAL WRAPPER */
+    /* HERO VISUAL */
     .hero-visual{
-      margin-top:36px; background: radial-gradient(900px 420px at 70% -20%, rgba(31,111,235,.14), transparent 60%), #0b0f16;
-      border:1px solid var(--border); border-radius:18px; padding:0; overflow:hidden; position:relative;
+      margin-top:36px; background:#05070c; border:1px solid var(--border); border-radius:18px; overflow:hidden; position:relative;
     }
-    /* WebGL canvas */
-    #viz3d {
-      display:block; width:100%; height: clamp(280px, 46vw, 520px);
-    }
+    #viz3d { display:block; width:100%; height: clamp(300px, 48vw, 560px); }
 
+    /* CARDS */
     h2{font-size:1.6rem; margin:0 0 12px}
     .grid{
       display:grid;
@@ -125,7 +118,6 @@
     }
     .mono{font-family: ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:.95rem; color:#b7c3d4}
     .muted{color:var(--muted)}
-
     form{margin-top:12px}
     form .row{display:grid; gap:12px; grid-template-columns:1fr 1fr}
     @media (max-width:700px){form .row{grid-template-columns:1fr}}
@@ -134,7 +126,6 @@
       background:#0f1220; color:var(--text)
     }
     textarea{min-height:140px; resize:vertical}
-
     footer{background:#0a0c12; padding:42px 0; border-top:1px solid var(--border); color:#muted; font-size:.95rem}
     .cols{
       display:grid; gap:20px;
@@ -174,7 +165,6 @@
 </header>
 
 <main>
-  <!-- HERO -->
   <section class="hero" id="project">
     <div class="container">
       <span class="badge"><span class="sr-only">Project: </span><span data-i18n="hero_badge">SiCell — Flagship Project</span></span>
@@ -189,19 +179,16 @@
         <button class="btn ghost" type="button" disabled title="Whitepaper coming soon" data-i18n="cta_whitepaper">Whitepaper (soon)</button>
       </div>
 
-      <!-- Ambient 3D graph (pure WebGL, no text overlays) -->
+      <!-- Immersive 3D net: inside view, sparser, physics, edges break/reform -->
       <div class="hero-visual">
-        <canvas id="viz3d" aria-label="Ambient 3D graph visualization"></canvas>
+        <canvas id="viz3d" aria-label="Immersive 3D graph visualization"></canvas>
         <noscript>
-          <svg viewBox="0 0 1200 420" width="100%" height="auto" role="img" aria-label="Static graph">
-            <rect width="1200" height="420" fill="#0b0f16"/>
-          </svg>
+          <svg viewBox="0 0 1200 420" width="100%" height="auto" role="img" aria-label="Static graph"><rect width="1200" height="420" fill="#0b0f16"/></svg>
         </noscript>
       </div>
     </div>
   </section>
 
-  <!-- TECHNOLOGY -->
   <section id="technology">
     <div class="container grid">
       <div class="card">
@@ -228,7 +215,6 @@
     </div>
   </section>
 
-  <!-- COMPANY -->
   <section id="company">
     <div class="container grid">
       <div class="card">
@@ -248,16 +234,12 @@
     </div>
   </section>
 
-  <!-- TEAM -->
   <section id="team">
     <div class="container grid">
       <div class="card">
         <h2 data-i18n="team_title">Team</h2>
         <p><strong>Marcel Tomaszek</strong> — <span data-i18n="team_affil">Cellular &amp; Molecular Biophysics, UJ</span></p>
         <p><a href="mailto:marcel.tomaszek@student.uj.edu.pl">marcel.tomaszek@student.uj.edu.pl</a></p>
-        <hr style="border:none;border-top:1px solid var(--border);margin:12px 0">
-        <p><strong>Oskar Lurka</strong> — <span data-i18n="team_affil">Cellular &amp; Molecular Biophysics, UJ</span></p>
-        <p><a href="mailto:oskar.lurka@student.uj.edu.pl">oskar.lurka@student.uj.edu.pl</a></p>
       </div>
       <div class="card">
         <h2 data-i18n="next_title">What we’re building next</h2>
@@ -270,7 +252,6 @@
     </div>
   </section>
 
-  <!-- CONTACT -->
   <section id="contact">
     <div class="container grid">
       <div class="card">
@@ -352,41 +333,23 @@
     });
   }
 
-  let lastY = window.scrollY;
-  let ticking = false;
-  const UP_THRESHOLD = 6;
-  const DOWN_THRESHOLD = 10;
-  const MIN_SHOW_Y = 80;
-
+  let lastY = window.scrollY, ticking = false;
   function onScroll() {
-    const y = window.scrollY;
-    const dy = y - lastY;
-
-    if (y > 2) header.classList.add('scrolled');
-    else header.classList.remove('scrolled');
-
+    const y = window.scrollY, dy = y - lastY;
+    if (y > 2) header.classList.add('scrolled'); else header.classList.remove('scrolled');
     const menuOpen = menu && menu.classList.contains('open');
-
-    if (!menuOpen && y > MIN_SHOW_Y && dy > DOWN_THRESHOLD) header.classList.add('hide');
-    else if (dy < -UP_THRESHOLD) header.classList.remove('hide');
-
-    lastY = y;
-    ticking = false;
+    if (!menuOpen && y > 80 && dy > 10) header.classList.add('hide');
+    else if (dy < -6) header.classList.remove('hide');
+    lastY = y; ticking = false;
   }
-
-  window.addEventListener('scroll', () => {
-    if (!ticking) {
-      window.requestAnimationFrame(onScroll);
-      ticking = true;
-    }
-  });
+  window.addEventListener('scroll', () => { if (!ticking) { requestAnimationFrame(onScroll); ticking = true; } });
 
   function setHeaderOffset(){
     const h = header.getBoundingClientRect().height;
     document.documentElement.style.setProperty('--header-h', `${Math.round(h)}px`);
   }
-  window.addEventListener('load', setHeaderOffset);
-  window.addEventListener('resize', setHeaderOffset);
+  addEventListener('load', setHeaderOffset);
+  addEventListener('resize', setHeaderOffset);
 
   const form = document.getElementById('mailtoForm');
   form.addEventListener('submit', (e) => {
@@ -469,35 +432,28 @@
       const html = dict[lang][key] || '';
       if (html) el.innerHTML = html;
     }
-    const en = document.getElementById('lang-en');
-    const pl = document.getElementById('lang-pl');
-    if (en) en.setAttribute('aria-pressed', lang==='en');
-    if (pl) pl.setAttribute('aria-pressed', lang==='pl');
+    document.getElementById('lang-en').setAttribute('aria-pressed', lang==='en');
+    document.getElementById('lang-pl').setAttribute('aria-pressed', lang==='pl');
     try { localStorage.setItem('lang', lang); } catch(e) {}
   }
-
   document.getElementById('lang-en').addEventListener('click', ()=>setLang('en'));
   document.getElementById('lang-pl').addEventListener('click', ()=>setLang('pl'));
   (function initLang(){
-    let saved = null;
-    try { saved = localStorage.getItem('lang'); } catch(e) {}
-    if (!saved) {
-      const userLang = (navigator.language || 'en').toLowerCase();
-      saved = userLang.startsWith('pl') ? 'pl' : 'en';
-    }
+    let saved = null; try { saved = localStorage.getItem('lang'); } catch(e) {}
+    if (!saved) { const userLang = (navigator.language || 'en').toLowerCase(); saved = userLang.startsWith('pl') ? 'pl' : 'en'; }
     setLang(saved);
   })();
 </script>
 
-<!-- Ambient 3D Graph — pure WebGL (no dependencies) -->
+<!-- Immersive 3D Graph — sparse, inside view, spring/repulsion physics, edges rewire, glossy node spheres -->
 <script>
 (() => {
   const canvas = document.getElementById('viz3d');
   if (!canvas) return;
-  const gl = canvas.getContext('webgl', {antialias: true, alpha: false, preserveDrawingBuffer:false});
+  const gl = canvas.getContext('webgl', {antialias:true, alpha:false});
   if (!gl) return;
 
-  // HiDPI sizing
+  // Sizing
   const DPR = Math.min(2, window.devicePixelRatio || 1);
   function resize(){
     const r = canvas.getBoundingClientRect();
@@ -509,140 +465,172 @@
 
   // Minimal mat4 utils
   const M = {
-    I(){ return [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]; },
-    mul(a,b){
-      const r = new Array(16).fill(0);
-      for(let i=0;i<4;i++)for(let j=0;j<4;j++)for(let k=0;k<4;k++)
-        r[i*4+j]+=a[i*4+k]*b[k*4+j];
-      return r;
-    },
     perspective(fov, aspect, near, far){
       const f = 1/Math.tan(fov/2), nf = 1/(near-far);
-      return [f/aspect,0,0,0, 0,f,0,0, 0,0,(far+near)*nf,-1, 0,0,(2*far*near)*nf,0];
+      return new Float32Array([f/aspect,0,0,0, 0,f,0,0, 0,0,(far+near)*nf,-1, 0,0,(2*far*near)*nf,0]);
     },
     lookAt(eye,center,up){
       const [ex,ey,ez]=eye,[cx,cy,cz]=center,[ux,uy,uz]=up;
-      let zx=ex-cx, zy=ey-cy, zz=ez-cz;
-      const zl = Math.hypot(zx,zy,zz); zx/=zl; zy/=zl; zz/=zl;
-      let xx = uy*zz - uz*zy;
-      let xy = uz*zx - ux*zz;
-      let xz = ux*zy - uy*zx;
-      const xl = Math.hypot(xx,xy,xz); xx/=xl; xy/=xl; xz/=xl;
-      const yx = zy*xz - zz*xy;
-      const yy = zz*xx - zx*xz;
-      const yz = zx*xy - zy*xx;
-      return [
-        xx, yx, zx, 0,
-        xy, yy, zy, 0,
-        xz, yz, zz, 0,
-        -(xx*ex+xy*ey+xz*ez), -(yx*ex+yy*ey+yz*ez), -(zx*ex+zy*ey+zz*ez), 1
-      ];
+      let zx=ex-cx, zy=ey-cy, zz=ez-cz; let zl=Math.hypot(zx,zy,zz); zx/=zl; zy/=zl; zz/=zl;
+      let xx = uy*zz - uz*zy, xy = uz*zx - ux*zz, xz = ux*zy - uy*zx;
+      let xl=Math.hypot(xx,xy,xz); xx/=xl; xy/=xl; xz/=xl;
+      const yx = zy*xz - zz*xy, yy = zz*xx - zx*xz, yz = zx*xy - zy*xx;
+      return new Float32Array([xx,yx,zx,0, xy,yy,zy,0, xz,yz,zz,0, -(xx*ex+xy*ey+xz*ez), -(yx*ex+yy*ey+yz*ez), -(zx*ex+zy*ey+zz*ez), 1]);
     },
+    rotY(a){ const c=Math.cos(a), s=Math.sin(a); return new Float32Array([c,0,s,0, 0,1,0,0, -s,0,c,0, 0,0,0,1]); }
   };
 
   // Shaders
-  const vs = `
+  const V_SRC = `
   attribute vec3 position;
   attribute vec3 color;
   uniform mat4 uProj, uView, uModel;
   varying vec3 vColor;
+  varying float vDepth;
   void main(){
+    vec4 world = uModel * vec4(position, 1.0);
+    vec4 view = uView * world;
+    vDepth = -view.z;
     vColor = color;
-    gl_Position = uProj * uView * uModel * vec4(position, 1.0);
-    gl_PointSize = 2.5;
-  }`;
-  const fs = `
-  precision mediump float;
-  varying vec3 vColor;
-  void main(){
-    gl_FragColor = vec4(vColor, 1.0);
-  }`;
-  const ps = `
-  precision mediump float;
-  varying vec3 vColor;
-  void main(){
-    // round points
-    vec2 p = gl_PointCoord*2.0-1.0;
-    float d = dot(p,p);
-    float a = smoothstep(1.0, 0.8, d);
-    gl_FragColor = vec4(vColor, a);
+    gl_Position = uProj * view;
+    gl_PointSize = 38.0 / (0.5 + vDepth*0.25); // size falls with distance
   }`;
 
-  function compile(src, type){
-    const s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s);
-    if(!gl.getShaderParameter(s, gl.COMPILE_STATUS)) { console.error(gl.getShaderInfoLog(s)); }
-    return s;
-  }
-  function program(vsrc, fsrc){
-    const p=gl.createProgram();
-    gl.attachShader(p, compile(vsrc, gl.VERTEX_SHADER));
-    gl.attachShader(p, compile(fsrc, gl.FRAGMENT_SHADER));
-    gl.linkProgram(p);
-    if(!gl.getProgramParameter(p, gl.LINK_STATUS)){ console.error(gl.getProgramInfoLog(p)); }
+  // Round glossy sphere sprite + fog
+  const F_POINTS = `
+  precision mediump float;
+  varying vec3 vColor;
+  varying float vDepth;
+  void main(){
+    vec2 p = gl_PointCoord*2.0 - 1.0;
+    float r2 = dot(p,p);
+    if (r2 > 1.0) discard;
+
+    // Fake normal from disc coords
+    vec3 N = normalize(vec3(p.x, p.y, sqrt(max(0.0, 1.0 - r2))));
+    vec3 L = normalize(vec3(0.7, 0.9, 1.0));
+    float diff = 0.45 + 0.55*max(0.0, dot(N,L));
+    float spec = pow(max(0.0, dot(reflect(-L,N), vec3(0.0,0.0,1.0))), 32.0) * 0.35;
+
+    // palette shift by depth (blue→cyan→green→magenta accents)
+    vec3 base = vColor;
+    float hue = clamp((vDepth-1.0)/6.0, 0.0, 1.0);
+    vec3 alt = mix(vec3(0.12,0.58,0.96), vec3(0.17,0.85,0.66), hue);
+    base = mix(base, alt, 0.6);
+
+    float fog = clamp((vDepth-1.0) / 8.0, 0.0, 1.0);
+    vec3 col = base*diff + spec*vec3(1.0,1.0,1.0);
+    col = mix(col, vec3(0.03,0.05,0.09), fog); // fog to background
+    gl_FragColor = vec4(col, 0.92);
+  }`;
+
+  // Lines with soft color and fog
+  const V_LINES = `
+  attribute vec3 position;
+  attribute vec3 color;
+  uniform mat4 uProj, uView, uModel;
+  varying vec3 vColor;
+  varying float vDepth;
+  void main(){
+    vec4 world = uModel * vec4(position, 1.0);
+    vec4 view = uView * world;
+    vDepth = -view.z;
+    vColor = color;
+    gl_Position = uProj * view;
+  }`;
+  const F_LINES = `
+  precision mediump float;
+  varying vec3 vColor;
+  varying float vDepth;
+  void main(){
+    float fog = clamp((vDepth-1.0) / 8.0, 0.0, 1.0);
+    vec3 col = mix(vColor, vec3(0.03,0.05,0.09), fog);
+    gl_FragColor = vec4(col, 0.55);
+  }`;
+
+  function compile(src, type){ const s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s);
+    if(!gl.getShaderParameter(s, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(s)); return s; }
+  function program(vs, fs){ const p=gl.createProgram();
+    gl.attachShader(p, compile(vs, gl.VERTEX_SHADER));
+    gl.attachShader(p, compile(fs, gl.FRAGMENT_SHADER));
+    gl.linkProgram(p); if(!gl.getProgramParameter(p, gl.LINK_STATUS)) console.error(gl.getProgramInfoLog(p));
     return p;
   }
+  const P_POINTS = program(V_SRC, F_POINTS);
+  const P_LINES  = program(V_LINES, F_LINES);
 
-  const progLines = program(vs, fs);
-  const progPoints = program(vs.replace('gl_PointSize = 2.5;','gl_PointSize = 3.5;'), ps);
+  // Graph data + physics
+  const N = 120;                // nodes
+  const MAX_EDGES = 340;        // sparse
+  const positions = new Float32Array(N*3);
+  const velocities = new Float32Array(N*3);
+  const colors = new Float32Array(N*3);
+  const tmpF = new Float32Array(N*3);
 
-  // Graph data
-  const NODE_COUNT = 260;
-  const nodes = new Float32Array(NODE_COUNT*3);
-  const base = new Float32Array(NODE_COUNT*3);
-  // Scatter nodes on a deformed torus-ish shell
-  for(let i=0;i<NODE_COUNT;i++){
-    const a = Math.random()*Math.PI*2;
-    const b = Math.random()*Math.PI*2;
-    const R = 1.2, r = 0.45 + 0.12*Math.sin(3*a);
-    const x = (R + r*Math.cos(b))*Math.cos(a);
-    const y = (R + r*Math.cos(b))*Math.sin(a);
-    const z = r*Math.sin(b);
-    base[i*3+0]=x; base[i*3+1]=y; base[i*3+2]=z;
-    nodes[i*3+0]=x; nodes[i*3+1]=y; nodes[i*3+2]=z;
+  // Init nodes in a loose sphere
+  for (let i=0;i<N;i++){
+    const phi = Math.acos(2*Math.random()-1);
+    const th = 2*Math.PI*Math.random();
+    const r = 1.6 + Math.random()*0.4;
+    positions[i*3+0] = r*Math.sin(phi)*Math.cos(th);
+    positions[i*3+1] = r*Math.sin(phi)*Math.sin(th);
+    positions[i*3+2] = r*Math.cos(phi);
+    velocities[i*3+0] = (Math.random()-0.5)*0.02;
+    velocities[i*3+1] = (Math.random()-0.5)*0.02;
+    velocities[i*3+2] = (Math.random()-0.5)*0.02;
+    // base color (cool→warm accents)
+    colors.set([0.14,0.72,0.66], i*3);
   }
 
-  // Build sparse edges (k-nearest on ring-ish index + a few long jumps)
-  const edges = [];
-  for(let i=0;i<NODE_COUNT;i++){
-    edges.push([i, (i+1)%NODE_COUNT]);
-    if(Math.random()<0.4) edges.push([i, (i+7)%NODE_COUNT]);
-    if(Math.random()<0.08) edges.push([i, (i+Math.floor(40+Math.random()*80))%NODE_COUNT]);
-  }
+  // Edge list (pairs of indices)
+  const edges = new Uint16Array(MAX_EDGES*2);
+  const edgeColor = new Float32Array(MAX_EDGES*2*3);
+  const springRest = new Float32Array(MAX_EDGES);
+  let edgeCount = 0;
 
-  // Buffers: lines
-  const lineVerts = new Float32Array(edges.length*2*3);
-  const lineCols  = new Float32Array(edges.length*2*3);
-  function fillLineBuffers(){
-    for(let e=0;e<edges.length;e++){
-      const [a,b]=edges[e];
-      for(let k=0;k<3;k++){
-        lineVerts[e*6+k]   = nodes[a*3+k];
-        lineVerts[e*6+3+k] = nodes[b*3+k];
-      }
-      // blue→green gradient per segment
-      lineCols.set([0.12,0.48,0.93], e*6+0);
-      lineCols.set([0.17,0.83,0.63], e*6+3);
+  function addEdge(a,b){
+    if (a===b || edgeCount>=MAX_EDGES) return;
+    // avoid duplicates
+    for(let e=0;e<edgeCount;e++){
+      if ((edges[e*2]===a && edges[e*2+1]===b) || (edges[e*2]===b && edges[e*2+1]===a)) return;
     }
+    edges[edgeCount*2]=a; edges[edgeCount*2+1]=b;
+    springRest[edgeCount]= 0.6 + Math.random()*0.6;
+    // color endpoints gradient (blue→cyan/teal/magenta flickers)
+    const c1 = [0.12,0.58,0.96], c2 = Math.random()<0.12 ? [0.92,0.18,0.56] : [0.17,0.85,0.66];
+    edgeColor.set(c1, edgeCount*6+0); edgeColor.set(c2, edgeCount*6+3);
+    edgeCount++;
   }
-  fillLineBuffers();
 
-  function makeBuffer(type, data){
-    const buf = gl.createBuffer();
-    gl.bindBuffer(type, buf);
-    gl.bufferData(type, data, gl.DYNAMIC_DRAW);
-    return buf;
+  // Seed edges by nearest-ish neighbors (cheap heuristic)
+  for (let i=0;i<N;i++){
+    for (let j=i+1;j<N;j++){
+      if (edgeCount>=MAX_EDGES) break;
+      const dx=positions[i*3]-positions[j*3], dy=positions[i*3+1]-positions[j*3+1], dz=positions[i*3+2]-positions[j*3+2];
+      const d2=dx*dx+dy*dy+dz*dz;
+      if (d2 < 2.4) { addEdge(i,j); }
+    }
+    if (edgeCount>=MAX_EDGES) break;
   }
-  const linePosBuf = makeBuffer(gl.ARRAY_BUFFER, lineVerts);
-  const lineColBuf = makeBuffer(gl.ARRAY_BUFFER, lineCols);
 
-  // Buffers: points
-  const ptPosBuf = makeBuffer(gl.ARRAY_BUFFER, nodes);
-  const ptCol = new Float32Array(NODE_COUNT*3);
-  for(let i=0;i<NODE_COUNT;i++){
-    // subtle mix for points
-    ptCol.set([0.18,0.88,0.69], i*3); // greenish
-  }
-  const ptColBuf = makeBuffer(gl.ARRAY_BUFFER, ptCol);
+  // GL buffers
+  function makeBuf(type, data, usage){ const b=gl.createBuffer(); gl.bindBuffer(type,b); gl.bufferData(type,data,usage||gl.DYNAMIC_DRAW); return b; }
+  const posBuf = makeBuf(gl.ARRAY_BUFFER, positions);
+  const colBuf = makeBuf(gl.ARRAY_BUFFER, colors);
+  const linePosBuf = makeBuf(gl.ARRAY_BUFFER, new Float32Array(MAX_EDGES*2*3));
+  const lineColBuf = makeBuf(gl.ARRAY_BUFFER, edgeColor);
+
+  // Uniform locations
+  const uPP = {
+    uProj: gl.getUniformLocation(P_POINTS,'uProj'),
+    uView: gl.getUniformLocation(P_POINTS,'uView'),
+    uModel: gl.getUniformLocation(P_POINTS,'uModel')
+  };
+  const uPL = {
+    uProj: gl.getUniformLocation(P_LINES,'uProj'),
+    uView: gl.getUniformLocation(P_LINES,'uView'),
+    uModel: gl.getUniformLocation(P_LINES,'uModel')
+  };
 
   function attrib(p, name, buf, size){
     const loc = gl.getAttribLocation(p, name);
@@ -651,86 +639,194 @@
     gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0);
   }
 
-  const uProjL = gl.getUniformLocation(progLines, 'uProj');
-  const uViewL = gl.getUniformLocation(progLines, 'uView');
-  const uModelL= gl.getUniformLocation(progLines, 'uModel');
-  const uProjP = gl.getUniformLocation(progPoints, 'uProj');
-  const uViewP = gl.getUniformLocation(progPoints, 'uView');
-  const uModelP= gl.getUniformLocation(progPoints, 'uModel');
+  // Physics params
+  const REPULSE = 0.035;      // Coulomb-like
+  const SPRING_K = 0.18;      // Hooke
+  const DAMP = 0.92;          // velocity damping
+  const BOX = 3.2;            // soft bounds
+  const BREAK_STRETCH = 1.95; // break if stretched > rest*factor
+  const REWIRE_INTERVAL = 2200; // ms
+  const DT = 0.016;
 
-  // Animation state
-  let t0 = performance.now();
-  function softNoise(n){ // cheap deterministic-ish noise
-    return Math.sin(n*12.9898)*43758.5453 % 1;
-  }
+  let lastRewire = performance.now();
 
-  function updateNodes(time){
-    const T = time*0.00025;
-    for(let i=0;i<NODE_COUNT;i++){
-      const bx = base[i*3], by = base[i*3+1], bz = base[i*3+2];
-      const wob = 0.06*Math.sin(T*2.0 + i*0.37) + 0.04*Math.cos(T*1.3 + i*1.19);
-      nodes[i*3+0] = bx*(1.0+wob) + 0.05*Math.sin(T*1.7 + i);
-      nodes[i*3+1] = by*(1.0+wob) + 0.05*Math.cos(T*1.3 + i*0.7);
-      nodes[i*3+2] = bz*(1.0+wob) + 0.05*Math.sin(T*1.1 + i*1.1);
+  // Build/update line position buffer each frame
+  const lineVerts = new Float32Array(MAX_EDGES*2*3);
+  function updateLineVerts(){
+    for (let e=0;e<edgeCount;e++){
+      const a = edges[e*2], b = edges[e*2+1];
+      lineVerts.set(positions.subarray(a*3,a*3+3), e*6+0);
+      lineVerts.set(positions.subarray(b*3,b*3+3), e*6+3);
+      // tension tinting (upload colors rarely; we prefilled gradient, alpha handled in shader)
     }
-    // Upload updated positions
-    gl.bindBuffer(gl.ARRAY_BUFFER, ptPosBuf);
-    gl.bufferSubData(gl.ARRAY_BUFFER, 0, nodes);
-    // Update lines too
-    fillLineBuffers();
     gl.bindBuffer(gl.ARRAY_BUFFER, linePosBuf);
-    gl.bufferSubData(gl.ARRAY_BUFFER, 0, lineVerts);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, lineVerts.subarray(0, edgeCount*6));
   }
 
-  function render(){
+  // Edge break & reform
+  function rewire(){
     const now = performance.now();
-    const dt = now - t0; t0 = now;
-    const time = now;
+    if (now - lastRewire < REWIRE_INTERVAL) return;
+    lastRewire = now;
 
-    updateNodes(time);
+    // Probabilistically break a few overstretched or random edges
+    for (let e=0;e<edgeCount;){
+      const a = edges[e*2], b = edges[e*2+1];
+      const dx=positions[a*3]-positions[b*3], dy=positions[a*3+1]-positions[b*3+1], dz=positions[a*3+2]-positions[b*3+2];
+      const d = Math.hypot(dx,dy,dz);
+      const overstretch = d > springRest[e]*BREAK_STRETCH;
+      if (overstretch || Math.random()<0.03){
+        // remove edge e by swapping with last
+        edgeCount--;
+        edges[e*2]=edges[edgeCount*2]; edges[e*2+1]=edges[edgeCount*2+1];
+        springRest[e]=springRest[edgeCount];
+        edgeColor.set(edgeColor.subarray(edgeCount*6, edgeCount*6+6), e*6);
+        continue; // don't increment e (we replaced current slot)
+      }
+      e++;
+    }
+    // Form a few new edges between nearby nodes
+    let attempts = 0, added = 0;
+    while (added < 12 && attempts < 200){
+      attempts++;
+      const i = (Math.random()*N)|0, j = (Math.random()*N)|0;
+      if (i===j) continue;
+      const dx=positions[i*3]-positions[j*3], dy=positions[i*3+1]-positions[j*3+1], dz=positions[i*3+2]-positions[j*3+2];
+      const d2 = dx*dx+dy*dy+dz*dz;
+      if (d2>0.25 && d2<1.9){ addEdge(i,j); added++; }
+    }
+  }
 
-    // Camera path: gentle orbit + dolly
-    const aspect = canvas.width / canvas.height;
-    const proj = M.perspective(45*Math.PI/180, aspect, 0.1, 100.0);
-    const r = 3.0 + 0.25*Math.sin(time*0.0007);
-    const theta = time*0.00018;
-    const eye = [ Math.cos(theta)*r, 0.5*Math.sin(time*0.00023)*1.2, Math.sin(theta)*r ];
-    const view = M.lookAt(eye, [0,0,0], [0,1,0]);
+  function stepPhysics(){
+    // reset forces
+    tmpF.fill(0);
 
-    // Slow model rotation (feels like world moves around you)
-    const ang = time*0.0003;
-    const c = Math.cos(ang), s = Math.sin(ang);
-    const model = [ c,0,s,0, 0,1,0,0, -s,0,c,0, 0,0,0,1 ];
+    // repulsion (O(N^2), OK for N=120)
+    for (let i=0;i<N;i++){
+      const ix=i*3, ix0=positions[ix], iy0=positions[ix+1], iz0=positions[ix+2];
+      for (let j=i+1;j<N;j++){
+        const jx=j*3;
+        let dx = ix0 - positions[jx];
+        let dy = iy0 - positions[jx+1];
+        let dz = iz0 - positions[jx+2];
+        let d2 = dx*dx+dy*dy+dz*dz + 0.001;
+        let inv = 1.0/Math.sqrt(d2);
+        let f = REPULSE * inv*inv; // ~1/d^2
+        dx*=f; dy*=f; dz*=f;
+        tmpF[ix]+=dx; tmpF[ix+1]+=dy; tmpF[ix+2]+=dz;
+        tmpF[jx]-=dx; tmpF[jx+1]-=dy; tmpF[jx+2]-=dz;
+      }
+    }
 
-    // Clear with subtle vignette-like color
+    // springs
+    for (let e=0;e<edgeCount;e++){
+      const a = edges[e*2], b = edges[e*2+1];
+      const ax=a*3, bx=b*3;
+      let dx = positions[bx]-positions[ax];
+      let dy = positions[bx+1]-positions[ax+1];
+      let dz = positions[bx+2]-positions[ax+2];
+      let d = Math.hypot(dx,dy,dz)+1e-6;
+      const rest = springRest[e];
+      const k = SPRING_K*(d - rest);
+      const fx = (dx/d)*k, fy = (dy/d)*k, fz = (dz/d)*k;
+      tmpF[ax]+=fx; tmpF[ax+1]+=fy; tmpF[ax+2]+=fz;
+      tmpF[bx]-=fx; tmpF[bx+1]-=fy; tmpF[bx+2]-=fz;
+    }
+
+    // integrate + soft bounds
+    for (let i=0;i<N;i++){
+      const ix=i*3;
+      velocities[ix]   = (velocities[ix]   + tmpF[ix]*DT) * DAMP;
+      velocities[ix+1] = (velocities[ix+1] + tmpF[ix+1]*DT) * DAMP;
+      velocities[ix+2] = (velocities[ix+2] + tmpF[ix+2]*DT) * DAMP;
+
+      positions[ix]   += velocities[ix]*DT;
+      positions[ix+1] += velocities[ix+1]*DT;
+      positions[ix+2] += velocities[ix+2]*DT;
+
+      // gentle inward pull to keep cloud compact
+      const pull = 0.02;
+      positions[ix]   -= positions[ix]*pull*DT;
+      positions[ix+1] -= positions[ix+1]*pull*DT;
+      positions[ix+2] -= positions[ix+2]*pull*DT;
+
+      // bounds
+      for (let k=0;k<3;k++){
+        const p = positions[ix+k];
+        if (p > BOX){ positions[ix+k]=BOX; velocities[ix+k]*=-0.4; }
+        if (p < -BOX){ positions[ix+k]=-BOX; velocities[ix+k]*=-0.4; }
+      }
+
+      // color accent by speed
+      const sp = Math.min(1.0, Math.hypot(velocities[ix],velocities[ix+1],velocities[ix+2])*12.0);
+      const cool = [0.14,0.72,0.66], hot = [0.92,0.18,0.56];
+      colors[ix]   = cool[0]*(1-sp) + hot[0]*sp*0.7;
+      colors[ix+1] = cool[1]*(1-sp) + hot[1]*sp*0.7;
+      colors[ix+2] = cool[2]*(1-sp) + hot[2]*sp*0.7;
+    }
+
+    // upload point buffers
+    gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, positions);
+    gl.bindBuffer(gl.ARRAY_BUFFER, colBuf);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, colors);
+  }
+
+  // Camera flies through interior
+  function getCamera(time){
+    const t = time*0.00018;
+    const radius = 0.6; // small orbit around local center
+    const eye = [Math.cos(t)*radius, 0.15*Math.sin(t*1.7), Math.sin(t)*radius];
+    const forward = [Math.sin(t*0.7)*0.4, Math.cos(t*0.6)*0.2, -0.6]; // drift forward
+    const center = [eye[0]+forward[0], eye[1]+forward[1], eye[2]+forward[2]];
+    return {eye, center};
+  }
+
+  // Render
+  let last = performance.now();
+  function frame(ts){
+    const dt = Math.min(32, ts-last); last=ts;
+
+    // physics & topology changes
+    stepPhysics();
+    rewire();
+    updateLineVerts();
+
+    // matrices
+    const aspect = canvas.width/canvas.height;
+    const proj = M.perspective(48*Math.PI/180, aspect, 0.1, 100.0);
+    const cam = getCamera(ts);
+    const view = M.lookAt(cam.eye, cam.center, [0,1,0]);
+    const model = M.rotY(ts*0.00015); // subtle world rotation
+
+    // clear
     gl.enable(gl.DEPTH_TEST);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-    gl.clearColor(0.045,0.055,0.085,1);
+    gl.clearColor(0.02,0.03,0.06,1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    // Draw lines
-    gl.useProgram(progLines);
-    gl.uniformMatrix4fv(uProjL,false,new Float32Array(proj));
-    gl.uniformMatrix4fv(uViewL,false,new Float32Array(view));
-    gl.uniformMatrix4fv(uModelL,false,new Float32Array(model));
-    attrib(progLines, 'position', linePosBuf, 3);
-    attrib(progLines, 'color',    lineColBuf, 3);
-    gl.lineWidth(1);
-    gl.drawArrays(gl.LINES, 0, lineVerts.length/3);
+    // draw lines
+    gl.useProgram(P_LINES);
+    gl.uniformMatrix4fv(uPL.uProj,false,proj);
+    gl.uniformMatrix4fv(uPL.uView,false,view);
+    gl.uniformMatrix4fv(uPL.uModel,false,model);
+    attrib(P_LINES,'position', linePosBuf, 3);
+    attrib(P_LINES,'color',    lineColBuf, 3);
+    gl.drawArrays(gl.LINES, 0, edgeCount*2);
 
-    // Draw points (with round sprites)
-    gl.useProgram(progPoints);
-    gl.uniformMatrix4fv(uProjP,false,new Float32Array(proj));
-    gl.uniformMatrix4fv(uViewP,false,new Float32Array(view));
-    gl.uniformMatrix4fv(uModelP,false,new Float32Array(model));
-    attrib(progPoints, 'position', ptPosBuf, 3);
-    attrib(progPoints, 'color',    ptColBuf, 3);
-    gl.drawArrays(gl.POINTS, 0, NODE_COUNT);
+    // draw points (glossy spheres)
+    gl.useProgram(P_POINTS);
+    gl.uniformMatrix4fv(uPP.uProj,false,proj);
+    gl.uniformMatrix4fv(uPP.uView,false,view);
+    gl.uniformMatrix4fv(uPP.uModel,false,model);
+    attrib(P_POINTS,'position', posBuf, 3);
+    attrib(P_POINTS,'color',    colBuf, 3);
+    gl.drawArrays(gl.POINTS, 0, N);
 
-    requestAnimationFrame(render);
+    requestAnimationFrame(frame);
   }
-  requestAnimationFrame(render);
+  requestAnimationFrame(frame);
 })();
 </script>
 </body>
