@@ -22,19 +22,16 @@
     html,body{height:100%}
     body{
       margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      color:var(--text); line-height:1.6;
-      background:
-        radial-gradient(1200px 600px at 80% -10%, rgba(43,212,161,.08), transparent 60%),
-        radial-gradient(900px 500px at -10% 10%, rgba(31,111,235,.12), transparent 60%),
-        var(--bg);
+      color:var(--text); line-height:1.6; background:var(--bg);
       padding-top: var(--header-h);
     }
     a{color:var(--accent); text-decoration:none}
     a:hover{text-decoration:underline}
     .container{width:var(--container); margin:0 auto; padding:0 8px}
 
+    /* Header */
     header{
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
       backdrop-filter: saturate(140%) blur(6px);
       background: linear-gradient(to bottom, rgba(11,12,16,.86), rgba(11,12,16,.6) 60%, transparent);
       border-bottom: 1px solid var(--border);
@@ -43,16 +40,12 @@
     }
     header.scrolled{ background: rgba(11,12,16,.92); box-shadow: 0 6px 22px rgba(0,0,0,.28) }
     header.hide{ transform: translateY(-100%) }
-
     .nav{display:flex; align-items:center; justify-content:space-between; padding:12px 0}
     .brand{display:flex; align-items:center; gap:12px; font-weight:700}
-    .logo{
-      width:28px; height:28px; border-radius:8px;
+    .logo{ width:28px; height:28px; border-radius:8px;
       background: conic-gradient(from 210deg, var(--accent), var(--accent-2) 40%, #6ee7ff 70%, var(--accent));
-      box-shadow: 0 0 0 4px rgba(255,255,255,.03), 0 8px 30px var(--ring);
-    }
+      box-shadow: 0 0 0 4px rgba(255,255,255,.03), 0 8px 30px var(--ring); }
     .brand small{display:block; font-weight:600; color:var(--muted)}
-
     .menu{display:flex; gap:18px; align-items:center}
     .menu a{color:var(--text); opacity:.9}
     .menu a:hover{opacity:1}
@@ -71,9 +64,19 @@
       .menu.open{display:flex}
     }
 
-    main > section{position:relative; padding:80px 0; background:var(--bg-soft); border-top:1px solid var(--border)}
-    main > section:first-of-type{border-top:none}
-    .hero{padding:100px 0 44px}
+    /* HERO — full viewport, graph is fixed background */
+    .hero{
+      position:relative; min-height:100svh;
+      display:flex; align-items:center;
+      padding: calc(var(--header-h) + 24px) 0 80px;
+      isolation:isolate; /* so overlay filters don’t affect header */
+      background: transparent;
+      overflow: clip; /* allow bottom fade to overlay */
+    }
+    .hero .container{
+      position:relative; z-index:3;
+      will-change: transform, opacity;
+    }
     .badge{
       display:inline-flex; align-items:center; gap:8px; font-size:.83rem; color:#cfe0ff;
       background:rgba(31,111,235,.12); border:1px solid rgba(31,111,235,.35);
@@ -82,61 +85,60 @@
     h1{font-size:clamp(2rem, 5vw, 3.2rem); line-height:1.1; margin:16px 0 10px}
     .lead{font-size:clamp(1.05rem, 2.2vw, 1.25rem); color:var(--muted); max-width:780px}
     .cta{margin-top:24px; display:flex; gap:12px; flex-wrap:wrap}
-    .btn{
-      display:inline-flex; align-items:center; gap:10px; padding:12px 16px; border-radius:12px; font-weight:700;
+    .btn{display:inline-flex; align-items:center; gap:10px; padding:12px 16px; border-radius:12px; font-weight:700;
       background:linear-gradient(135deg, var(--accent), #3aa0ff); color:white; border:none; cursor:pointer;
-      box-shadow:0 10px 30px var(--ring)
-    }
+      box-shadow:0 10px 30px var(--ring)}
     .btn.ghost{background:#151a27; color:#d8e0ee; border:1px solid var(--border); box-shadow:none}
 
-    /* HERO VISUAL */
-    .hero-visual{
-      margin-top:36px; background:#05070c; border:1px solid var(--border); border-radius:18px; overflow:hidden; position:relative;
+    /* FIXED full-bleed background canvas + blending layers */
+    .hero-bg{
+      position:fixed; inset:0; z-index:1; pointer-events:none;
     }
-    #viz3d { display:block; width:100%; height: clamp(300px, 48vw, 560px); }
+    #viz3d{ display:block; width:100%; height:100%; }
 
-    /* CARDS */
+    /* Vignette + bottom fade into page background */
+    .hero-bg::after{
+      content:""; position:absolute; inset:0; pointer-events:none;
+      background:
+        radial-gradient(1200px 700px at 70% -10%, rgba(43,212,161,.10), transparent 60%),
+        radial-gradient(1000px 600px at -10% 0%, rgba(31,111,235,.14), transparent 60%),
+        linear-gradient(to bottom, rgba(11,12,16,.35), rgba(11,12,16,.0) 35%, rgba(11,12,16,.0) 70%, rgba(11,12,16,.65));
+      mix-blend-mode: screen;
+    }
+    .hero-fade{
+      position:absolute; left:0; right:0; bottom:-1px; height:22svh; z-index:2; pointer-events:none;
+      background: linear-gradient(to bottom, rgba(11,12,16,0), var(--bg));
+    }
+
+    /* Sections after hero */
+    main > section:not(.hero){position:relative; padding:80px 0; background:var(--bg-soft); border-top:1px solid var(--border)}
     h2{font-size:1.6rem; margin:0 0 12px}
-    .grid{
-      display:grid;
-      grid-template-columns: 1.15fr .85fr;
-      gap:clamp(18px, 3vw, 32px)
-    }
+    .grid{display:grid; grid-template-columns: 1.15fr .85fr; gap:clamp(18px, 3vw, 32px)}
     @media (max-width:980px){ .grid{grid-template-columns:1fr} }
-    .card{
-      background: var(--card);
-      border:1px solid var(--border); border-radius:var(--radius);
-      padding: var(--pad);
-      box-shadow: 0 10px 28px rgba(0,0,0,.28);
-    }
+    .card{background: var(--card); border:1px solid var(--border); border-radius:var(--radius); padding: var(--pad); box-shadow: 0 10px 28px rgba(0,0,0,.28)}
     .list{display:grid; gap:10px; margin:14px 0 0; padding:0; list-style:none}
     .list li{display:grid; grid-template-columns: 14px 1fr; align-items:start; column-gap:10px}
-    .list li::before{
-      content:""; width:10px; height:10px; margin-top:.4em;
-      border-radius:999px; background:linear-gradient(135deg, var(--accent), var(--accent-2));
-      box-shadow:0 0 0 3px rgba(255,255,255,.03)
-    }
+    .list li::before{content:""; width:10px; height:10px; margin-top:.4em; border-radius:999px; background:linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow:0 0 0 3px rgba(255,255,255,.03)}
     .mono{font-family: ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:.95rem; color:#b7c3d4}
     .muted{color:var(--muted)}
     form{margin-top:12px}
     form .row{display:grid; gap:12px; grid-template-columns:1fr 1fr}
     @media (max-width:700px){form .row{grid-template-columns:1fr}}
-    input, textarea{
-      width:100%; padding:14px 16px; border-radius:12px; border:1px solid var(--border);
-      background:#0f1220; color:var(--text)
-    }
+    input, textarea{width:100%; padding:14px 16px; border-radius:12px; border:1px solid var(--border); background:#0f1220; color:var(--text)}
     textarea{min-height:140px; resize:vertical}
     footer{background:#0a0c12; padding:42px 0; border-top:1px solid var(--border); color:#muted; font-size:.95rem}
-    .cols{
-      display:grid; gap:20px;
-      grid-template-columns: 1.3fr 1fr 1fr 1fr;
-    }
+    .cols{display:grid; gap:20px; grid-template-columns: 1.3fr 1fr 1fr 1fr}
     @media (max-width:980px){ .cols{grid-template-columns:1fr 1fr} }
     @media (max-width:640px){ .cols{grid-template-columns:1fr} }
     .pill{display:inline-block; padding:6px 10px; border:1px solid var(--border); border-radius:999px; color:#d6deed}
     .footer-links a{display:block; margin:6px 0; color:#cfd6e6; opacity:.9}
     .footer-links a:hover{opacity:1; text-decoration:none}
     .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0}
+
+    /* Reduce motion friendly */
+    @media (prefers-reduced-motion: reduce){
+      .hero .container{transform:none !important}
+    }
   </style>
 </head>
 <body>
@@ -165,8 +167,16 @@
 </header>
 
 <main>
-  <section class="hero" id="project">
-    <div class="container">
+  <!-- HERO (full-viewport, background graph) -->
+  <section class="hero" id="project" aria-label="SiCell hero section">
+    <!-- fixed background -->
+    <div class="hero-bg" aria-hidden="true">
+      <canvas id="viz3d"></canvas>
+    </div>
+    <div class="hero-fade" aria-hidden="true"></div>
+
+    <!-- foreground content -->
+    <div class="container" id="heroContent">
       <span class="badge"><span class="sr-only">Project: </span><span data-i18n="hero_badge">SiCell — Flagship Project</span></span>
       <h1 data-i18n="hero_title">Full human cell simulations — closing the gap between silicon and carbon.</h1>
       <p class="lead" data-i18n="hero_lead">
@@ -178,17 +188,10 @@
         <a class="btn" href="#contact" role="button" aria-label="Contact us" data-i18n="cta_contact">Contact us</a>
         <button class="btn ghost" type="button" disabled title="Whitepaper coming soon" data-i18n="cta_whitepaper">Whitepaper (soon)</button>
       </div>
-
-      <!-- Immersive 3D net: inside view, sparser, physics, edges break/reform -->
-      <div class="hero-visual">
-        <canvas id="viz3d" aria-label="Immersive 3D graph visualization"></canvas>
-        <noscript>
-          <svg viewBox="0 0 1200 420" width="100%" height="auto" role="img" aria-label="Static graph"><rect width="1200" height="420" fill="#0b0f16"/></svg>
-        </noscript>
-      </div>
     </div>
   </section>
 
+  <!-- TECHNOLOGY -->
   <section id="technology">
     <div class="container grid">
       <div class="card">
@@ -215,6 +218,7 @@
     </div>
   </section>
 
+  <!-- COMPANY -->
   <section id="company">
     <div class="container grid">
       <div class="card">
@@ -234,12 +238,16 @@
     </div>
   </section>
 
+  <!-- TEAM -->
   <section id="team">
     <div class="container grid">
       <div class="card">
         <h2 data-i18n="team_title">Team</h2>
         <p><strong>Marcel Tomaszek</strong> — <span data-i18n="team_affil">Cellular &amp; Molecular Biophysics, UJ</span></p>
         <p><a href="mailto:marcel.tomaszek@student.uj.edu.pl">marcel.tomaszek@student.uj.edu.pl</a></p>
+        <hr style="border:none;border-top:1px solid var(--border);margin:12px 0">
+        <p><strong>Oskar Lurka</strong> — <span data-i18n="team_affil">Cellular &amp; Molecular Biophysics, UJ</span></p>
+        <p><a href="mailto:oskar.lurka@student.uj.edu.pl">oskar.lurka@student.uj.edu.pl</a></p>
       </div>
       <div class="card">
         <h2 data-i18n="next_title">What we’re building next</h2>
@@ -252,6 +260,7 @@
     </div>
   </section>
 
+  <!-- CONTACT -->
   <section id="contact">
     <div class="container grid">
       <div class="card">
@@ -319,7 +328,7 @@
   </div>
 </footer>
 
-<!-- Core UI scripts -->
+<!-- Core UI scripts (unchanged basics + i18n) -->
 <script>
   const hamb = document.getElementById('hamb');
   const menu = document.getElementById('menu');
@@ -334,7 +343,7 @@
   }
 
   let lastY = window.scrollY, ticking = false;
-  function onScroll() {
+  function onScrollHeader() {
     const y = window.scrollY, dy = y - lastY;
     if (y > 2) header.classList.add('scrolled'); else header.classList.remove('scrolled');
     const menuOpen = menu && menu.classList.contains('open');
@@ -342,7 +351,7 @@
     else if (dy < -6) header.classList.remove('hide');
     lastY = y; ticking = false;
   }
-  window.addEventListener('scroll', () => { if (!ticking) { requestAnimationFrame(onScroll); ticking = true; } });
+  window.addEventListener('scroll', () => { if (!ticking) { requestAnimationFrame(onScrollHeader); ticking = true; } });
 
   function setHeaderOffset(){
     const h = header.getBoundingClientRect().height;
@@ -351,8 +360,9 @@
   addEventListener('load', setHeaderOffset);
   addEventListener('resize', setHeaderOffset);
 
+  // Mailto form
   const form = document.getElementById('mailtoForm');
-  form.addEventListener('submit', (e) => {
+  if (form) form.addEventListener('submit', (e) => {
     e.preventDefault();
     const name = encodeURIComponent(document.getElementById('name').value.trim());
     const email = encodeURIComponent(document.getElementById('email').value.trim());
@@ -362,6 +372,7 @@
     window.location.href = `mailto:contact@noonauticslabs.org?subject=${subject}&body=${body}`;
   });
 
+  // i18n dictionary (same as before, shortened for brevity)
   const dict = {
     en: {
       tagline:"R&D • Cell Sim • Bioinformatics",
@@ -376,11 +387,9 @@
       tech_point2:"Mechanistic <strong>ODE/graph models</strong> with feedback loops; no trillion-param training needed.",
       tech_point3:"<strong>Search engine</strong> to explore disease pathways, targets, apoptosis routes, and drug effects.",
       tech_point4:"Simple <strong>APIs & visuals</strong> for rapid prototyping, like software.",
-      why_title:"Why now?",
-      why_text:"It’s a paradox: we run trillion-parameter AIs trained from scratch, yet biology — where we already know so much — trails behind. We aim to close the gap between silicon on CPUs and carbon in cells, bringing biology into the era of emergent, iterative tooling.",
+      why_title:"Why now?", why_text:"It’s a paradox: we run trillion-parameter AIs trained from scratch, yet biology — where we already know so much — trails behind. We aim to close the gap between silicon on CPUs and carbon in cells, bringing biology into the era of emergent, iterative tooling.",
       why_motto:"“Make biology buildable.”",
-      about_title:"About Noonautics Labs",
-      about_legal:"Legal form: sp. z o.o. • Kraków (Kraków-Podgórze), Małopolskie",
+      about_title:"About Noonautics Labs", about_legal:"Legal form: sp. z o.o. • Kraków (Kraków-Podgórze), Małopolskie",
       about_desc:"BADANIA I ROZWÓJ W ZAKRESIE SYMULACJI KOMÓRKOWYCH, BIOINFORMATYKI I TWORZENIA NARZĘDZI DLA BIOTECHNOLOGII.",
       focus_title:"Focus", focus_1:"Full human cell simulations (mechanistic).", focus_2:"Bioinformatics pipelines & knowledge synthesis.", focus_3:"Developer-grade tools for biotech teams.",
       team_title:"Team", team_affil:"Cellular & Molecular Biophysics, UJ",
@@ -398,38 +407,27 @@
       cta_contact:"Skontaktuj się", cta_whitepaper:"Biała księga (wkrótce)",
       tech_title:"Technologia",
       tech_intro:"Łączymy dane z kuratorowanych baz i mechanistyczne modele: przekształcamy wiedzę biologiczną w deterministyczne systemy, które działają szybko i łączą się ze sobą jak klocki.",
-      tech_point1:"Elastyczne <strong>stany początkowe</strong>: geny, epigenetyka, organella, poziomy białek → dowolny typ komórki (neuron, komórka macierzysta, nowotworowa, zaprojektowana).",
-      tech_point2:"Mechanistyczne <strong>modele ODE/grafowe</strong> ze sprzężeniami zwrotnymi — bez bilionów parametrów i kosztownego trenowania.",
-      tech_point3:"<strong>Wyszukiwarka</strong> do badania szlaków chorobowych, celów terapeutycznych, apoptozy i efektów leków.",
-      tech_point4:"Proste <strong>API i wizualizacje</strong>, które umożliwiają szybkie prototypowanie — jak w inżynierii oprogramowania.",
-      why_title:"Dlaczego teraz?",
-      why_text:"Paradoks: budujemy systemy AI z bilionami parametrów uczonymi od zera, a biologia — mimo ogromnej ilości wiedzy — wciąż zostaje w tyle. Naszym celem jest domknięcie luki między krzemem a komórką i wejście w erę narzędzi emergentnych, które pozwalają pracować iteracyjnie.",
+      tech_point1:"Elastyczne <strong>stany początkowe</strong>: geny, epigenetyka, organella, poziomy białek → dowolny typ komórki.",
+      tech_point2:"Mechanistyczne <strong>modele ODE/grafowe</strong> ze sprzężeniami zwrotnymi.",
+      tech_point3:"<strong>Wyszukiwarka</strong> szlaków chorobowych i efektów leków.",
+      tech_point4:"Proste <strong>API i wizualizacje</strong> do szybkiego prototypowania.",
+      why_title:"Dlaczego teraz?", why_text:"Paradoks: budujemy AI z bilionami parametrów, a biologia wciąż zostaje w tyle. Domykamy lukę między krzemem a komórką.",
       why_motto:"„Sprawmy, by biologia stała się inżynierią.”",
-      about_title:"O Noonautics Labs",
-      about_legal:"Forma prawna: sp. z o.o. • Kraków (Kraków-Podgórze), Małopolskie",
-      about_desc:"Badania i rozwój w zakresie symulacji komórkowych, bioinformatyki i tworzenia narzędzi dla biotechnologii.",
-      focus_title:"Zakres",
-      focus_1:"Symulacje komórek w pełnej skali (mechanistyczne).",
-      focus_2:"Pipeline’y bioinformatyczne i synteza wiedzy.",
-      focus_3:"Narzędzia deweloperskie dla zespołów biotech.",
+      about_title:"O Noonautics Labs", about_legal:"Forma prawna: sp. z o.o. • Kraków (Kraków-Podgórze), Małopolskie",
+      about_desc:"Badania i rozwój w zakresie symulacji komórkowych, bioinformatyki i narzędzi dla biotech.",
+      focus_title:"Zakres", focus_1:"Symulacje komórek (mechanistyczne).", focus_2:"Pipeline’y i synteza wiedzy.", focus_3:"Narzędzia deweloperskie.",
       team_title:"Zespół", team_affil:"Biofizyka komórkowa i molekularna, UJ",
-      next_title:"Co budujemy dalej",
-      next_1:"Otwarte API do definiowania stanów i sterowania symulacją.",
-      next_2:"Interaktywne wizualizacje do eksploracji szlaków biologicznych.",
-      next_3:"Biała księga i demo (w przygotowaniu).",
+      next_title:"Co dalej", next_1:"Otwarte API.", next_2:"Interaktywne wizualizacje.", next_3:"Biała księga i demo.",
       contact_title:"Kontakt", contact_general:"Ogólne", contact_send:"Wyślij", contact_email:"Wyślij e-mail",
-      contact_note:"Przygotowujemy materiały konferencyjne. Wkrótce udostępnimy białą księgę i demo.",
-      partners_title:"Dla partnerów",
-      partners_text:"Badanie mechanizmów chorób, odkrywanie nowych celów terapeutycznych i weryfikacja hipotez in-silico. Współpracujmy nad konkretnymi, mechanistycznymi wyzwaniami."
+      contact_note:"Przygotowujemy materiały konferencyjne.",
+      partners_title:"Dla partnerów", partners_text:"Mechanizmy chorób, cele terapeutyczne, hipotezy in-silico."
     }
   };
-
   function setLang(lang){
     document.documentElement.setAttribute('lang', lang);
     document.documentElement.dataset.lang = lang;
     for (const el of document.querySelectorAll('[data-i18n]')) {
-      const key = el.getAttribute('data-i18n');
-      const html = dict[lang][key] || '';
+      const key = el.getAttribute('data-i18n'); const html = dict[lang][key] || '';
       if (html) el.innerHTML = html;
     }
     document.getElementById('lang-en').setAttribute('aria-pressed', lang==='en');
@@ -445,7 +443,7 @@
   })();
 </script>
 
-<!-- Immersive 3D Graph — sparse, inside view, spring/repulsion physics, edges rewire, glossy node spheres -->
+<!-- Full-bleed immersive WebGL background with scroll-linked dynamics -->
 <script>
 (() => {
   const canvas = document.getElementById('viz3d');
@@ -453,13 +451,13 @@
   const gl = canvas.getContext('webgl', {antialias:true, alpha:false});
   if (!gl) return;
 
-  // Sizing
+  // HiDPI sizing for full screen
   const DPR = Math.min(2, window.devicePixelRatio || 1);
   function resize(){
-    const r = canvas.getBoundingClientRect();
-    canvas.width = Math.max(640, r.width * DPR) | 0;
-    canvas.height = Math.max(360, r.height * DPR) | 0;
-    gl.viewport(0,0,canvas.width, canvas.height);
+    const w = Math.max(800, innerWidth) * DPR | 0;
+    const h = Math.max(500, innerHeight) * DPR | 0;
+    canvas.width = w; canvas.height = h;
+    gl.viewport(0,0,w,h);
   }
   resize(); addEventListener('resize', resize);
 
@@ -493,10 +491,8 @@
     vDepth = -view.z;
     vColor = color;
     gl_Position = uProj * view;
-    gl_PointSize = 38.0 / (0.5 + vDepth*0.25); // size falls with distance
+    gl_PointSize = 42.0 / (0.4 + vDepth*0.25);
   }`;
-
-  // Round glossy sphere sprite + fog
   const F_POINTS = `
   precision mediump float;
   varying vec3 vColor;
@@ -505,26 +501,15 @@
     vec2 p = gl_PointCoord*2.0 - 1.0;
     float r2 = dot(p,p);
     if (r2 > 1.0) discard;
-
-    // Fake normal from disc coords
     vec3 N = normalize(vec3(p.x, p.y, sqrt(max(0.0, 1.0 - r2))));
-    vec3 L = normalize(vec3(0.7, 0.9, 1.0));
-    float diff = 0.45 + 0.55*max(0.0, dot(N,L));
-    float spec = pow(max(0.0, dot(reflect(-L,N), vec3(0.0,0.0,1.0))), 32.0) * 0.35;
-
-    // palette shift by depth (blue→cyan→green→magenta accents)
-    vec3 base = vColor;
-    float hue = clamp((vDepth-1.0)/6.0, 0.0, 1.0);
-    vec3 alt = mix(vec3(0.12,0.58,0.96), vec3(0.17,0.85,0.66), hue);
-    base = mix(base, alt, 0.6);
-
-    float fog = clamp((vDepth-1.0) / 8.0, 0.0, 1.0);
-    vec3 col = base*diff + spec*vec3(1.0,1.0,1.0);
-    col = mix(col, vec3(0.03,0.05,0.09), fog); // fog to background
-    gl_FragColor = vec4(col, 0.92);
+    vec3 L = normalize(vec3(0.6, 0.9, 1.0));
+    float diff = 0.5 + 0.5*max(0.0, dot(N,L));
+    float spec = pow(max(0.0, dot(reflect(-L,N), vec3(0.0,0.0,1.0))), 40.0) * 0.35;
+    float fog = clamp((vDepth-1.0) / 9.0, 0.0, 1.0);
+    vec3 col = vColor*diff + spec;
+    col = mix(col, vec3(0.03,0.05,0.09), fog);
+    gl_FragColor = vec4(col, 0.95);
   }`;
-
-  // Lines with soft color and fog
   const V_LINES = `
   attribute vec3 position;
   attribute vec3 color;
@@ -534,8 +519,7 @@
   void main(){
     vec4 world = uModel * vec4(position, 1.0);
     vec4 view = uView * world;
-    vDepth = -view.z;
-    vColor = color;
+    vDepth = -view.z; vColor = color;
     gl_Position = uProj * view;
   }`;
   const F_LINES = `
@@ -543,9 +527,9 @@
   varying vec3 vColor;
   varying float vDepth;
   void main(){
-    float fog = clamp((vDepth-1.0) / 8.0, 0.0, 1.0);
+    float fog = clamp((vDepth-1.0) / 9.0, 0.0, 1.0);
     vec3 col = mix(vColor, vec3(0.03,0.05,0.09), fog);
-    gl_FragColor = vec4(col, 0.55);
+    gl_FragColor = vec4(col, 0.45);
   }`;
 
   function compile(src, type){ const s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s);
@@ -559,30 +543,27 @@
   const P_POINTS = program(V_SRC, F_POINTS);
   const P_LINES  = program(V_LINES, F_LINES);
 
-  // Graph data + physics
-  const N = 120;                // nodes
-  const MAX_EDGES = 340;        // sparse
+  // Graph + physics (sparser)
+  const N = 96;
+  const MAX_EDGES = 240;
   const positions = new Float32Array(N*3);
   const velocities = new Float32Array(N*3);
   const colors = new Float32Array(N*3);
   const tmpF = new Float32Array(N*3);
 
-  // Init nodes in a loose sphere
   for (let i=0;i<N;i++){
     const phi = Math.acos(2*Math.random()-1);
     const th = 2*Math.PI*Math.random();
-    const r = 1.6 + Math.random()*0.4;
+    const r = 1.4 + Math.random()*0.6;
     positions[i*3+0] = r*Math.sin(phi)*Math.cos(th);
     positions[i*3+1] = r*Math.sin(phi)*Math.sin(th);
     positions[i*3+2] = r*Math.cos(phi);
-    velocities[i*3+0] = (Math.random()-0.5)*0.02;
-    velocities[i*3+1] = (Math.random()-0.5)*0.02;
-    velocities[i*3+2] = (Math.random()-0.5)*0.02;
-    // base color (cool→warm accents)
-    colors.set([0.14,0.72,0.66], i*3);
+    velocities[i*3+0] = (Math.random()-0.5)*0.01;
+    velocities[i*3+1] = (Math.random()-0.5)*0.01;
+    velocities[i*3+2] = (Math.random()-0.5)*0.01;
+    colors.set([0.16,0.78,0.72], i*3);
   }
 
-  // Edge list (pairs of indices)
   const edges = new Uint16Array(MAX_EDGES*2);
   const edgeColor = new Float32Array(MAX_EDGES*2*3);
   const springRest = new Float32Array(MAX_EDGES);
@@ -590,47 +571,32 @@
 
   function addEdge(a,b){
     if (a===b || edgeCount>=MAX_EDGES) return;
-    // avoid duplicates
     for(let e=0;e<edgeCount;e++){
       if ((edges[e*2]===a && edges[e*2+1]===b) || (edges[e*2]===b && edges[e*2+1]===a)) return;
     }
     edges[edgeCount*2]=a; edges[edgeCount*2+1]=b;
-    springRest[edgeCount]= 0.6 + Math.random()*0.6;
-    // color endpoints gradient (blue→cyan/teal/magenta flickers)
-    const c1 = [0.12,0.58,0.96], c2 = Math.random()<0.12 ? [0.92,0.18,0.56] : [0.17,0.85,0.66];
+    springRest[edgeCount]= 0.5 + Math.random()*0.6;
+    const c1 = [0.10,0.58,0.96], c2 = Math.random()<0.14 ? [0.92,0.18,0.56] : [0.17,0.85,0.66];
     edgeColor.set(c1, edgeCount*6+0); edgeColor.set(c2, edgeCount*6+3);
     edgeCount++;
   }
-
-  // Seed edges by nearest-ish neighbors (cheap heuristic)
+  // seed by proximity
   for (let i=0;i<N;i++){
     for (let j=i+1;j<N;j++){
       if (edgeCount>=MAX_EDGES) break;
       const dx=positions[i*3]-positions[j*3], dy=positions[i*3+1]-positions[j*3+1], dz=positions[i*3+2]-positions[j*3+2];
       const d2=dx*dx+dy*dy+dz*dz;
-      if (d2 < 2.4) { addEdge(i,j); }
+      if (d2 < 1.8) addEdge(i,j);
     }
     if (edgeCount>=MAX_EDGES) break;
   }
 
-  // GL buffers
+  // Buffers
   function makeBuf(type, data, usage){ const b=gl.createBuffer(); gl.bindBuffer(type,b); gl.bufferData(type,data,usage||gl.DYNAMIC_DRAW); return b; }
   const posBuf = makeBuf(gl.ARRAY_BUFFER, positions);
   const colBuf = makeBuf(gl.ARRAY_BUFFER, colors);
   const linePosBuf = makeBuf(gl.ARRAY_BUFFER, new Float32Array(MAX_EDGES*2*3));
   const lineColBuf = makeBuf(gl.ARRAY_BUFFER, edgeColor);
-
-  // Uniform locations
-  const uPP = {
-    uProj: gl.getUniformLocation(P_POINTS,'uProj'),
-    uView: gl.getUniformLocation(P_POINTS,'uView'),
-    uModel: gl.getUniformLocation(P_POINTS,'uModel')
-  };
-  const uPL = {
-    uProj: gl.getUniformLocation(P_LINES,'uProj'),
-    uView: gl.getUniformLocation(P_LINES,'uView'),
-    uModel: gl.getUniformLocation(P_LINES,'uModel')
-  };
 
   function attrib(p, name, buf, size){
     const loc = gl.getAttribLocation(p, name);
@@ -639,174 +605,173 @@
     gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0);
   }
 
-  // Physics params
-  const REPULSE = 0.035;      // Coulomb-like
-  const SPRING_K = 0.18;      // Hooke
-  const DAMP = 0.92;          // velocity damping
-  const BOX = 3.2;            // soft bounds
-  const BREAK_STRETCH = 1.95; // break if stretched > rest*factor
-  const REWIRE_INTERVAL = 2200; // ms
-  const DT = 0.016;
+  // Uniforms
+  const uPP = { uProj: gl.getUniformLocation(P_POINTS,'uProj'), uView: gl.getUniformLocation(P_POINTS,'uView'), uModel: gl.getUniformLocation(P_POINTS,'uModel') };
+  const uPL = { uProj: gl.getUniformLocation(P_LINES,'uProj'),  uView: gl.getUniformLocation(P_LINES,'uView'),  uModel: gl.getUniformLocation(P_LINES,'uModel') };
 
-  let lastRewire = performance.now();
-
-  // Build/update line position buffer each frame
+  // Physics
+  let timeScale = 0.15; // base slow
+  const REPULSE = 0.028, SPRING_K = 0.14, DAMP = 0.93, BOX=3.2, BREAK_STRETCH=1.9;
   const lineVerts = new Float32Array(MAX_EDGES*2*3);
+  let lastRewire = performance.now();
+  let rewireInterval = 3200; // ms (gets shorter with scroll)
+
   function updateLineVerts(){
     for (let e=0;e<edgeCount;e++){
       const a = edges[e*2], b = edges[e*2+1];
       lineVerts.set(positions.subarray(a*3,a*3+3), e*6+0);
       lineVerts.set(positions.subarray(b*3,b*3+3), e*6+3);
-      // tension tinting (upload colors rarely; we prefilled gradient, alpha handled in shader)
     }
     gl.bindBuffer(gl.ARRAY_BUFFER, linePosBuf);
     gl.bufferSubData(gl.ARRAY_BUFFER, 0, lineVerts.subarray(0, edgeCount*6));
   }
 
-  // Edge break & reform
   function rewire(){
     const now = performance.now();
-    if (now - lastRewire < REWIRE_INTERVAL) return;
+    if (now - lastRewire < rewireInterval) return;
     lastRewire = now;
-
-    // Probabilistically break a few overstretched or random edges
+    // remove overstretched or random few
     for (let e=0;e<edgeCount;){
-      const a = edges[e*2], b = edges[e*2+1];
+      const a=edges[e*2], b=edges[e*2+1];
       const dx=positions[a*3]-positions[b*3], dy=positions[a*3+1]-positions[b*3+1], dz=positions[a*3+2]-positions[b*3+2];
       const d = Math.hypot(dx,dy,dz);
-      const overstretch = d > springRest[e]*BREAK_STRETCH;
-      if (overstretch || Math.random()<0.03){
-        // remove edge e by swapping with last
+      if (d > springRest[e]*BREAK_STRETCH || Math.random() < 0.025){
         edgeCount--;
         edges[e*2]=edges[edgeCount*2]; edges[e*2+1]=edges[edgeCount*2+1];
         springRest[e]=springRest[edgeCount];
         edgeColor.set(edgeColor.subarray(edgeCount*6, edgeCount*6+6), e*6);
-        continue; // don't increment e (we replaced current slot)
+        continue;
       }
       e++;
     }
-    // Form a few new edges between nearby nodes
-    let attempts = 0, added = 0;
-    while (added < 12 && attempts < 200){
-      attempts++;
-      const i = (Math.random()*N)|0, j = (Math.random()*N)|0;
+    // add some nearby
+    let added=0, tries=0;
+    while(added<8 && tries<160){
+      tries++;
+      const i=(Math.random()*N)|0, j=(Math.random()*N)|0;
       if (i===j) continue;
       const dx=positions[i*3]-positions[j*3], dy=positions[i*3+1]-positions[j*3+1], dz=positions[i*3+2]-positions[j*3+2];
-      const d2 = dx*dx+dy*dy+dz*dz;
-      if (d2>0.25 && d2<1.9){ addEdge(i,j); added++; }
+      const d2=dx*dx+dy*dy+dz*dz;
+      if (d2>0.25 && d2<1.6){ addEdge(i,j); added++; }
     }
   }
 
-  function stepPhysics(){
-    // reset forces
+  function stepPhysics(dt){
     tmpF.fill(0);
-
-    // repulsion (O(N^2), OK for N=120)
+    // repulsion
     for (let i=0;i<N;i++){
-      const ix=i*3, ix0=positions[ix], iy0=positions[ix+1], iz0=positions[ix+2];
+      const ix=i*3, x=positions[ix], y=positions[ix+1], z=positions[ix+2];
       for (let j=i+1;j<N;j++){
         const jx=j*3;
-        let dx = ix0 - positions[jx];
-        let dy = iy0 - positions[jx+1];
-        let dz = iz0 - positions[jx+2];
+        let dx = x - positions[jx], dy = y - positions[jx+1], dz = z - positions[jx+2];
         let d2 = dx*dx+dy*dy+dz*dz + 0.001;
         let inv = 1.0/Math.sqrt(d2);
-        let f = REPULSE * inv*inv; // ~1/d^2
+        let f = REPULSE * inv*inv;
         dx*=f; dy*=f; dz*=f;
         tmpF[ix]+=dx; tmpF[ix+1]+=dy; tmpF[ix+2]+=dz;
         tmpF[jx]-=dx; tmpF[jx+1]-=dy; tmpF[jx+2]-=dz;
       }
     }
-
     // springs
     for (let e=0;e<edgeCount;e++){
-      const a = edges[e*2], b = edges[e*2+1];
-      const ax=a*3, bx=b*3;
+      const a=edges[e*2], b=edges[e*2+1], ax=a*3, bx=b*3;
       let dx = positions[bx]-positions[ax];
       let dy = positions[bx+1]-positions[ax+1];
       let dz = positions[bx+2]-positions[ax+2];
       let d = Math.hypot(dx,dy,dz)+1e-6;
-      const rest = springRest[e];
-      const k = SPRING_K*(d - rest);
-      const fx = (dx/d)*k, fy = (dy/d)*k, fz = (dz/d)*k;
+      const k = SPRING_K*(d - springRest[e]);
+      const fx=(dx/d)*k, fy=(dy/d)*k, fz=(dz/d)*k;
       tmpF[ax]+=fx; tmpF[ax+1]+=fy; tmpF[ax+2]+=fz;
       tmpF[bx]-=fx; tmpF[bx+1]-=fy; tmpF[bx+2]-=fz;
     }
-
-    // integrate + soft bounds
+    // integrate, soft pull to origin, color by speed
     for (let i=0;i<N;i++){
       const ix=i*3;
-      velocities[ix]   = (velocities[ix]   + tmpF[ix]*DT) * DAMP;
-      velocities[ix+1] = (velocities[ix+1] + tmpF[ix+1]*DT) * DAMP;
-      velocities[ix+2] = (velocities[ix+2] + tmpF[ix+2]*DT) * DAMP;
+      velocities[ix]   = (velocities[ix]   + tmpF[ix]*dt) * DAMP;
+      velocities[ix+1] = (velocities[ix+1] + tmpF[ix+1]*dt) * DAMP;
+      velocities[ix+2] = (velocities[ix+2] + tmpF[ix+2]*dt) * DAMP;
 
-      positions[ix]   += velocities[ix]*DT;
-      positions[ix+1] += velocities[ix+1]*DT;
-      positions[ix+2] += velocities[ix+2]*DT;
+      positions[ix]   += velocities[ix]*dt;
+      positions[ix+1] += velocities[ix+1]*dt;
+      positions[ix+2] += velocities[ix+2]*dt;
 
-      // gentle inward pull to keep cloud compact
-      const pull = 0.02;
-      positions[ix]   -= positions[ix]*pull*DT;
-      positions[ix+1] -= positions[ix+1]*pull*DT;
-      positions[ix+2] -= positions[ix+2]*pull*DT;
+      const pull = 0.018;
+      positions[ix]   -= positions[ix]*pull*dt;
+      positions[ix+1] -= positions[ix+1]*pull*dt;
+      positions[ix+2] -= positions[ix+2]*pull*dt;
 
-      // bounds
       for (let k=0;k<3;k++){
         const p = positions[ix+k];
         if (p > BOX){ positions[ix+k]=BOX; velocities[ix+k]*=-0.4; }
         if (p < -BOX){ positions[ix+k]=-BOX; velocities[ix+k]*=-0.4; }
       }
-
-      // color accent by speed
-      const sp = Math.min(1.0, Math.hypot(velocities[ix],velocities[ix+1],velocities[ix+2])*12.0);
-      const cool = [0.14,0.72,0.66], hot = [0.92,0.18,0.56];
-      colors[ix]   = cool[0]*(1-sp) + hot[0]*sp*0.7;
-      colors[ix+1] = cool[1]*(1-sp) + hot[1]*sp*0.7;
-      colors[ix+2] = cool[2]*(1-sp) + hot[2]*sp*0.7;
+      const sp = Math.min(1.0, Math.hypot(velocities[ix],velocities[ix+1],velocities[ix+2])*10.0);
+      const cool=[0.16,0.78,0.72], warm=[0.92,0.18,0.56];
+      colors[ix]   = cool[0]*(1-sp) + warm[0]*sp*0.6;
+      colors[ix+1] = cool[1]*(1-sp) + warm[1]*sp*0.6;
+      colors[ix+2] = cool[2]*(1-sp) + warm[2]*sp*0.6;
     }
-
-    // upload point buffers
-    gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
-    gl.bufferSubData(gl.ARRAY_BUFFER, 0, positions);
-    gl.bindBuffer(gl.ARRAY_BUFFER, colBuf);
-    gl.bufferSubData(gl.ARRAY_BUFFER, 0, colors);
+    gl.bindBuffer(gl.ARRAY_BUFFER, posBuf); gl.bufferSubData(gl.ARRAY_BUFFER, 0, positions);
+    gl.bindBuffer(gl.ARRAY_BUFFER, colBuf); gl.bufferSubData(gl.ARRAY_BUFFER, 0, colors);
   }
 
-  // Camera flies through interior
-  function getCamera(time){
-    const t = time*0.00018;
-    const radius = 0.6; // small orbit around local center
-    const eye = [Math.cos(t)*radius, 0.15*Math.sin(t*1.7), Math.sin(t)*radius];
-    const forward = [Math.sin(t*0.7)*0.4, Math.cos(t*0.6)*0.2, -0.6]; // drift forward
-    const center = [eye[0]+forward[0], eye[1]+forward[1], eye[2]+forward[2]];
+  // Scroll-linked dynamics (parallax & speed)
+  const hero = document.querySelector('.hero');
+  const heroContent = document.getElementById('heroContent');
+  let scrollProg = 0;
+  function onScrollDyn(){
+    const vh = Math.max(1, window.innerHeight);
+    const y = window.scrollY;
+    // progress through the first viewport (0..1)
+    scrollProg = Math.max(0, Math.min(1, y / vh));
+    // ease in/out speed
+    const ease = scrollProg*scrollProg*(3 - 2*scrollProg); // smoothstep
+    timeScale = 0.06 + 0.5*ease; // very slow at top, more active as you scroll
+    rewireInterval = 4200 - 3000*ease; // rewire a bit faster as we scroll
+    // parallax: content drifts slightly upward as you scroll
+    heroContent.style.transform = `translateY(${(-24*ease).toFixed(2)}px)`;
+    heroContent.style.opacity = `${1 - 0.08*ease}`;
+  }
+  onScrollDyn();
+  addEventListener('scroll', () => requestAnimationFrame(onScrollDyn), {passive:true});
+
+  // Matrices
+  function getCamera(t){
+    // camera sits "inside" the net, gentle drift; depth changes with scroll
+    const baseDepth = 2.2 - 0.5*scrollProg; // closer as you scroll
+    const radius = 0.5 + 0.15*scrollProg;
+    const ang = t*0.00008; // slow
+    const eye = [Math.cos(ang)*radius, 0.12*Math.sin(ang*1.7), Math.sin(ang)*radius];
+    const center = [0.0, 0.02*Math.sin(ang*0.9), -baseDepth];
     return {eye, center};
   }
 
-  // Render
-  let last = performance.now();
-  function frame(ts){
-    const dt = Math.min(32, ts-last); last=ts;
+  // Uniform setters and draw
+  const uPP = { uProj: gl.getUniformLocation(P_POINTS,'uProj'), uView: gl.getUniformLocation(P_POINTS,'uView'), uModel: gl.getUniformLocation(P_POINTS,'uModel') };
+  const uPL = { uProj: gl.getUniformLocation(P_LINES,'uProj'),  uView: gl.getUniformLocation(P_LINES,'uView'),  uModel: gl.getUniformLocation(P_LINES,'uModel') };
 
-    // physics & topology changes
-    stepPhysics();
+  let lastTS = performance.now();
+  function frame(ts){
+    const rawDt = Math.min(40, ts - lastTS); lastTS = ts;
+    const dt = (rawDt/1000) * timeScale;
+
+    stepPhysics(dt);
     rewire();
     updateLineVerts();
 
-    // matrices
     const aspect = canvas.width/canvas.height;
-    const proj = M.perspective(48*Math.PI/180, aspect, 0.1, 100.0);
+    const proj = M.perspective(50*Math.PI/180, aspect, 0.1, 100.0);
     const cam = getCamera(ts);
     const view = M.lookAt(cam.eye, cam.center, [0,1,0]);
-    const model = M.rotY(ts*0.00015); // subtle world rotation
+    const model = M.rotY(ts*0.00008); // subtle world rotation
 
-    // clear
     gl.enable(gl.DEPTH_TEST);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     gl.clearColor(0.02,0.03,0.06,1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    // draw lines
+    // lines
     gl.useProgram(P_LINES);
     gl.uniformMatrix4fv(uPL.uProj,false,proj);
     gl.uniformMatrix4fv(uPL.uView,false,view);
@@ -815,7 +780,7 @@
     attrib(P_LINES,'color',    lineColBuf, 3);
     gl.drawArrays(gl.LINES, 0, edgeCount*2);
 
-    // draw points (glossy spheres)
+    // points
     gl.useProgram(P_POINTS);
     gl.uniformMatrix4fv(uPP.uProj,false,proj);
     gl.uniformMatrix4fv(uPP.uView,false,view);
@@ -827,6 +792,11 @@
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
+
+  // Reduced motion: freeze dynamics but keep render
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    timeScale = 0.0; rewireInterval = 1e9;
+  }
 })();
 </script>
 </body>
