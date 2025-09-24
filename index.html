@@ -29,13 +29,12 @@
         radial-gradient(1200px 600px at 80% -10%, rgba(43,212,161,.08), transparent 60%),
         radial-gradient(900px 500px at -10% 10%, rgba(31,111,235,.12), transparent 60%),
         var(--bg);
-      padding-top: var(--header-h); /* space for fixed header */
+      padding-top: var(--header-h);
     }
     a{color:var(--accent); text-decoration:none}
     a:hover{text-decoration:underline}
     .container{width:var(--container); margin:0 auto; padding:0 8px}
 
-    /* FIXED header with hide-on-scroll */
     header{
       position: fixed; top: 0; left: 0; right: 0;
       z-index: 100;
@@ -76,7 +75,6 @@
       .menu.open{display:flex}
     }
 
-    /* SECTIONS */
     main > section{position:relative; padding:80px 0; background:var(--bg-soft); border-top:1px solid var(--border)}
     main > section:first-of-type{border-top:none}
     .hero{padding:100px 0 44px}
@@ -95,47 +93,20 @@
     }
     .btn.ghost{background:#151a27; color:#d8e0ee; border:1px solid var(--border); box-shadow:none}
 
-    /* hero visual (container) */
+    /* HERO VISUAL WRAPPER */
     .hero-visual{
-      margin-top:36px; background:#0c0f15; border:1px solid var(--border); border-radius:18px; padding:18px;
-      position: relative; isolation: isolate; overflow: hidden;
+      margin-top:36px; background: radial-gradient(900px 420px at 70% -20%, rgba(31,111,235,.14), transparent 60%), #0b0f16;
+      border:1px solid var(--border); border-radius:18px; padding:0; overflow:hidden; position:relative;
     }
-    /* animated tensor/topology/automaton canvas + overlay */
-    #viz {
-      width: 100%;
-      height: clamp(260px, 44vw, 460px);
-      display: block;
-      border-radius: 12px;
-      background: #0b0f16;
-      border: 1px solid var(--border);
-    }
-    .viz-overlay {
-      position: absolute; inset: 12px;
-      display: flex; align-items: flex-start; justify-content: space-between;
-      pointer-events: none;
-    }
-    .viz-badge {
-      font: 700 .8rem/1 ui-sans-serif, system-ui;
-      color: #cfe0ff; letter-spacing: .04em;
-      background: rgba(31,111,235,.12);
-      border: 1px solid rgba(31,111,235,.35);
-      border-radius: 999px; padding: 6px 10px;
-      box-shadow: 0 8px 20px var(--ring);
-    }
-    .viz-legend {
-      display: grid; gap: 6px; text-align: right;
-    }
-    .viz-legend small { color: var(--muted); font-size: .78rem }
-    .viz-legend .pill {
-      display: inline-block; padding: 4px 8px; border-radius: 999px;
-      border: 1px solid var(--border); color:#d6deed; background:#0e1118cc;
+    /* WebGL canvas */
+    #viz3d {
+      display:block; width:100%; height: clamp(280px, 46vw, 520px);
     }
 
-    /* CARDS + GRID */
     h2{font-size:1.6rem; margin:0 0 12px}
     .grid{
       display:grid;
-      grid-template-columns: 1.15fr .85fr; /* asymmetry */
+      grid-template-columns: 1.15fr .85fr;
       gap:clamp(18px, 3vw, 32px)
     }
     @media (max-width:980px){ .grid{grid-template-columns:1fr} }
@@ -145,19 +116,16 @@
       padding: var(--pad);
       box-shadow: 0 10px 28px rgba(0,0,0,.28);
     }
-
-    /* Lists with centered custom bullets */
     .list{display:grid; gap:10px; margin:14px 0 0; padding:0; list-style:none}
     .list li{display:grid; grid-template-columns: 14px 1fr; align-items:start; column-gap:10px}
     .list li::before{
-      content:""; width:10px; height:10px; margin-top:.4em; /* align with first line */
+      content:""; width:10px; height:10px; margin-top:.4em;
       border-radius:999px; background:linear-gradient(135deg, var(--accent), var(--accent-2));
       box-shadow:0 0 0 3px rgba(255,255,255,.03)
     }
     .mono{font-family: ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:.95rem; color:#b7c3d4}
     .muted{color:var(--muted)}
 
-    /* FORM */
     form{margin-top:12px}
     form .row{display:grid; gap:12px; grid-template-columns:1fr 1fr}
     @media (max-width:700px){form .row{grid-template-columns:1fr}}
@@ -167,7 +135,6 @@
     }
     textarea{min-height:140px; resize:vertical}
 
-    /* FOOTER */
     footer{background:#0a0c12; padding:42px 0; border-top:1px solid var(--border); color:#muted; font-size:.95rem}
     .cols{
       display:grid; gap:20px;
@@ -222,35 +189,12 @@
         <button class="btn ghost" type="button" disabled title="Whitepaper coming soon" data-i18n="cta_whitepaper">Whitepaper (soon)</button>
       </div>
 
-      <!-- NEW animated hero visual -->
+      <!-- Ambient 3D graph (pure WebGL, no text overlays) -->
       <div class="hero-visual">
-        <canvas id="viz" aria-label="Animated visualization: tensor grid, topology graph, cellular automaton"></canvas>
-        <div class="viz-overlay" aria-hidden="true">
-          <span class="viz-badge">Tensor • Topology • Automaton</span>
-          <div class="viz-legend">
-            <span class="pill">Graph packets →</span>
-            <small>Adjacency heatmap background</small>
-          </div>
-        </div>
+        <canvas id="viz3d" aria-label="Ambient 3D graph visualization"></canvas>
         <noscript>
-          <svg viewBox="0 0 1200 420" width="100%" height="auto" role="img" aria-label="Static tensor grid with graph overlay">
-            <defs>
-              <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#1f6feb"/><stop offset="100%" stop-color="#2bd4a1"/>
-              </linearGradient>
-            </defs>
+          <svg viewBox="0 0 1200 420" width="100%" height="auto" role="img" aria-label="Static graph">
             <rect width="1200" height="420" fill="#0b0f16"/>
-            <g opacity=".28" stroke="#1f2a3a">
-              <path d="M0 60 H1200"/><path d="M0 120 H1200"/><path d="M0 180 H1200"/>
-              <path d="M0 240 H1200"/><path d="M0 300 H1200"/><path d="M0 360 H1200"/>
-              <path d="M100 0 V420"/><path d="M200 0 V420"/><path d="M300 0 V420"/><path d="M400 0 V420"/>
-              <path d="M500 0 V420"/><path d="M600 0 V420"/><path d="M700 0 V420"/><path d="M800 0 V420"/>
-              <path d="M900 0 V420"/><path d="M1000 0 V420"/><path d="M1100 0 V420"/>
-            </g>
-            <g fill="none" stroke="url(#g)" stroke-width="3">
-              <path d="M160,300 C260,180 340,220 420,180 S620,140 720,200 880,320 1040,180"/>
-            </g>
-            <g fill="url(#g)"><circle cx="420" cy="180" r="6"/><circle cx="720" cy="200" r="6"/></g>
           </svg>
         </noscript>
       </div>
@@ -311,6 +255,9 @@
         <h2 data-i18n="team_title">Team</h2>
         <p><strong>Marcel Tomaszek</strong> — <span data-i18n="team_affil">Cellular &amp; Molecular Biophysics, UJ</span></p>
         <p><a href="mailto:marcel.tomaszek@student.uj.edu.pl">marcel.tomaszek@student.uj.edu.pl</a></p>
+        <hr style="border:none;border-top:1px solid var(--border);margin:12px 0">
+        <p><strong>Oskar Lurka</strong> — <span data-i18n="team_affil">Cellular &amp; Molecular Biophysics, UJ</span></p>
+        <p><a href="mailto:oskar.lurka@student.uj.edu.pl">oskar.lurka@student.uj.edu.pl</a></p>
       </div>
       <div class="card">
         <h2 data-i18n="next_title">What we’re building next</h2>
@@ -331,7 +278,6 @@
         <p><span data-i18n="contact_general">General</span>:
           <a href="mailto:contact@noonauticslabs.org">contact@noonauticslabs.org</a></p>
 
-        <!-- Mailto form: no backend required -->
         <form id="mailtoForm">
           <div class="row">
             <div>
@@ -392,9 +338,8 @@
   </div>
 </footer>
 
-<!-- Scripts -->
+<!-- Core UI scripts -->
 <script>
-  // --- Mobile menu ---
   const hamb = document.getElementById('hamb');
   const menu = document.getElementById('menu');
   const header = document.querySelector('header');
@@ -403,11 +348,10 @@
     hamb.addEventListener('click', () => {
       const open = menu.classList.toggle('open');
       hamb.setAttribute('aria-expanded', String(open));
-      if (open) header.classList.remove('hide'); // keep header visible while menu open
+      if (open) header.classList.remove('hide');
     });
   }
 
-  // --- Hide-on-scroll header ---
   let lastY = window.scrollY;
   let ticking = false;
   const UP_THRESHOLD = 6;
@@ -423,11 +367,8 @@
 
     const menuOpen = menu && menu.classList.contains('open');
 
-    if (!menuOpen && y > MIN_SHOW_Y && dy > DOWN_THRESHOLD) {
-      header.classList.add('hide');    // scrolling down → hide
-    } else if (dy < -UP_THRESHOLD) {
-      header.classList.remove('hide'); // scrolling up → show
-    }
+    if (!menuOpen && y > MIN_SHOW_Y && dy > DOWN_THRESHOLD) header.classList.add('hide');
+    else if (dy < -UP_THRESHOLD) header.classList.remove('hide');
 
     lastY = y;
     ticking = false;
@@ -440,7 +381,6 @@
     }
   });
 
-  // Ensure body padding matches actual header height
   function setHeaderOffset(){
     const h = header.getBoundingClientRect().height;
     document.documentElement.style.setProperty('--header-h', `${Math.round(h)}px`);
@@ -448,20 +388,17 @@
   window.addEventListener('load', setHeaderOffset);
   window.addEventListener('resize', setHeaderOffset);
 
-  // --- Mailto form handler (no backend) ---
   const form = document.getElementById('mailtoForm');
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const name = encodeURIComponent(document.getElementById('name').value.trim());
     const email = encodeURIComponent(document.getElementById('email').value.trim());
     const msg = encodeURIComponent(document.getElementById('message').value.trim());
-
     const subject = encodeURIComponent('Noonautics Labs — Website Contact');
     const body = `Name/Company: ${name}%0AEmail: ${email}%0A%0A${msg}`;
     window.location.href = `mailto:contact@noonauticslabs.org?subject=${subject}&body=${body}`;
   });
 
-  // --- i18n dictionary (EN + rewritten PL) ---
   const dict = {
     en: {
       tagline:"R&D • Cell Sim • Bioinformatics",
@@ -492,43 +429,33 @@
     pl: {
       tagline:"B+R • Symulacje komórkowe • Bioinformatyka",
       nav_project:"Projekt", nav_tech:"Technologia", nav_company:"Spółka", nav_team:"Zespół", nav_contact:"Kontakt",
-
       hero_badge:"SiCell — projekt flagowy",
       hero_title:"Symulacje komórek w pełnej skali — zamykamy lukę między krzemem a węglem.",
       hero_lead:"<strong>SiCell</strong> to nasz odważny krok w stronę programowalnej biologii: własne definicje stanów początkowych, modele mechanistyczne i wyszukiwarka do analizy chorób oraz celów farmaceutycznych — tak szybkie i iteracyjne jak rozwój oprogramowania.",
-
       cta_contact:"Skontaktuj się", cta_whitepaper:"Biała księga (wkrótce)",
-
       tech_title:"Technologia",
       tech_intro:"Łączymy dane z kuratorowanych baz i mechanistyczne modele: przekształcamy wiedzę biologiczną w deterministyczne systemy, które działają szybko i łączą się ze sobą jak klocki.",
       tech_point1:"Elastyczne <strong>stany początkowe</strong>: geny, epigenetyka, organella, poziomy białek → dowolny typ komórki (neuron, komórka macierzysta, nowotworowa, zaprojektowana).",
       tech_point2:"Mechanistyczne <strong>modele ODE/grafowe</strong> ze sprzężeniami zwrotnymi — bez bilionów parametrów i kosztownego trenowania.",
       tech_point3:"<strong>Wyszukiwarka</strong> do badania szlaków chorobowych, celów terapeutycznych, apoptozy i efektów leków.",
       tech_point4:"Proste <strong>API i wizualizacje</strong>, które umożliwiają szybkie prototypowanie — jak w inżynierii oprogramowania.",
-
       why_title:"Dlaczego teraz?",
       why_text:"Paradoks: budujemy systemy AI z bilionami parametrów uczonymi od zera, a biologia — mimo ogromnej ilości wiedzy — wciąż zostaje w tyle. Naszym celem jest domknięcie luki między krzemem a komórką i wejście w erę narzędzi emergentnych, które pozwalają pracować iteracyjnie.",
       why_motto:"„Sprawmy, by biologia stała się inżynierią.”",
-
       about_title:"O Noonautics Labs",
       about_legal:"Forma prawna: sp. z o.o. • Kraków (Kraków-Podgórze), Małopolskie",
       about_desc:"Badania i rozwój w zakresie symulacji komórkowych, bioinformatyki i tworzenia narzędzi dla biotechnologii.",
-
       focus_title:"Zakres",
       focus_1:"Symulacje komórek w pełnej skali (mechanistyczne).",
       focus_2:"Pipeline’y bioinformatyczne i synteza wiedzy.",
       focus_3:"Narzędzia deweloperskie dla zespołów biotech.",
-
       team_title:"Zespół", team_affil:"Biofizyka komórkowa i molekularna, UJ",
-
       next_title:"Co budujemy dalej",
       next_1:"Otwarte API do definiowania stanów i sterowania symulacją.",
       next_2:"Interaktywne wizualizacje do eksploracji szlaków biologicznych.",
       next_3:"Biała księga i demo (w przygotowaniu).",
-
       contact_title:"Kontakt", contact_general:"Ogólne", contact_send:"Wyślij", contact_email:"Wyślij e-mail",
       contact_note:"Przygotowujemy materiały konferencyjne. Wkrótce udostępnimy białą księgę i demo.",
-
       partners_title:"Dla partnerów",
       partners_text:"Badanie mechanizmów chorób, odkrywanie nowych celów terapeutycznych i weryfikacja hipotez in-silico. Współpracujmy nad konkretnymi, mechanistycznymi wyzwaniami."
     }
@@ -549,7 +476,6 @@
     try { localStorage.setItem('lang', lang); } catch(e) {}
   }
 
-  // language toggle + persistence + auto-detect
   document.getElementById('lang-en').addEventListener('click', ()=>setLang('en'));
   document.getElementById('lang-pl').addEventListener('click', ()=>setLang('pl'));
   (function initLang(){
@@ -563,208 +489,248 @@
   })();
 </script>
 
-<!-- Animated hero visualization script -->
+<!-- Ambient 3D Graph — pure WebGL (no dependencies) -->
 <script>
-/* === SiCell hero viz: tensors + topology graph + automaton === */
 (() => {
-  const canvas = document.getElementById('viz');
+  const canvas = document.getElementById('viz3d');
   if (!canvas) return;
-  const ctx = canvas.getContext('2d');
+  const gl = canvas.getContext('webgl', {antialias: true, alpha: false, preserveDrawingBuffer:false});
+  if (!gl) return;
 
-  // DPI-aware resize
-  const state = { w: 0, h: 0, dpr: Math.min(2, window.devicePixelRatio || 1) };
-  function resize() {
-    const rect = canvas.getBoundingClientRect();
-    state.w = Math.max(320, rect.width|0);
-    state.h = Math.max(200, rect.height|0);
-    canvas.width = (state.w * state.dpr)|0;
-    canvas.height = (state.h * state.dpr)|0;
-    ctx.setTransform(state.dpr,0,0,state.dpr,0,0);
+  // HiDPI sizing
+  const DPR = Math.min(2, window.devicePixelRatio || 1);
+  function resize(){
+    const r = canvas.getBoundingClientRect();
+    canvas.width = Math.max(640, r.width * DPR) | 0;
+    canvas.height = Math.max(360, r.height * DPR) | 0;
+    gl.viewport(0,0,canvas.width, canvas.height);
   }
   resize(); addEventListener('resize', resize);
 
-  // -------- Tensor background (adjacency-style heatmap) --------
-  const grid = {
-    cols: 48, rows: 20,
-    t: 0.0,
-    sample(i, j, t){
-      // smoothly varying “rank-3 tensor slice”
-      const x = i / this.cols, y = j / this.rows;
-      const a = Math.sin(6.283*(x*2.0 + t*0.15)) * Math.cos(6.283*(y*1.5 - t*0.12));
-      const b = Math.sin(6.283*(x*3.0 - y*0.5 + t*0.07));
-      const c = Math.cos(6.283*(x*0.5 + y*2.0 + t*0.03));
-      return 0.5 + 0.5*(0.55*a + 0.3*b + 0.15*c);
-    }
+  // Minimal mat4 utils
+  const M = {
+    I(){ return [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]; },
+    mul(a,b){
+      const r = new Array(16).fill(0);
+      for(let i=0;i<4;i++)for(let j=0;j<4;j++)for(let k=0;k<4;k++)
+        r[i*4+j]+=a[i*4+k]*b[k*4+j];
+      return r;
+    },
+    perspective(fov, aspect, near, far){
+      const f = 1/Math.tan(fov/2), nf = 1/(near-far);
+      return [f/aspect,0,0,0, 0,f,0,0, 0,0,(far+near)*nf,-1, 0,0,(2*far*near)*nf,0];
+    },
+    lookAt(eye,center,up){
+      const [ex,ey,ez]=eye,[cx,cy,cz]=center,[ux,uy,uz]=up;
+      let zx=ex-cx, zy=ey-cy, zz=ez-cz;
+      const zl = Math.hypot(zx,zy,zz); zx/=zl; zy/=zl; zz/=zl;
+      let xx = uy*zz - uz*zy;
+      let xy = uz*zx - ux*zz;
+      let xz = ux*zy - uy*zx;
+      const xl = Math.hypot(xx,xy,xz); xx/=xl; xy/=xl; xz/=xl;
+      const yx = zy*xz - zz*xy;
+      const yy = zz*xx - zx*xz;
+      const yz = zx*xy - zy*xx;
+      return [
+        xx, yx, zx, 0,
+        xy, yy, zy, 0,
+        xz, yz, zz, 0,
+        -(xx*ex+xy*ey+xz*ez), -(yx*ex+yy*ey+yz*ez), -(zx*ex+zy*ey+zz*ez), 1
+      ];
+    },
   };
 
-  // -------- Topology graph (curved edges + moving packets) --------
-  const N = 18;
-  let nodes = [];
-  function makeNodes(){
-    nodes = Array.from({length:N}, (_,k) => {
-      const theta = (k / N) * Math.PI * 2;
-      const R = Math.min(state.w, state.h) * 0.36;
-      const cx = state.w*0.5 + Math.cos(theta)*R + (Math.random()-0.5)*18;
-      const cy = state.h*0.46 + Math.sin(theta)*R*0.62 + (Math.random()-0.5)*12;
-      return { x:cx, y:cy, r: 5.5 + Math.random()*1.5 };
-    });
-  }
-  makeNodes();
+  // Shaders
+  const vs = `
+  attribute vec3 position;
+  attribute vec3 color;
+  uniform mat4 uProj, uView, uModel;
+  varying vec3 vColor;
+  void main(){
+    vColor = color;
+    gl_Position = uProj * uView * uModel * vec4(position, 1.0);
+    gl_PointSize = 2.5;
+  }`;
+  const fs = `
+  precision mediump float;
+  varying vec3 vColor;
+  void main(){
+    gl_FragColor = vec4(vColor, 1.0);
+  }`;
+  const ps = `
+  precision mediump float;
+  varying vec3 vColor;
+  void main(){
+    // round points
+    vec2 p = gl_PointCoord*2.0-1.0;
+    float d = dot(p,p);
+    float a = smoothstep(1.0, 0.8, d);
+    gl_FragColor = vec4(vColor, a);
+  }`;
 
+  function compile(src, type){
+    const s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s);
+    if(!gl.getShaderParameter(s, gl.COMPILE_STATUS)) { console.error(gl.getShaderInfoLog(s)); }
+    return s;
+  }
+  function program(vsrc, fsrc){
+    const p=gl.createProgram();
+    gl.attachShader(p, compile(vsrc, gl.VERTEX_SHADER));
+    gl.attachShader(p, compile(fsrc, gl.FRAGMENT_SHADER));
+    gl.linkProgram(p);
+    if(!gl.getProgramParameter(p, gl.LINK_STATUS)){ console.error(gl.getProgramInfoLog(p)); }
+    return p;
+  }
+
+  const progLines = program(vs, fs);
+  const progPoints = program(vs.replace('gl_PointSize = 2.5;','gl_PointSize = 3.5;'), ps);
+
+  // Graph data
+  const NODE_COUNT = 260;
+  const nodes = new Float32Array(NODE_COUNT*3);
+  const base = new Float32Array(NODE_COUNT*3);
+  // Scatter nodes on a deformed torus-ish shell
+  for(let i=0;i<NODE_COUNT;i++){
+    const a = Math.random()*Math.PI*2;
+    const b = Math.random()*Math.PI*2;
+    const R = 1.2, r = 0.45 + 0.12*Math.sin(3*a);
+    const x = (R + r*Math.cos(b))*Math.cos(a);
+    const y = (R + r*Math.cos(b))*Math.sin(a);
+    const z = r*Math.sin(b);
+    base[i*3+0]=x; base[i*3+1]=y; base[i*3+2]=z;
+    nodes[i*3+0]=x; nodes[i*3+1]=y; nodes[i*3+2]=z;
+  }
+
+  // Build sparse edges (k-nearest on ring-ish index + a few long jumps)
   const edges = [];
-  for (let i=0;i<N;i++){
-    edges.push([i, (i+1)%N]);
-    if (Math.random()<0.45) edges.push([i, (i+3)%N]);
+  for(let i=0;i<NODE_COUNT;i++){
+    edges.push([i, (i+1)%NODE_COUNT]);
+    if(Math.random()<0.4) edges.push([i, (i+7)%NODE_COUNT]);
+    if(Math.random()<0.08) edges.push([i, (i+Math.floor(40+Math.random()*80))%NODE_COUNT]);
   }
-  const packets = edges.flatMap(([a,b]) => {
-    const n = 1 + (Math.random()<0.5?1:0);
-    return Array.from({length:n}, () => ({
-      a, b, t: Math.random(), speed: 0.25 + Math.random()*0.6
-    }));
-  });
 
-  // -------- Cellular Automaton (Rule 110) ribbon --------
-  const ca = {
-    cols: 240,
-    row: [],
-    y: 0,
-    init() {
-      this.row = Array.from({length:this.cols}, () => 0);
-      this.row[(this.cols/2)|0] = 1;
-      this.y = state.h - 34;
-    },
-    step() {
-      const next = new Array(this.cols).fill(0);
-      // Rule 110 mapping
-      for (let i=0;i<this.cols;i++){
-        const L = this.row[(i-1+this.cols)%this.cols];
-        const C = this.row[i];
-        const R = this.row[(i+1)%this.cols];
-        const n = (L<<2)|(C<<1)|R;
-        next[i] = (n===6||n===5||n===3||n===2||n===1)?1:0;
+  // Buffers: lines
+  const lineVerts = new Float32Array(edges.length*2*3);
+  const lineCols  = new Float32Array(edges.length*2*3);
+  function fillLineBuffers(){
+    for(let e=0;e<edges.length;e++){
+      const [a,b]=edges[e];
+      for(let k=0;k<3;k++){
+        lineVerts[e*6+k]   = nodes[a*3+k];
+        lineVerts[e*6+3+k] = nodes[b*3+k];
       }
-      this.row = next;
-    },
-    draw(ctx){
-      const pw = state.w / this.cols;
-      const py = this.y;
-      for (let i=0;i<this.cols;i++){
-        if (!this.row[i]) continue;
-        ctx.fillStyle = 'rgba(43,212,161,.85)';
-        ctx.fillRect(i*pw, py, Math.ceil(pw), 18);
-      }
-      ctx.fillStyle = 'rgba(255,255,255,.08)';
-      ctx.fillRect(0, py+18, state.w, 1);
-    }
-  };
-  ca.init();
-
-  const c1 = '#1f6feb', c2 = '#2bd4a1';
-
-  function drawTensorBackground(t) {
-    const {cols, rows} = grid;
-    const cw = state.w / cols, ch = (state.h-28) / rows;
-    for (let j=0;j<rows;j++){
-      for (let i=0;i<cols;i++){
-        const v = grid.sample(i, j, t);
-        const rb = Math.floor(16 + 80*v);
-        const gb = Math.floor(120 + 100*v);
-        const bb = Math.floor(180 + 30*v);
-        ctx.fillStyle = `rgba(${rb},${gb},${bb},${0.22 + 0.18*v})`;
-        ctx.fillRect(i*cw, j*ch, Math.ceil(cw)+1, Math.ceil(ch)+1);
-      }
-    }
-    ctx.strokeStyle = 'rgba(255,255,255,.05)';
-    ctx.lineWidth = 1;
-    for (let i=0;i<=cols;i++){ ctx.beginPath(); ctx.moveTo(i*cw,0); ctx.lineTo(i*cw, rows*ch); ctx.stroke(); }
-    for (let j=0;j<=rows;j++){ ctx.beginPath(); ctx.moveTo(0,j*ch); ctx.lineTo(cols*cw, j*ch); ctx.stroke(); }
-  }
-
-  function quadThrough(p0, p1, p2, t){
-    const u = 1 - t;
-    const x = u*u*p0.x + 2*u*t*p1.x + t*t*p2.x;
-    const y = u*u*p0.y + 2*u*t*p1.y + t*t*p2.y;
-    return {x,y};
-  }
-
-  function drawGraph() {
-    ctx.lineWidth = 1.5;
-    for (const [ai,bi] of edges){
-      const a = nodes[ai], b = nodes[bi];
-      const mx = (a.x + b.x)/2, my = (a.y + b.y)/2;
-      const cx = state.w*0.5 + (mx - state.w*0.5)*0.78;
-      const cy = state.h*0.46 + (my - state.h*0.46)*0.78 - 18*Math.sin((ai*13.7+bi*7.3)*0.2);
-      const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
-      grad.addColorStop(0, c1); grad.addColorStop(1, c2);
-      ctx.strokeStyle = grad; ctx.globalAlpha = 0.9;
-      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.quadraticCurveTo(cx, cy, b.x, b.y); ctx.stroke();
-
-      ctx.strokeStyle = 'rgba(31,111,235,.15)';
-      ctx.lineWidth = 4; ctx.globalAlpha = 0.35;
-      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.quadraticCurveTo(cx, cy, b.x, b.y); ctx.stroke();
-      ctx.globalAlpha = 1; ctx.lineWidth = 1.5;
-    }
-
-    for (const p of packets){
-      p.t = (p.t + p.speed*0.0025) % 1;
-      const a = nodes[p.a], b = nodes[p.b];
-      const mx = (a.x + b.x)/2, my = (a.y + b.y)/2;
-      const cx = state.w*0.5 + (mx - state.w*0.5)*0.78;
-      const cy = state.h*0.46 + (my - state.h*0.46)*0.78 - 18*Math.sin((p.a*13.7+p.b*7.3)*0.2);
-      const P = quadThrough(a, {x:cx,y:cy}, b, p.t);
-      ctx.beginPath();
-      ctx.fillStyle = (p.t<0.5)? c1 : c2;
-      ctx.arc(P.x, P.y, 2.4, 0, Math.PI*2);
-      ctx.fill();
-    }
-
-    for (const n of nodes){
-      ctx.beginPath();
-      const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r+8);
-      g.addColorStop(0, 'rgba(43,212,161,.95)');
-      g.addColorStop(1, 'rgba(43,212,161,.0)');
-      ctx.fillStyle = g;
-      ctx.arc(n.x, n.y, n.r+8, 0, Math.PI*2);
-      ctx.fill();
-
-      ctx.beginPath();
-      ctx.fillStyle = '#0b0f16';
-      ctx.arc(n.x, n.y, n.r, 0, Math.PI*2);
-      ctx.fill();
-
-      ctx.strokeStyle = 'rgba(255,255,255,.7)';
-      ctx.lineWidth = 1.25;
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, n.r, 0, Math.PI*2);
-      ctx.stroke();
+      // blue→green gradient per segment
+      lineCols.set([0.12,0.48,0.93], e*6+0);
+      lineCols.set([0.17,0.83,0.63], e*6+3);
     }
   }
+  fillLineBuffers();
 
-  let last = performance.now();
-  function tick(ts){
-    const dt = Math.min(0.1, (ts - last)/1000); last = ts;
-    grid.t += dt;
-    ctx.clearRect(0,0,state.w,state.h);
-
-    drawTensorBackground(grid.t);
-    drawGraph();
-
-    ca.draw(ctx);
-    if (Math.floor(ts/120)%2===0){ ca.step(); }
-
-    const gr = ctx.createLinearGradient(0,0,0,state.h);
-    gr.addColorStop(0,'rgba(11,12,16,.65)');
-    gr.addColorStop(0.2,'rgba(11,12,16,.0)');
-    gr.addColorStop(0.85,'rgba(11,12,16,.0)');
-    gr.addColorStop(1,'rgba(11,12,16,.55)');
-    ctx.fillStyle = gr; ctx.fillRect(0,0,state.w,state.h);
-
-    requestAnimationFrame(tick);
+  function makeBuffer(type, data){
+    const buf = gl.createBuffer();
+    gl.bindBuffer(type, buf);
+    gl.bufferData(type, data, gl.DYNAMIC_DRAW);
+    return buf;
   }
-  requestAnimationFrame(tick);
+  const linePosBuf = makeBuffer(gl.ARRAY_BUFFER, lineVerts);
+  const lineColBuf = makeBuffer(gl.ARRAY_BUFFER, lineCols);
 
-  // Remake nodes on resize for better layout
-  window.addEventListener('resize', () => { makeNodes(); ca.init(); });
+  // Buffers: points
+  const ptPosBuf = makeBuffer(gl.ARRAY_BUFFER, nodes);
+  const ptCol = new Float32Array(NODE_COUNT*3);
+  for(let i=0;i<NODE_COUNT;i++){
+    // subtle mix for points
+    ptCol.set([0.18,0.88,0.69], i*3); // greenish
+  }
+  const ptColBuf = makeBuffer(gl.ARRAY_BUFFER, ptCol);
+
+  function attrib(p, name, buf, size){
+    const loc = gl.getAttribLocation(p, name);
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0);
+  }
+
+  const uProjL = gl.getUniformLocation(progLines, 'uProj');
+  const uViewL = gl.getUniformLocation(progLines, 'uView');
+  const uModelL= gl.getUniformLocation(progLines, 'uModel');
+  const uProjP = gl.getUniformLocation(progPoints, 'uProj');
+  const uViewP = gl.getUniformLocation(progPoints, 'uView');
+  const uModelP= gl.getUniformLocation(progPoints, 'uModel');
+
+  // Animation state
+  let t0 = performance.now();
+  function softNoise(n){ // cheap deterministic-ish noise
+    return Math.sin(n*12.9898)*43758.5453 % 1;
+  }
+
+  function updateNodes(time){
+    const T = time*0.00025;
+    for(let i=0;i<NODE_COUNT;i++){
+      const bx = base[i*3], by = base[i*3+1], bz = base[i*3+2];
+      const wob = 0.06*Math.sin(T*2.0 + i*0.37) + 0.04*Math.cos(T*1.3 + i*1.19);
+      nodes[i*3+0] = bx*(1.0+wob) + 0.05*Math.sin(T*1.7 + i);
+      nodes[i*3+1] = by*(1.0+wob) + 0.05*Math.cos(T*1.3 + i*0.7);
+      nodes[i*3+2] = bz*(1.0+wob) + 0.05*Math.sin(T*1.1 + i*1.1);
+    }
+    // Upload updated positions
+    gl.bindBuffer(gl.ARRAY_BUFFER, ptPosBuf);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, nodes);
+    // Update lines too
+    fillLineBuffers();
+    gl.bindBuffer(gl.ARRAY_BUFFER, linePosBuf);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, lineVerts);
+  }
+
+  function render(){
+    const now = performance.now();
+    const dt = now - t0; t0 = now;
+    const time = now;
+
+    updateNodes(time);
+
+    // Camera path: gentle orbit + dolly
+    const aspect = canvas.width / canvas.height;
+    const proj = M.perspective(45*Math.PI/180, aspect, 0.1, 100.0);
+    const r = 3.0 + 0.25*Math.sin(time*0.0007);
+    const theta = time*0.00018;
+    const eye = [ Math.cos(theta)*r, 0.5*Math.sin(time*0.00023)*1.2, Math.sin(theta)*r ];
+    const view = M.lookAt(eye, [0,0,0], [0,1,0]);
+
+    // Slow model rotation (feels like world moves around you)
+    const ang = time*0.0003;
+    const c = Math.cos(ang), s = Math.sin(ang);
+    const model = [ c,0,s,0, 0,1,0,0, -s,0,c,0, 0,0,0,1 ];
+
+    // Clear with subtle vignette-like color
+    gl.enable(gl.DEPTH_TEST);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.clearColor(0.045,0.055,0.085,1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    // Draw lines
+    gl.useProgram(progLines);
+    gl.uniformMatrix4fv(uProjL,false,new Float32Array(proj));
+    gl.uniformMatrix4fv(uViewL,false,new Float32Array(view));
+    gl.uniformMatrix4fv(uModelL,false,new Float32Array(model));
+    attrib(progLines, 'position', linePosBuf, 3);
+    attrib(progLines, 'color',    lineColBuf, 3);
+    gl.lineWidth(1);
+    gl.drawArrays(gl.LINES, 0, lineVerts.length/3);
+
+    // Draw points (with round sprites)
+    gl.useProgram(progPoints);
+    gl.uniformMatrix4fv(uProjP,false,new Float32Array(proj));
+    gl.uniformMatrix4fv(uViewP,false,new Float32Array(view));
+    gl.uniformMatrix4fv(uModelP,false,new Float32Array(model));
+    attrib(progPoints, 'position', ptPosBuf, 3);
+    attrib(progPoints, 'color',    ptColBuf, 3);
+    gl.drawArrays(gl.POINTS, 0, NODE_COUNT);
+
+    requestAnimationFrame(render);
+  }
+  requestAnimationFrame(render);
 })();
 </script>
 </body>
