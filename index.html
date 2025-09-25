@@ -128,7 +128,8 @@
 
     /* FIXED full-bleed background canvas + vignette + fade */
     .hero-bg{ position:fixed; inset:0; z-index:1; pointer-events:none; }
-    .hero-bg canvas{display:block; width:100%; height:100%; position:absolute; inset:0;}
+    .hero-bg canvas{display:block; width:100%; height:100%; position:absolute; inset:0; opacity:1; transition:opacity .35s ease;}
+    .hero-bg.paused canvas{opacity:0;}
     #viz3d{ position:absolute; inset:0; }
     #vizLabels{ position:absolute; inset:0; }
     .hero-bg::after{
@@ -575,22 +576,71 @@
 
   let animationActive = true;
   let motionDisabled = false;
+  const heroSection = canvas.closest('.hero');
+  const heroBg = heroSection ? heroSection.querySelector('.hero-bg') : null;
+  let heroVisible = true;
+  let heroVisibilityKnown = !heroSection;
+  let heroLastVisible = performance.now();
+  let heroGraceTimeout = 0;
+  const HERO_INACTIVE_GRACE = 1200;
+  function heroEffectivelyVisible(){
+    if (!heroVisibilityKnown) return true;
+    if (heroVisible) return true;
+    return (performance.now() - heroLastVisible) < HERO_INACTIVE_GRACE;
+  }
+  function clearHeroGraceTimeout(){
+    if (!heroGraceTimeout) return;
+    clearTimeout(heroGraceTimeout);
+    heroGraceTimeout = 0;
+  }
+  function scheduleHeroGraceTimeout(){
+    if (heroGraceTimeout) return;
+    heroGraceTimeout = setTimeout(() => {
+      heroGraceTimeout = 0;
+      updateAnimationActive();
+    }, HERO_INACTIVE_GRACE);
+  }
   function setAnimationActive(active){
     if (active === animationActive) return;
     animationActive = active;
     const now = performance.now();
     lastTS = now;
     lastPulse = now;
+    if (heroBg){
+      heroBg.classList.toggle('paused', !active);
+    }
   }
   function updateAnimationActive(){
     if (motionDisabled){
       setAnimationActive(false);
       return;
     }
-    const shouldRun = document.visibilityState !== 'hidden';
+    const pageVisible = document.visibilityState !== 'hidden';
+    const shouldRun = pageVisible && heroEffectivelyVisible();
     setAnimationActive(shouldRun);
   }
   document.addEventListener('visibilitychange', updateAnimationActive);
+
+  if (heroSection && 'IntersectionObserver' in window){
+    const heroObserver = new IntersectionObserver((entries) => {
+      for (const entry of entries){
+        if (entry.target !== heroSection) continue;
+        heroVisibilityKnown = true;
+        const currentlyVisible = entry.isIntersecting && entry.intersectionRatio > 0;
+        if (currentlyVisible){
+          heroVisible = true;
+          heroLastVisible = performance.now();
+          clearHeroGraceTimeout();
+          updateAnimationActive();
+        } else {
+          heroVisible = false;
+          clearHeroGraceTimeout();
+          scheduleHeroGraceTimeout();
+        }
+      }
+    }, { rootMargin: '-12% 0px -32%', threshold: [0, 0.05, 0.15] });
+    heroObserver.observe(heroSection);
+  }
 
   /* Matrices */
   const M = {
