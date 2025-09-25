@@ -549,11 +549,12 @@
   const overlay = document.getElementById('vizLabels');
   if (!canvas) return;
   const gl = canvas.getContext('webgl', {
-    antialias:true, alpha:false, premultipliedAlpha:true, powerPreference:'high-performance'
+    antialias:true, alpha:false, premultipliedAlpha:true, powerPreference:'default'
   });
   if (!gl) return;
   const overlayCtx = overlay ? overlay.getContext('2d') : null;
-
+  let lastPulse = performance.now();
+  let lastTS = performance.now();
   const DPR = Math.min(2, window.devicePixelRatio || 1);
   function resize(){
     const w = Math.max(360, innerWidth);
@@ -571,6 +572,25 @@
     }
   }
   resize(); addEventListener('resize', resize);
+
+  let animationActive = true;
+  let motionDisabled = false;
+  function setAnimationActive(active){
+    if (active === animationActive) return;
+    animationActive = active;
+    const now = performance.now();
+    lastTS = now;
+    lastPulse = now;
+  }
+  function updateAnimationActive(){
+    if (motionDisabled){
+      setAnimationActive(false);
+      return;
+    }
+    const shouldRun = document.visibilityState !== 'hidden';
+    setAnimationActive(shouldRun);
+  }
+  document.addEventListener('visibilitychange', updateAnimationActive);
 
   /* Matrices */
   const M = {
@@ -985,13 +1005,17 @@
   }
 
   /* Physics + pulses */
-  let timeScale = 0.03, timeScaleTarget = 0.03;
+  const BASE_TIME_SCALE = 0.03;
+  const BASE_PULSE_INTERVAL = 5200;
+  const BASE_REWIRE_INTERVAL = 8200;
+  const PAUSE_INTERVAL = 1e9;
+
+  let timeScale = BASE_TIME_SCALE, timeScaleTarget = BASE_TIME_SCALE;
   const pulses = []; // {i, t0}
   const nodePulse = new Float32Array(N);
   const PULSE_SPEED = 0.18; const PULSE_FADE = 1.9;
 
-  let lastPulse = performance.now();
-  let pulseInterval = 5200, pulseIntervalTarget = 5200;
+  let pulseInterval = BASE_PULSE_INTERVAL, pulseIntervalTarget = BASE_PULSE_INTERVAL;
 
   function spawnPulse(){
     const deg = degree();
@@ -1024,7 +1048,7 @@
   }
 
   let lastRewire = performance.now();
-  let rewireInterval = 8200, rewireIntervalTarget = 8200;
+  let rewireInterval = BASE_REWIRE_INTERVAL, rewireIntervalTarget = BASE_REWIRE_INTERVAL;
 
   function rewire(){
     const now = performance.now();
@@ -1218,6 +1242,7 @@
   const uLinesLoc  = { uProj: uLines.uProj,  uView: uLines.uView,  uModel: uLines.uModel };
 
   const parsedLabelCache = new Map();
+  const textWidthCache = new Map();
   function parseLabelSource(raw){
     if (!raw) return {lines:[], usesBrackets:false};
     const cached = parsedLabelCache.get(raw);
@@ -1262,9 +1287,13 @@
     ctx.stroke();
   }
 
-  let lastTS = performance.now();
   function frame(ts){
-    const rawDt = Math.min(40, ts - lastTS); lastTS = ts;
+    const rawDt = Math.min(40, ts - lastTS);
+    lastTS = ts;
+    if (!animationActive){
+      requestAnimationFrame(frame);
+      return;
+    }
     const dt = (rawDt/1000);
 
     // smooth scroll & targets to avoid flicker
@@ -1337,6 +1366,7 @@
       const textColor = 'rgba(255,255,255,0.95)';
       const bracketColor = 'rgba(255,255,255,0.72)';
       const nowSec = now * 0.001;
+      const skipMargin = 80 * DPR;
 
       for (let i=0;i<N;i++){
         const idx = i*3;
@@ -1372,12 +1402,19 @@
 
         const raw = labelText[i];
         if (!raw) continue;
+        if (screenX < -skipMargin || screenX > overlay.width + skipMargin) continue;
+        if (screenY < -skipMargin || screenY > overlay.height + skipMargin) continue;
         const parsed = parseLabelSource(raw);
         const lines = parsed.lines;
         if (!lines.length) continue;
         let textWidth = 0;
         for (const line of lines){
-          const w = overlayCtx.measureText(line).width;
+          const cacheKey = `${fontSizePx}|${line}`;
+          let w = textWidthCache.get(cacheKey);
+          if (w === undefined){
+            w = overlayCtx.measureText(line).width;
+            textWidthCache.set(cacheKey, w);
+          }
           if (w>textWidth) textWidth = w;
         }
         const textHeight = lines.length * fontSizePx + (lines.length-1)*lineGap;
@@ -1425,10 +1462,32 @@
   }
   requestAnimationFrame(frame);
 
-  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-    timeScale = 0.0; timeScaleTarget = 0.0;
-    rewireInterval = rewireIntervalTarget = 1e9;
-    pulseInterval = pulseIntervalTarget = 1e9;
+  function applyReducedMotion(enabled){
+    motionDisabled = enabled;
+    if (enabled){
+      timeScale = timeScaleTarget = 0.0;
+      rewireInterval = rewireIntervalTarget = PAUSE_INTERVAL;
+      pulseInterval = pulseIntervalTarget = PAUSE_INTERVAL;
+      setAnimationActive(false);
+    } else {
+      timeScale = timeScaleTarget = BASE_TIME_SCALE;
+      rewireInterval = rewireIntervalTarget = BASE_REWIRE_INTERVAL;
+      pulseInterval = pulseIntervalTarget = BASE_PULSE_INTERVAL;
+      updateAnimationActive();
+    }
+  }
+
+  const reduceMotionQuery = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  if (reduceMotionQuery){
+    const handleReduceMotionChange = (event) => applyReducedMotion(event.matches);
+    if (typeof reduceMotionQuery.addEventListener === 'function'){
+      reduceMotionQuery.addEventListener('change', handleReduceMotionChange);
+    } else if (typeof reduceMotionQuery.addListener === 'function'){
+      reduceMotionQuery.addListener(handleReduceMotionChange);
+    }
+    applyReducedMotion(reduceMotionQuery.matches);
+  } else {
+    updateAnimationActive();
   }
 })();
 </script>
