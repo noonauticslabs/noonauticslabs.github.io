@@ -838,6 +838,9 @@
   const labelOffset = new Float32Array(N*3);
   const labelFreq = new Float32Array(N);
   const labelPhase = new Float32Array(N);
+  const centerMass = new Float32Array(3);
+  const smoothedCenter = new Float32Array(3);
+  let centerReady = false;
 
   const R = 1.7, r = 0.55;                      // torus major/minor radii
   const TORUS_K = 1.4;                           // surface pull strength
@@ -956,6 +959,29 @@
     gl.bufferSubData(gl.ARRAY_BUFFER, 0, edgePulse.subarray(0, edgeCount*2));
     gl.bindBuffer(gl.ARRAY_BUFFER, lineAlphaBuf);
     gl.bufferSubData(gl.ARRAY_BUFFER, 0, edgeAlpha.subarray(0, edgeCount*2));
+  }
+
+  function updateCenterOfMass(dt){
+    let sx = 0, sy = 0, sz = 0;
+    for (let i=0;i<N;i++){
+      const idx = i*3;
+      sx += positions[idx];
+      sy += positions[idx+1];
+      sz += positions[idx+2];
+    }
+    const invN = 1 / N;
+    centerMass[0] = sx * invN;
+    centerMass[1] = sy * invN;
+    centerMass[2] = sz * invN;
+    if (!centerReady){
+      smoothedCenter.set(centerMass);
+      centerReady = true;
+      return;
+    }
+    const blend = Math.min(1, 0.08 + dt * 5.5);
+    smoothedCenter[0] += (centerMass[0] - smoothedCenter[0]) * blend;
+    smoothedCenter[1] += (centerMass[1] - smoothedCenter[1]) * blend;
+    smoothedCenter[2] += (centerMass[2] - smoothedCenter[2]) * blend;
   }
 
   /* Physics + pulses */
@@ -1139,24 +1165,49 @@
   /* Camera: inside torus, spin + forward; phase is scroll-scrubbed + gentle autoplay */
   let autoPhase = 0.0;
   function getCamera(dt){
-    autoPhase += dt * 0.18; // steady autopilot drift
-    const spiral = scrollProg * 0.45;
+    const aspect = canvas.height === 0 ? 1 : canvas.width / canvas.height;
+    const portraitStrength = Math.max(0, Math.min(1, (1.25 - aspect) * 1.6));
+    autoPhase += dt * (0.18 + 0.04*portraitStrength);
+
+    const spiral = scrollProg * (0.45 + 0.22*portraitStrength);
     const phase = autoPhase + spiral;
-    const twist = phase*1.08 + 1.1;
-    const cx = R*Math.cos(phase), cy = R*Math.sin(phase), cz = 0;
-    const tx = -Math.sin(phase), ty = Math.cos(phase), tz = 0;
-    const radial = 0.16 + 0.015*Math.sin(autoPhase*0.8);
+    const twist = phase * (1.08 + 0.12*portraitStrength) + 1.1;
+
+    const tx = -Math.sin(phase);
+    const ty = Math.cos(phase);
+
+    const comX = smoothedCenter[0];
+    const comY = smoothedCenter[1];
+    const comZ = smoothedCenter[2];
+
+    const cx = comX + R*Math.cos(phase);
+    const cy = comY + R*Math.sin(phase);
+    const radialBase = 0.16 - 0.03*portraitStrength;
+    const radial = radialBase + 0.015*Math.sin(autoPhase*0.8);
     const ex = cx + radial*Math.cos(twist);
     const ey = cy + radial*Math.sin(twist);
-    const ez = -0.5 + Math.sin(autoPhase*0.45)*0.05;
-    const forwardPush = 1.16 + 0.04*Math.sin(autoPhase*0.3);
-    const upDrift = Math.sin(phase*0.5)*0.22;
-    const center = [
+    const ez = comZ - 0.42 - 0.08*portraitStrength + Math.sin(autoPhase*0.45)*0.05;
+
+    const forwardPush = 1.16 + 0.58*portraitStrength + 0.04*Math.sin(autoPhase*0.3);
+    const upDrift = Math.sin(phase*0.5)*(0.22 + 0.18*portraitStrength) + 0.18*portraitStrength;
+
+    const lookAhead = [
       ex + tx*forwardPush,
       ey + ty*forwardPush,
-      ez + upDrift
+      comZ + upDrift
     ];
-    return {eye:[ex,ey,ez], center, spin: phase*0.18};
+    const focusBlend = 0.3 + 0.45*portraitStrength;
+    const center = [
+      lookAhead[0]*(1 - focusBlend) + comX*focusBlend,
+      lookAhead[1]*(1 - focusBlend) + comY*focusBlend,
+      lookAhead[2]*(1 - focusBlend) + (comZ + upDrift*0.6)*focusBlend
+    ];
+
+    return {
+      eye:[ex, ey, ez],
+      center,
+      spin: phase * (0.18 + 0.04*portraitStrength)
+    };
   }
 
   /* Points need an alpha of 1 (constant), edges get per-vertex alpha */
@@ -1229,6 +1280,7 @@
     updatePulses(now);
 
     step(simDt);
+    updateCenterOfMass(dt);
     rewire();
     fadeEdges(dt);
     updateLineVerts();
