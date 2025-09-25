@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SiCell — by Noonautics Labs</title>
+  <title>SiCell - by Noonautics Labs</title>
   <meta name="description" content="SiCell is Noonautics Labs’ flagship project: full human cell simulations and a search engine for disease mechanisms and pharma targets." />
   <meta name="theme-color" content="#0b0c10" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%231f6feb'/%3E%3Cstop offset='100%25' stop-color='%232bd4a1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='44' fill='url(%23g)'/%3E%3C/svg%3E" />
@@ -72,6 +72,11 @@
       .menu.open{display:flex}
       .menu .lang{align-self:stretch; justify-content:space-between}
     }
+    @media (max-width:720px){
+      .hero{padding: calc(var(--header-h) + 6px) 0 14svh;}
+      .hero-copy{margin-top: clamp(18px, 7vh, 48px);}
+      .lead{font-size:clamp(1rem, 4.6vw, 1.18rem);}
+    }
 
     /* HERO */
     .hero{
@@ -82,21 +87,25 @@
     }
     .hero::before{
       content:""; position:absolute; inset:0; z-index:2; pointer-events:none;
-      background:linear-gradient(180deg, rgba(8,11,18,.78) 0%, rgba(8,11,18,.32) 42%, rgba(8,11,18,.78) 100%);
+      background:
+        radial-gradient(620px 360px at 50% 18%, rgba(8,11,18,.32), rgba(8,11,18,0) 68%),
+        linear-gradient(180deg, rgba(8,11,18,.28), rgba(8,11,18,.04) 60%, rgba(8,11,18,.3));
     }
     .hero .container{ position:relative; z-index:3; max-width: var(--container); }
-    .hero .stack{
-      display:flex; flex-direction:column; gap:10px;
-      margin-top: min(8vh, 80px);
-      max-width: 860px;
-      padding: clamp(18px, 3vw, 32px);
-      border-radius: 28px;
-      background: rgba(9,13,22,.58);
-      border:1px solid rgba(78,110,166,.28);
-      box-shadow: 0 24px 60px rgba(4,6,14,.55);
-      backdrop-filter: blur(14px);
+    .hero-copy{
+      display:flex; flex-direction:column; gap:12px;
+      margin-top: clamp(32px, 9vh, 72px);
+      max-width: 860px; position:relative;
+      padding: clamp(12px, 3.6vw, 24px);
+      isolation:isolate;
     }
-    .hero .stack > *{text-shadow:0 8px 24px rgba(0,0,0,.55);}
+    .hero-copy::before{
+      content:""; position:absolute;
+      inset: clamp(-40px, -6.5vw, -22px) clamp(-34px, -5.6vw, -18px);
+      background: radial-gradient(ellipse at center, rgba(4,7,14,.88) 0%, rgba(4,7,14,.54) 42%, rgba(4,7,14,.16) 72%, transparent 100%);
+      filter: blur(30px); opacity:.95; pointer-events:none; z-index:-1;
+    }
+    .hero-copy > *{text-shadow:0 18px 58px rgba(0,0,0,.9), 0 0 64px rgba(3,12,26,.9);}
 
     /* Badge = true fit-content + nowrap */
     .badge{
@@ -186,12 +195,25 @@
     input, textarea{width:100%; padding:14px 16px; border-radius:12px; border:1px solid var(--border); background:#0f1220; color: var(--text)}
     textarea{min-height:140px; resize:vertical}
 
-    footer{background:#0a0c12; padding:42px 0; border-top:1px solid var(--border); color:#muted; font-size:.95rem}
-    .cols{width:var(--container); margin:0 auto; padding:0 8px; display:grid; gap:20px; grid-template-columns: 1.3fr 1fr 1fr 1fr}
+    footer{background:#0a0c12AA; padding:42px 0; border-top:1px solid var(--border); color:#muted; font-size:.95rem; position:relative;}
+    footer, footer *{text-shadow:0 18px 52px rgba(0,0,0,.86), 0 0 40px rgba(2,6,14,.7);}
+    .cols{
+      width:var(--container); margin:0 auto; padding: clamp(16px, 4vw, 28px);
+      display:grid; gap:20px; grid-template-columns: 1.3fr 1fr 1fr 1fr;
+      position:relative; isolation:isolate;
+    }
+    .cols::before{
+      content:""; position:absolute;
+      inset: clamp(-28px, -5.4vw, -16px) clamp(-24px, -4.6vw, -14px);
+      background: radial-gradient(ellipse at center, rgba(5,7,12,.84) 0%, rgba(5,7,12,.46) 44%, rgba(5,7,12,.16) 72%, transparent 100%);
+      filter: blur(26px); opacity:.9; pointer-events:none; z-index:-1;
+    }
     @media (max-width:980px){ .cols{grid-template-columns:1fr 1fr} }
     @media (max-width:640px){ .cols{grid-template-columns:1fr} }
     .pill{display:inline-block; padding:6px 10px; border:1px solid var(--border); border-radius:999px; color:#d6deed}
-    .footer-links a{display:block; margin:6px 0; color:#cfd6e6; opacity:.9}
+    .footer-links a{display:block; margin:6px 0; color:#cfd6e6; opacity:.9;
+      text-shadow:0 14px 46px rgba(0,0,0,.8), 0 0 36px rgba(4,10,22,.72);
+    }
     .footer-links a:hover{opacity:1; text-decoration:none}
     .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0}
 
@@ -238,13 +260,13 @@
     </div>
     <div class="hero-fade" aria-hidden="true"></div>
     <div class="container">
-      <div class="stack">
-        <span class="badge"><span class="sr-only">Project: </span><span data-i18n="hero_badge">SiCell — Flagship Project</span></span>
-        <h1 data-i18n="hero_title">Full human cell simulations — closing the gap between silicon and carbon.</h1>
+      <div class="hero-copy">
+        <span class="badge"><span class="sr-only">Project: </span><span data-i18n="hero_badge">SiCell - Flagship Project</span></span>
+        <h1 data-i18n="hero_title">Full human cell simulations - closing the gap between silicon and carbon.</h1>
         <p class="lead" data-i18n="hero_lead">
           <strong>SiCell</strong> is our audacious step toward programmable biology:
           universal initial-state definitions, mechanistic models, and a search engine
-          to explore disease mechanisms and pharma targets — as fast and iterative as software.
+          to explore disease mechanisms and pharma targets - as fast and iterative as software.
         </p>
         <div class="cta">
           <a class="btn" href="#contact" role="button" aria-label="Contact us" data-i18n="cta_contact">Contact us</a>
@@ -273,8 +295,8 @@
       <div class="card">
         <h2 data-i18n="why_title">Why now?</h2>
         <p class="muted" data-i18n="why_text">
-          It’s a paradox: we run trillion-parameter AIs trained from scratch, yet biology —
-          where we already know so much — trails behind. We aim to close the gap between silicon on CPUs and carbon in cells, bringing biology into the era of emergent, iterative tooling.
+          It’s a paradox: we run trillion-parameter AIs trained from scratch, yet biology -
+          where we already know so much - trails behind. We aim to close the gap between silicon on CPUs and carbon in cells, bringing biology into the era of emergent, iterative tooling.
         </p>
         <p class="mono" data-i18n="why_motto">“Make biology buildable.”</p>
       </div>
@@ -306,7 +328,7 @@
     <div class="section-inner">
       <div class="card">
         <h2 data-i18n="team_title">Team</h2>
-        <p><strong>Marcel Tomaszek</strong> — <span data-i18n="team_affil">Cellular &amp; Molecular Biophysics, UJ</span></p>
+        <p><strong>Marcel Tomaszek</strong> - <span data-i18n="team_affil">Cellular &amp; Molecular Biophysics, UJ</span></p>
         <p><a href="mailto:marcel.tomaszek@student.uj.edu.pl">marcel.tomaszek@student.uj.edu.pl</a></p>
       </div>
       <div class="card">
@@ -345,7 +367,7 @@
             <button class="btn" type="submit" data-i18n="contact_send">Send</button>
             <a class="btn ghost" href="mailto:contact@noonauticslabs.org" data-i18n="contact_email">Email instead</a>
           </div>
-          <p class="muted" style="margin-top:8px">No backend needed — this opens your email client with the details prefilled.</p>
+          <p class="muted" style="margin-top:8px">No backend needed - this opens your email client with the details prefilled.</p>
         </form>
 
         <p class="muted" data-i18n="contact_note" style="margin-top:10px">We’re preparing our conference materials. A whitepaper and demo access will follow.</p>
@@ -366,7 +388,7 @@
   <div class="cols">
     <div>
       <span class="pill">SiCell</span>
-      <div style="margin-top:8px">© 2025 Noonautics Labs sp. z o.o. — Kraków, Poland</div>
+      <div style="margin-top:8px">© 2025 Noonautics Labs sp. z o.o. - Kraków, Poland</div>
     </div>
     <div class="footer-links">
       <div class="muted">Company</div>
@@ -401,12 +423,22 @@
       hamb.setAttribute('aria-expanded', String(open));
       if (open) header.classList.remove('hide');
     });
+    const closeMenu = () => {
+      if (!menu.classList.contains('open')) return;
+      menu.classList.remove('open');
+      hamb.setAttribute('aria-expanded', 'false');
+    };
     for (const link of menu.querySelectorAll('a[href^="#"]')){
-      link.addEventListener('click', () => {
-        menu.classList.remove('open');
-        hamb.setAttribute('aria-expanded', 'false');
-      });
+      link.addEventListener('click', closeMenu);
     }
+    document.addEventListener('click', (evt) => {
+      if (!menu.classList.contains('open')) return;
+      const target = evt.target;
+      if (target === hamb || hamb.contains(target)) return;
+      if (menu.contains(target)) return;
+      closeMenu();
+    });
+    window.addEventListener('resize', closeMenu);
   }
 
   let lastY = window.scrollY, ticking = false;
@@ -434,7 +466,7 @@
     const name = encodeURIComponent(document.getElementById('name').value.trim());
     const email = encodeURIComponent(document.getElementById('email').value.trim());
     const msg = encodeURIComponent(document.getElementById('message').value.trim());
-    const subject = encodeURIComponent('Noonautics Labs — Website Contact');
+    const subject = encodeURIComponent('Noonautics Labs - Website Contact');
     const body = `Name/Company: ${name}%0AEmail: ${email}%0A%0A${msg}`;
     window.location.href = `mailto:contact@noonauticslabs.org?subject=${subject}&body=${body}`;
   });
@@ -444,9 +476,9 @@
     en: {
       tagline:"R&D • Cell Sim • Bioinformatics",
       nav_project:"Project", nav_tech:"Technology", nav_company:"Company", nav_team:"Team", nav_contact:"Contact",
-      hero_badge:"SiCell — Flagship Project",
-      hero_title:"Full human cell simulations — closing the gap between silicon and carbon.",
-      hero_lead:"<strong>SiCell</strong> is our audacious step toward programmable biology: universal initial-state definitions, mechanistic models, and a search engine to explore disease mechanisms and pharma targets — as fast and iterative as software.",
+      hero_badge:"SiCell - Flagship Project",
+      hero_title:"Full human cell simulations - closing the gap between silicon and carbon.",
+      hero_lead:"<strong>SiCell</strong> is our audacious step toward programmable biology: universal initial-state definitions, mechanistic models, and a search engine to explore disease mechanisms and pharma targets - as fast and iterative as software.",
       cta_contact:"Contact us", cta_whitepaper:"Whitepaper (soon)",
       tech_title:"Technology",
       tech_intro:"From curated databases to mechanistic graphs: we synthesize structured knowledge into deterministic systems that run fast and compose cleanly.",
@@ -454,7 +486,7 @@
       tech_point2:"Mechanistic <strong>ODE/graph models</strong> with feedback loops; no trillion-param training needed.",
       tech_point3:"<strong>Search engine</strong> to explore disease pathways, targets, apoptosis routes, and drug effects.",
       tech_point4:"Simple <strong>APIs & visuals</strong> for rapid prototyping, like software.",
-      why_title:"Why now?", why_text:"It’s a paradox: we run trillion-parameter AIs trained from scratch, yet biology — where we already know so much — trails behind. We aim to close the gap between silicon on CPUs and carbon in cells, bringing biology into the era of emergent, iterative tooling.",
+      why_title:"Why now?", why_text:"It’s a paradox: we run trillion-parameter AIs trained from scratch, yet biology - where we already know so much - trails behind. We aim to close the gap between silicon on CPUs and carbon in cells, bringing biology into the era of emergent, iterative tooling.",
       why_motto:"“Make biology buildable.”",
       about_title:"About Noonautics Labs", about_legal:"Legal form: sp. z o.o. • Kraków (Kraków-Podgórze), Małopolskie",
       about_desc:"BADANIA I ROZWÓJ W ZAKRESIE SYMULACJI KOMÓRKOWYCH, BIOINFORMATYKI I TWORZENIA NARZĘDZI DLA BIOTECHNOLOGII.",
@@ -468,11 +500,11 @@
     pl: {
       tagline:"B+R • Symulacje komórkowe • Bioinformatyka",
       nav_project:"Projekt", nav_tech:"Technologia", nav_company:"Spółka", nav_team:"Zespół", nav_contact:"Kontakt",
-      hero_badge:"SiCell — projekt flagowy",
-      hero_title:"Symulacje komórek w pełnej skali — zamykamy lukę między krzemem a węglem.",
+      hero_badge:"SiCell - projekt flagowy",
+      hero_title:"Symulacje komórek w pełnej skali - zamykamy lukę między krzemem a węglem.",
       hero_lead:"<strong>SiCell</strong> to nasz odważny krok w stronę programowalnej biologii: definicje stanów początkowych, modele mechanistyczne i wyszukiwarka do analizy mechanizmów chorób oraz celów farmaceutycznych.",
       cta_contact:"Skontaktuj się", cta_whitepaper:"Biała księga (wkrótce)",
-      tech_title:"Technologia", tech_intro:"Od kuratorowanych baz do modeli mechanistycznych — szybkie i komponowalne systemy.",
+      tech_title:"Technologia", tech_intro:"Od kuratorowanych baz do modeli mechanistycznych - szybkie i komponowalne systemy.",
       tech_point1:"Elastyczne <strong>stany początkowe</strong> → dowolny typ komórki.",
       tech_point2:"<strong>Modele ODE/grafowe</strong> ze sprzężeniami zwrotnymi.",
       tech_point3:"<strong>Wyszukiwarka</strong> szlaków i efektów leków.",
@@ -569,18 +601,131 @@
     };
   }
 
-  function drawBadge(ctx, x, y, w, h, r){
-    ctx.beginPath();
-    ctx.moveTo(x+r, y);
-    ctx.lineTo(x+w-r, y);
-    ctx.quadraticCurveTo(x+w, y, x+w, y+r);
-    ctx.lineTo(x+w, y+h-r);
-    ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
-    ctx.lineTo(x+r, y+h);
-    ctx.quadraticCurveTo(x, y+h, x, y+h-r);
-    ctx.lineTo(x, y+r);
-    ctx.quadraticCurveTo(x, y, x+r, y);
-    ctx.closePath();
+  function weightedPick(weights){
+    const total = weights.reduce((sum, w) => sum + w, 0);
+    let r = Math.random() * total;
+    for (let i=0; i<weights.length; i++){
+      r -= weights[i];
+      if (r <= 0) return i;
+    }
+    return weights.length - 1;
+  }
+
+  function makeBracketedRows(rows){
+    const last = rows.length - 1;
+    return rows.map((row, idx) => {
+      const left = idx === 0 ? '⎡' : idx === last ? '⎣' : '⎢';
+      const right = idx === 0 ? '⎤' : idx === last ? '⎦' : '⎥';
+      return `${left}${row}${right}`;
+    }).join('\n');
+  }
+
+  function buildColumn(entries){
+    return makeBracketedRows(entries);
+  }
+
+  function buildMatrix(rows){
+    return makeBracketedRows(rows.map((row) => row.join(' ')));
+  }
+
+  function sample(pool){
+    return pool[(Math.random() * pool.length) | 0];
+  }
+
+  const columnScalars = ['0', '1', '-1', '2', '-2', '3', '-3', 'x', 'y', 'z', 'λ', 'μ', 'σ', 'κ'];
+  const rowSymbols = ['ẋ', 'ẏ', 'ż', 'p', 'q', 'r', 'ω', 'θ', 'φ', 'ψ', 'μ', 'ν', '0', '1'];
+  const gradSymbols = ['∂f/∂x', '∂f/∂y', '∂f/∂z', '∂g/∂x', '∂g/∂y', '∂g/∂z'];
+
+  const smallMatrixTemplates = [
+    buildMatrix([
+      ['∂²f/∂x²', '∂²f/∂x∂y'],
+      ['∂²f/∂y∂x', '∂²f/∂y²']
+    ]),
+    buildMatrix([
+      ['∂f/∂x', '∂f/∂y'],
+      ['∂g/∂x', '∂g/∂y'],
+      ['∂h/∂x', '∂h/∂y']
+    ]),
+    buildMatrix([
+      ['1', '0', '0'],
+      ['0', 'cosθ', '-sinθ']
+    ]),
+    buildMatrix([
+      ['0', '1'],
+      ['-1', '0'],
+      ['0', 'κ']
+    ])
+  ];
+
+  const mediumMatrixTemplates = [
+    buildMatrix([
+      ['∂²Φ/∂x²', '∂²Φ/∂x∂y', '∂²Φ/∂x∂z'],
+      ['∂²Φ/∂y∂x', '∂²Φ/∂y²', '∂²Φ/∂y∂z'],
+      ['∂²Φ/∂z∂x', '∂²Φ/∂z∂y', '∂²Φ/∂z²']
+    ]),
+    buildMatrix([
+      ['2k', '0', '0'],
+      ['0', 'κ₁', '-ω'],
+      ['0', 'ω', 'κ₂']
+    ]),
+    buildMatrix([
+      ['1', '0', '0'],
+      ['0', '1', '0'],
+      ['0', '0', 'γ']
+    ])
+  ];
+
+  const largeMatrixTemplates = [
+    buildMatrix([
+      ['∂²𝓛/∂x²', '∂²𝓛/∂x∂y', '∂²𝓛/∂x∂z', '0'],
+      ['∂²𝓛/∂y∂x', '∂²𝓛/∂y²', '∂²𝓛/∂y∂z', '0'],
+      ['∂²𝓛/∂z∂x', '∂²𝓛/∂z∂y', '∂²𝓛/∂z²', '0'],
+      ['0', '0', '0', '1']
+    ]),
+    buildMatrix([
+      ['∂²Ψ/∂x²', '∂²Ψ/∂x∂y', '∂²Ψ/∂x∂z'],
+      ['∂²Ψ/∂y∂x', '∂²Ψ/∂y²', '∂²Ψ/∂y∂z'],
+      ['∂²Ψ/∂z∂x', '∂²Ψ/∂z∂y', '∂²Ψ/∂z²'],
+      ['∂Ψ/∂x', '∂Ψ/∂y', '∂Ψ/∂z'],
+      ['ΔΨ', '0', 'κ']
+    ])
+  ];
+
+  function randomColumnVector(){
+    const lengths = [3, 4, 5, 6];
+    const weights = [1, 2, 3, 5];
+    const len = lengths[weightedPick(weights)];
+    const entries = [];
+    for (let i=0;i<len;i++){
+      entries.push(sample(columnScalars));
+    }
+    return buildColumn(entries);
+  }
+
+  function randomRowVector(){
+    const lengths = [3, 4, 5];
+    const weights = [4, 2, 1];
+    const len = lengths[weightedPick(weights)];
+    const entries = [];
+    for (let i=0;i<len;i++){
+      const useGrad = Math.random() < 0.25;
+      entries.push(useGrad ? sample(gradSymbols) : sample(rowSymbols));
+    }
+    return `[${entries.join(' ')}]`;
+  }
+
+  function randomMatrix(){
+    const roll = Math.random();
+    if (roll < 0.72) return sample(smallMatrixTemplates);
+    if (roll < 0.94) return sample(mediumMatrixTemplates);
+    return sample(largeMatrixTemplates);
+  }
+
+  function pickLabel(){
+    const r = Math.random();
+    if (r < 0.5) return randomColumnVector();
+    if (r < 0.75) return randomRowVector();
+    return randomMatrix();
   }
 
   /* Shaders (alpha softened, bigger points) */
@@ -689,14 +834,6 @@
   const colors = new Float32Array(N*3);
   const pulsesAttrib = new Float32Array(N);
   const tmpF = new Float32Array(N*3);
-  const LABEL_SNIPPETS = [
-    '[1 0 0]', '[0 1 0]', '[0 0 1]',
-    '[0.7 0.2 0.1]', '[0.4 0.4 0.2]', '[0.12 0.56 0.32]',
-    '[[1 0][0 1]]', '[[0.6 0.4][0.3 0.7]]', '[[2 -1][1 0]]',
-    '[[0.2 0.8][0.1 0.9]]', '[[3 1 0][0 2 1]]',
-    '[0.3,0.6,0.8]', '[0.5,0.5,0.0]', '[0.25,0.5,0.25]',
-    '[[1 0 0][0 0 1]]', '[[0 1 0][1 0 0]]'
-  ];
   const labelText = new Array(N);
   const labelOffset = new Float32Array(N*3);
   const labelFreq = new Float32Array(N);
@@ -731,7 +868,7 @@
     velocities[i*3+1]=(Math.random()-0.5)*0.0018;
     velocities[i*3+2]=(Math.random()-0.5)*0.0018;
     colors.set([0.16,0.78,0.72], i*3);
-    labelText[i] = LABEL_SNIPPETS[(Math.random()*LABEL_SNIPPETS.length)|0];
+    labelText[i] = pickLabel();
     const amp = 0.14 + Math.random()*0.12;
     const theta = Math.random()*Math.PI*2;
     const phi = (Math.random()*0.6) - 0.3;
@@ -1029,6 +1166,51 @@
   const uPointsLoc = { uProj: uPoints.uProj, uView: uPoints.uView, uModel: uPoints.uModel };
   const uLinesLoc  = { uProj: uLines.uProj,  uView: uLines.uView,  uModel: uLines.uModel };
 
+  const parsedLabelCache = new Map();
+  function parseLabelSource(raw){
+    if (!raw) return {lines:[], usesBrackets:false};
+    const cached = parsedLabelCache.get(raw);
+    if (cached) return cached;
+    const rows = raw.split('\n');
+    const cleaned = [];
+    let canBracket = true;
+    for (const row of rows){
+      const trimmed = row.trim();
+      if (!trimmed) continue;
+      cleaned.push(trimmed);
+      const first = trimmed[0];
+      const last = trimmed[trimmed.length-1];
+      const hasBracket = '⎡⎢⎣'.includes(first) && '⎤⎥⎦'.includes(last) && trimmed.length > 1;
+      if (!hasBracket) canBracket = false;
+    }
+    const lines = canBracket
+      ? cleaned.map(part => part.slice(1, -1).trim().replace(/\s+/g, ' '))
+      : cleaned;
+    const result = {lines, usesBrackets: canBracket && lines.length>0};
+    parsedLabelCache.set(raw, result);
+    return result;
+  }
+
+  function drawTallBracket(ctx, lineX, top, bottom, arm, isRight){
+    ctx.beginPath();
+    if (isRight){
+      ctx.moveTo(lineX, top);
+      ctx.lineTo(lineX - arm, top);
+      ctx.moveTo(lineX, top);
+      ctx.lineTo(lineX, bottom);
+      ctx.moveTo(lineX, bottom);
+      ctx.lineTo(lineX - arm, bottom);
+    } else {
+      ctx.moveTo(lineX, top);
+      ctx.lineTo(lineX + arm, top);
+      ctx.moveTo(lineX, top);
+      ctx.lineTo(lineX, bottom);
+      ctx.moveTo(lineX, bottom);
+      ctx.lineTo(lineX + arm, bottom);
+    }
+    ctx.stroke();
+  }
+
   let lastTS = performance.now();
   function frame(ts){
     const rawDt = Math.min(40, ts - lastTS); lastTS = ts;
@@ -1037,8 +1219,8 @@
     // smooth scroll & targets to avoid flicker
     scrollProg += (scrollTarget - scrollProg) * Math.min(1, 1.2*dt);
     timeScale += (timeScaleTarget - timeScale) * Math.min(1, 1.4*dt);
-    rewireInterval += (rewireIntervalTarget - rewireInterval) * Math.min(1, 1.1*dt);
     pulseInterval += (pulseIntervalTarget - pulseInterval) * Math.min(1, 1.1*dt);
+    rewireInterval += (rewireIntervalTarget - rewireInterval) * Math.min(1, 1.1*dt);
 
     const simDt = Math.min(0.004, dt * timeScale);
 
@@ -1088,17 +1270,20 @@
     if (overlayCtx && overlay){
       overlayCtx.clearRect(0,0,overlay.width, overlay.height);
       const fontSizePx = Math.max(12, Math.round(12 * DPR));
+      const lineGap = Math.round(fontSizePx * 0.3);
       overlayCtx.font = `${fontSizePx}px "SFMono-Regular", "Menlo", monospace`;
       overlayCtx.textBaseline = 'middle';
-      overlayCtx.lineJoin = 'round';
-      overlayCtx.shadowColor = 'rgba(6,14,28,0.45)';
-      overlayCtx.shadowBlur = 8 * DPR;
-      const padX = 6 * DPR;
+      overlayCtx.lineJoin = 'miter';
+      overlayCtx.lineCap = 'butt';
+      overlayCtx.shadowBlur = 0;
+      overlayCtx.shadowColor = 'transparent';
+      const padX = 4 * DPR;
       const padY = 4 * DPR;
-      const offset = 12 * DPR;
-      const radius = 6 * DPR;
-      const outline = Math.max(1, DPR*0.75);
+      const offset = 10 * DPR;
+      const outline = Math.max(1, DPR*0.6);
       overlayCtx.lineWidth = outline;
+      const textColor = 'rgba(255,255,255,0.95)';
+      const bracketColor = 'rgba(255,255,255,0.72)';
       const nowSec = now * 0.001;
 
       for (let i=0;i<N;i++){
@@ -1133,12 +1318,23 @@
         const screenX = (ndcX * 0.5 + 0.5) * overlay.width;
         const screenY = (1 - (ndcY * 0.5 + 0.5)) * overlay.height;
 
-        const text = labelText[i];
-        if (!text) continue;
-        const metrics = overlayCtx.measureText(text);
-        const textWidth = metrics.width;
-        const boxW = textWidth + padX*2;
-        const boxH = fontSizePx + padY*2;
+        const raw = labelText[i];
+        if (!raw) continue;
+        const parsed = parseLabelSource(raw);
+        const lines = parsed.lines;
+        if (!lines.length) continue;
+        let textWidth = 0;
+        for (const line of lines){
+          const w = overlayCtx.measureText(line).width;
+          if (w>textWidth) textWidth = w;
+        }
+        const textHeight = lines.length * fontSizePx + (lines.length-1)*lineGap;
+        const bracketThickness = parsed.usesBrackets ? Math.max(1, Math.round(DPR*0.6)) : 0;
+        const bracketArm = parsed.usesBrackets ? Math.max(5 * DPR, Math.round(fontSizePx * 0.4)) : 0;
+        const bracketGap = parsed.usesBrackets ? Math.max(4 * DPR, Math.round(fontSizePx * 0.18)) : 0;
+        const bracketPad = parsed.usesBrackets ? (bracketThickness/2 + bracketArm + bracketGap) : 0;
+        const boxW = textWidth + padX*2 + bracketPad*2;
+        const boxH = textHeight + padY*2;
         let boxX = screenX + offset;
         if (boxX + boxW > overlay.width - 4 * DPR){
           boxX = screenX - offset - boxW;
@@ -1148,17 +1344,29 @@
         if (boxY < 4 * DPR) boxY = 4 * DPR;
         if (boxY + boxH > overlay.height - 4 * DPR) boxY = overlay.height - 4 * DPR - boxH;
 
-        overlayCtx.fillStyle = 'rgba(8,12,22,0.82)';
-        overlayCtx.strokeStyle = 'rgba(44,78,130,0.45)';
-        drawBadge(overlayCtx, boxX, boxY, boxW, boxH, radius);
-        overlayCtx.fill();
-        overlayCtx.stroke();
-        overlayCtx.fillStyle = 'rgba(215,228,250,0.92)';
-        overlayCtx.shadowColor = 'rgba(6,14,28,0.3)';
-        overlayCtx.fillText(text, boxX + padX, screenY);
-      }
+        if (parsed.usesBrackets){
+          const bracketTop = boxY + padY;
+          const bracketBottom = bracketTop + textHeight;
+          const leftLineX = boxX + padX + bracketThickness/2;
+          const rightLineX = boxX + boxW - padX - bracketThickness/2;
+          overlayCtx.save();
+          overlayCtx.lineWidth = bracketThickness;
+          overlayCtx.strokeStyle = bracketColor;
+          overlayCtx.shadowColor = 'transparent';
+          drawTallBracket(overlayCtx, leftLineX, bracketTop, bracketBottom, bracketArm, false);
+          drawTallBracket(overlayCtx, rightLineX, bracketTop, bracketBottom, bracketArm, true);
+          overlayCtx.restore();
+        }
 
-      overlayCtx.shadowBlur = 0;
+        overlayCtx.fillStyle = textColor;
+        overlayCtx.shadowColor = 'transparent';
+        const textX = boxX + padX + bracketPad;
+        let lineY = boxY + padY + fontSizePx/2;
+        for (const line of lines){
+          overlayCtx.fillText(line, textX, lineY);
+          lineY += fontSizePx + lineGap;
+        }
+      }
     }
 
     requestAnimationFrame(frame);
