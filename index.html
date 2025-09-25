@@ -553,14 +553,18 @@
 
 <!-- WebGL background: torus “tire dive”, scroll-scrub + fade edges -->
 <script>
-(() => {
+;(() => {
   "use strict";
   const canvas = document.getElementById('viz3d');
   const overlay = document.getElementById('vizLabels');
   if (!canvas) return;
-  const gl = canvas.getContext('webgl', {
-    antialias:true, alpha:false, premultipliedAlpha:true, powerPreference:'default'
-  });
+  const glConfig = {
+    antialias: true,
+    alpha: false,
+    premultipliedAlpha: true,
+    powerPreference: 'default'
+  };
+  const gl = canvas.getContext('webgl', glConfig);
   if (!gl) return;
   const overlayCtx = overlay ? overlay.getContext('2d') : null;
   let lastPulse = performance.now();
@@ -583,7 +587,6 @@
   }
   resize(); addEventListener('resize', resize);
 
-  let heroVisible = true;
   let animationActive = true;
   function setAnimationActive(active){
     if (active === animationActive) return;
@@ -593,19 +596,8 @@
     lastPulse = now;
   }
   function updateAnimationActive(){
-    const shouldRun = heroVisible && document.visibilityState !== 'hidden';
+    const shouldRun = document.visibilityState !== 'hidden';
     setAnimationActive(shouldRun);
-  }
-  const heroSection = document.querySelector('.hero');
-  if (heroSection && 'IntersectionObserver' in window){
-    const observer = new IntersectionObserver((entries) => {
-      for (const entry of entries){
-        if (entry.target !== heroSection) continue;
-        heroVisible = entry.isIntersecting && entry.intersectionRatio > 0.12;
-        updateAnimationActive();
-      }
-    }, { threshold:[0, 0.12, 0.35], rootMargin:'0px 0px -35% 0px' });
-    observer.observe(heroSection);
   }
   document.addEventListener('visibilitychange', updateAnimationActive);
   updateAnimationActive();
