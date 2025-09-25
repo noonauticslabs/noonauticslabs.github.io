@@ -80,12 +80,23 @@
       padding: calc(var(--header-h) + 24px) 0 10svh;
       isolation:isolate; overflow: clip;
     }
+    .hero::before{
+      content:""; position:absolute; inset:0; z-index:2; pointer-events:none;
+      background:linear-gradient(180deg, rgba(8,11,18,.78) 0%, rgba(8,11,18,.32) 42%, rgba(8,11,18,.78) 100%);
+    }
     .hero .container{ position:relative; z-index:3; max-width: var(--container); }
     .hero .stack{
       display:flex; flex-direction:column; gap:10px;
       margin-top: min(8vh, 80px);
       max-width: 860px;
+      padding: clamp(18px, 3vw, 32px);
+      border-radius: 28px;
+      background: rgba(9,13,22,.58);
+      border:1px solid rgba(78,110,166,.28);
+      box-shadow: 0 24px 60px rgba(4,6,14,.55);
+      backdrop-filter: blur(14px);
     }
+    .hero .stack > *{text-shadow:0 8px 24px rgba(0,0,0,.55);}
 
     /* Badge = true fit-content + nowrap */
     .badge{
@@ -679,9 +690,12 @@
   const pulsesAttrib = new Float32Array(N);
   const tmpF = new Float32Array(N*3);
   const LABEL_SNIPPETS = [
-    'f(x)=x^2', 'dV/dt', 'exp(-t)', 'n!/(n-k)!', 'curl F', 'grad phi',
-    'lim t->0', 'P(E|H)', 'dH/dt', 'sin(2t)', 'Re(z)', '|psi|^2',
-    'det(A)', 'trace(M)', 'cov(x,y)', 'eig(A)=lambda'
+    '[1 0 0]', '[0 1 0]', '[0 0 1]',
+    '[0.7 0.2 0.1]', '[0.4 0.4 0.2]', '[0.12 0.56 0.32]',
+    '[[1 0][0 1]]', '[[0.6 0.4][0.3 0.7]]', '[[2 -1][1 0]]',
+    '[[0.2 0.8][0.1 0.9]]', '[[3 1 0][0 2 1]]',
+    '[0.3,0.6,0.8]', '[0.5,0.5,0.0]', '[0.25,0.5,0.25]',
+    '[[1 0 0][0 0 1]]', '[[0 1 0][1 0 0]]'
   ];
   const labelText = new Array(N);
   const labelOffset = new Float32Array(N*3);
@@ -690,7 +704,7 @@
 
   const R = 1.7, r = 0.55;                      // torus major/minor radii
   const TORUS_K = 1.4;                           // surface pull strength
-  const PULL=0.01, DAMP=0.92, REPULSE=0.018, SPRING_K=0.11, BREAK_STRETCH=1.9;
+  const PULL=0.009, DAMP=0.9, REPULSE=0.014, SPRING_K=0.095, BREAK_STRETCH=1.9;
 
   function torusPoint(a,b){
     const x = (R + r*Math.cos(b))*Math.cos(a);
@@ -713,9 +727,9 @@
     const b = Math.random()*Math.PI*2;
     const p = torusPoint(a,b);
     positions[i*3+0]=p[0]; positions[i*3+1]=p[1]; positions[i*3+2]=p[2];
-    velocities[i*3+0]=(Math.random()-0.5)*0.003;
-    velocities[i*3+1]=(Math.random()-0.5)*0.003;
-    velocities[i*3+2]=(Math.random()-0.5)*0.003;
+    velocities[i*3+0]=(Math.random()-0.5)*0.0018;
+    velocities[i*3+1]=(Math.random()-0.5)*0.0018;
+    velocities[i*3+2]=(Math.random()-0.5)*0.0018;
     colors.set([0.16,0.78,0.72], i*3);
     labelText[i] = LABEL_SNIPPETS[(Math.random()*LABEL_SNIPPETS.length)|0];
     const amp = 0.14 + Math.random()*0.12;
@@ -808,13 +822,13 @@
   }
 
   /* Physics + pulses */
-  let timeScale = 0.06, timeScaleTarget = 0.06;
+  let timeScale = 0.03, timeScaleTarget = 0.03;
   const pulses = []; // {i, t0}
   const nodePulse = new Float32Array(N);
-  const PULSE_SPEED = 0.32; const PULSE_FADE = 1.8;
+  const PULSE_SPEED = 0.18; const PULSE_FADE = 1.9;
 
   let lastPulse = performance.now();
-  let pulseInterval = 3600, pulseIntervalTarget = 3600;
+  let pulseInterval = 5200, pulseIntervalTarget = 5200;
 
   function spawnPulse(){
     const deg = degree();
@@ -847,7 +861,7 @@
   }
 
   let lastRewire = performance.now();
-  let rewireInterval = 6200, rewireIntervalTarget = 6200;
+  let rewireInterval = 8200, rewireIntervalTarget = 8200;
 
   function rewire(){
     const now = performance.now();
@@ -977,35 +991,35 @@
   function onScroll(){
     const vh = Math.max(1, window.innerHeight);
     const y = window.scrollY;
-    scrollTarget = Math.max(0, Math.min(0.35, y / (vh*8)));
-    const ease = scrollTarget * 0.35;
-    timeScaleTarget = 0.055 + ease*0.012;
-    rewireIntervalTarget = 6600 - ease*420;
-    pulseIntervalTarget  = 3800 - ease*260;
+    scrollTarget = Math.max(0, Math.min(0.2, y / (vh*12)));
+    const ease = scrollTarget * 0.4;
+    timeScaleTarget = 0.03 + ease*0.01;
+    rewireIntervalTarget = 8200 - ease*600;
+    pulseIntervalTarget  = 5200 - ease*400;
   }
   addEventListener('scroll', () => requestAnimationFrame(onScroll), {passive:true}); onScroll();
 
   /* Camera: inside torus, spin + forward; phase is scroll-scrubbed + gentle autoplay */
   let autoPhase = 0.0;
   function getCamera(dt){
-    autoPhase += dt * 0.42; // steady autopilot drift
-    const spiral = scrollProg * 0.6;
+    autoPhase += dt * 0.18; // steady autopilot drift
+    const spiral = scrollProg * 0.45;
     const phase = autoPhase + spiral;
-    const twist = phase*1.2 + 1.1;
+    const twist = phase*1.08 + 1.1;
     const cx = R*Math.cos(phase), cy = R*Math.sin(phase), cz = 0;
     const tx = -Math.sin(phase), ty = Math.cos(phase), tz = 0;
-    const radial = 0.18 + 0.02*Math.sin(autoPhase*0.8);
+    const radial = 0.16 + 0.015*Math.sin(autoPhase*0.8);
     const ex = cx + radial*Math.cos(twist);
     const ey = cy + radial*Math.sin(twist);
-    const ez = -0.48 + Math.sin(autoPhase*0.45)*0.08;
-    const forwardPush = 1.22 + 0.06*Math.sin(autoPhase*0.3);
-    const upDrift = Math.sin(phase*0.5)*0.35;
+    const ez = -0.5 + Math.sin(autoPhase*0.45)*0.05;
+    const forwardPush = 1.16 + 0.04*Math.sin(autoPhase*0.3);
+    const upDrift = Math.sin(phase*0.5)*0.22;
     const center = [
       ex + tx*forwardPush,
       ey + ty*forwardPush,
       ez + upDrift
     ];
-    return {eye:[ex,ey,ez], center, spin: phase*0.22};
+    return {eye:[ex,ey,ez], center, spin: phase*0.18};
   }
 
   /* Points need an alpha of 1 (constant), edges get per-vertex alpha */
@@ -1021,12 +1035,12 @@
     const dt = (rawDt/1000);
 
     // smooth scroll & targets to avoid flicker
-    scrollProg += (scrollTarget - scrollProg) * Math.min(1, 1.6*dt);
-    timeScale += (timeScaleTarget - timeScale) * Math.min(1, 1.8*dt);
-    rewireInterval += (rewireIntervalTarget - rewireInterval) * Math.min(1, 1.6*dt);
-    pulseInterval += (pulseIntervalTarget - pulseInterval) * Math.min(1, 1.6*dt);
+    scrollProg += (scrollTarget - scrollProg) * Math.min(1, 1.2*dt);
+    timeScale += (timeScaleTarget - timeScale) * Math.min(1, 1.4*dt);
+    rewireInterval += (rewireIntervalTarget - rewireInterval) * Math.min(1, 1.1*dt);
+    pulseInterval += (pulseIntervalTarget - pulseInterval) * Math.min(1, 1.1*dt);
 
-    const simDt = Math.min(0.0065, dt * timeScale);
+    const simDt = Math.min(0.004, dt * timeScale);
 
     const now = performance.now();
     if (now - lastPulse > pulseInterval){ lastPulse = now; spawnPulse(); }
