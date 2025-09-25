@@ -549,11 +549,12 @@
   const overlay = document.getElementById('vizLabels');
   if (!canvas) return;
   const gl = canvas.getContext('webgl', {
-    antialias:true, alpha:false, premultipliedAlpha:true, powerPreference:'high-performance'
+    antialias:true, alpha:false, premultipliedAlpha:true, powerPreference:'default'
   });
   if (!gl) return;
   const overlayCtx = overlay ? overlay.getContext('2d') : null;
-
+  let lastPulse = performance.now();
+  let lastTS = performance.now();
   const DPR = Math.min(2, window.devicePixelRatio || 1);
   function resize(){
     const w = Math.max(360, innerWidth);
@@ -571,6 +572,33 @@
     }
   }
   resize(); addEventListener('resize', resize);
+
+  let heroVisible = true;
+  let animationActive = true;
+  function setAnimationActive(active){
+    if (active === animationActive) return;
+    animationActive = active;
+    const now = performance.now();
+    lastTS = now;
+    lastPulse = now;
+  }
+  function updateAnimationActive(){
+    const shouldRun = heroVisible && document.visibilityState !== 'hidden';
+    setAnimationActive(shouldRun);
+  }
+  const heroSection = document.querySelector('.hero');
+  if (heroSection && 'IntersectionObserver' in window){
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries){
+        if (entry.target !== heroSection) continue;
+        heroVisible = entry.isIntersecting && entry.intersectionRatio > 0.12;
+        updateAnimationActive();
+      }
+    }, { threshold:[0, 0.12, 0.35], rootMargin:'0px 0px -35% 0px' });
+    observer.observe(heroSection);
+  }
+  document.addEventListener('visibilitychange', updateAnimationActive);
+  updateAnimationActive();
 
   /* Matrices */
   const M = {
@@ -990,7 +1018,6 @@
   const nodePulse = new Float32Array(N);
   const PULSE_SPEED = 0.18; const PULSE_FADE = 1.9;
 
-  let lastPulse = performance.now();
   let pulseInterval = 5200, pulseIntervalTarget = 5200;
 
   function spawnPulse(){
@@ -1218,6 +1245,7 @@
   const uLinesLoc  = { uProj: uLines.uProj,  uView: uLines.uView,  uModel: uLines.uModel };
 
   const parsedLabelCache = new Map();
+  const textWidthCache = new Map();
   function parseLabelSource(raw){
     if (!raw) return {lines:[], usesBrackets:false};
     const cached = parsedLabelCache.get(raw);
@@ -1262,9 +1290,13 @@
     ctx.stroke();
   }
 
-  let lastTS = performance.now();
   function frame(ts){
-    const rawDt = Math.min(40, ts - lastTS); lastTS = ts;
+    const rawDt = Math.min(40, ts - lastTS);
+    lastTS = ts;
+    if (!animationActive){
+      requestAnimationFrame(frame);
+      return;
+    }
     const dt = (rawDt/1000);
 
     // smooth scroll & targets to avoid flicker
@@ -1337,6 +1369,7 @@
       const textColor = 'rgba(255,255,255,0.95)';
       const bracketColor = 'rgba(255,255,255,0.72)';
       const nowSec = now * 0.001;
+      const skipMargin = 80 * DPR;
 
       for (let i=0;i<N;i++){
         const idx = i*3;
@@ -1372,12 +1405,19 @@
 
         const raw = labelText[i];
         if (!raw) continue;
+        if (screenX < -skipMargin || screenX > overlay.width + skipMargin) continue;
+        if (screenY < -skipMargin || screenY > overlay.height + skipMargin) continue;
         const parsed = parseLabelSource(raw);
         const lines = parsed.lines;
         if (!lines.length) continue;
         let textWidth = 0;
         for (const line of lines){
-          const w = overlayCtx.measureText(line).width;
+          const cacheKey = `${fontSizePx}|${line}`;
+          let w = textWidthCache.get(cacheKey);
+          if (w === undefined){
+            w = overlayCtx.measureText(line).width;
+            textWidthCache.set(cacheKey, w);
+          }
           if (w>textWidth) textWidth = w;
         }
         const textHeight = lines.length * fontSizePx + (lines.length-1)*lineGap;
@@ -1429,6 +1469,7 @@
     timeScale = 0.0; timeScaleTarget = 0.0;
     rewireInterval = rewireIntervalTarget = 1e9;
     pulseInterval = pulseIntervalTarget = 1e9;
+    setAnimationActive(false);
   }
 })();
 </script>
