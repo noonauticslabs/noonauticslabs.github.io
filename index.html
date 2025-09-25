@@ -131,7 +131,8 @@
 
     /* FIXED full-bleed background canvas + vignette + fade */
     .hero-bg{ position:fixed; inset:0; z-index:1; pointer-events:none; }
-    .hero-bg canvas{display:block; width:100%; height:100%; position:absolute; inset:0;}
+    .hero-bg canvas{display:block; width:100%; height:100%; position:absolute; inset:0; opacity:1; transition:opacity .35s ease;}
+    .hero-bg.paused canvas{opacity:0;}
     #viz3d{ position:absolute; inset:0; }
     #vizLabels{ position:absolute; inset:0; }
     .hero-bg::after{
@@ -560,10 +561,12 @@
   if (!canvas) return;
   const gl = canvas.getContext('webgl', {
     antialias:true, alpha:false, premultipliedAlpha:true, powerPreference:'default'
+    antialias:true, alpha:false, premultipliedAlpha:true, powerPreference:'default'
   });
   if (!gl) return;
   const overlayCtx = overlay ? overlay.getContext('2d') : null;
   let lastPulse = performance.now();
+  let lastTS = performance.now();  let lastPulse = performance.now();
   let lastTS = performance.now();
   const DPR = Math.min(2, window.devicePixelRatio || 1);
   function resize(){
@@ -583,32 +586,73 @@
   }
   resize(); addEventListener('resize', resize);
 
-  let heroVisible = true;
   let animationActive = true;
+  let motionDisabled = false;
+  const heroSection = canvas.closest('.hero');
+  const heroBg = heroSection ? heroSection.querySelector('.hero-bg') : null;
+  let heroVisible = true;
+  let heroVisibilityKnown = !heroSection;
+  let heroLastVisible = performance.now();
+  let heroGraceTimeout = 0;
+  const HERO_INACTIVE_GRACE = 1200;
+  function heroEffectivelyVisible(){
+    if (!heroVisibilityKnown) return true;
+    if (heroVisible) return true;
+    return (performance.now() - heroLastVisible) < HERO_INACTIVE_GRACE;
+  }
+  function clearHeroGraceTimeout(){
+    if (!heroGraceTimeout) return;
+    clearTimeout(heroGraceTimeout);
+    heroGraceTimeout = 0;
+  }
+  function scheduleHeroGraceTimeout(){
+    if (heroGraceTimeout) return;
+    heroGraceTimeout = setTimeout(() => {
+      heroGraceTimeout = 0;
+      updateAnimationActive();
+    }, HERO_INACTIVE_GRACE);
+  }
   function setAnimationActive(active){
     if (active === animationActive) return;
     animationActive = active;
     const now = performance.now();
     lastTS = now;
     lastPulse = now;
+    if (heroBg){
+      heroBg.classList.toggle('paused', !active);
+    }
   }
   function updateAnimationActive(){
-    const shouldRun = heroVisible && document.visibilityState !== 'hidden';
+    if (motionDisabled){
+      setAnimationActive(false);
+      return;
+    }
+    const pageVisible = document.visibilityState !== 'hidden';
+    const shouldRun = pageVisible && heroEffectivelyVisible();
     setAnimationActive(shouldRun);
   }
-  const heroSection = document.querySelector('.hero');
+  document.addEventListener('visibilitychange', updateAnimationActive);
+
   if (heroSection && 'IntersectionObserver' in window){
-    const observer = new IntersectionObserver((entries) => {
+    const heroObserver = new IntersectionObserver((entries) => {
       for (const entry of entries){
         if (entry.target !== heroSection) continue;
-        heroVisible = entry.isIntersecting && entry.intersectionRatio > 0.12;
-        updateAnimationActive();
+        heroVisibilityKnown = true;
+        const currentlyVisible = entry.isIntersecting && entry.intersectionRatio > 0;
+        if (currentlyVisible){
+          heroVisible = true;
+          heroLastVisible = performance.now();
+          clearHeroGraceTimeout();
+          updateAnimationActive();
+        } else {
+          heroVisible = false;
+          clearHeroGraceTimeout();
+          scheduleHeroGraceTimeout();
+        }
       }
-    }, { threshold:[0, 0.12, 0.35], rootMargin:'0px 0px -35% 0px' });
-    observer.observe(heroSection);
+    }, { rootMargin: '-12% 0px -32%', threshold: [0, 0.05, 0.15] });
+    heroObserver.observe(heroSection);
   }
-  document.addEventListener('visibilitychange', updateAnimationActive);
-  updateAnimationActive();
 
   /* Matrices */
   const M = {
@@ -1023,12 +1067,17 @@
   }
 
   /* Physics + pulses */
-  let timeScale = 0.03, timeScaleTarget = 0.03;
+  const BASE_TIME_SCALE = 0.03;
+  const BASE_PULSE_INTERVAL = 5200;
+  const BASE_REWIRE_INTERVAL = 8200;
+  const PAUSE_INTERVAL = 1e9;
+
+  let timeScale = BASE_TIME_SCALE, timeScaleTarget = BASE_TIME_SCALE;
   const pulses = []; // {i, t0}
   const nodePulse = new Float32Array(N);
   const PULSE_SPEED = 0.18; const PULSE_FADE = 1.9;
 
-  let pulseInterval = 5200, pulseIntervalTarget = 5200;
+  let pulseInterval = BASE_PULSE_INTERVAL, pulseIntervalTarget = BASE_PULSE_INTERVAL;
 
   function spawnPulse(){
     const deg = degree();
@@ -1061,7 +1110,7 @@
   }
 
   let lastRewire = performance.now();
-  let rewireInterval = 8200, rewireIntervalTarget = 8200;
+  let rewireInterval = BASE_REWIRE_INTERVAL, rewireIntervalTarget = BASE_REWIRE_INTERVAL;
 
   function rewire(){
     const now = performance.now();
@@ -1417,6 +1466,8 @@
         if (!raw) continue;
         if (screenX < -skipMargin || screenX > overlay.width + skipMargin) continue;
         if (screenY < -skipMargin || screenY > overlay.height + skipMargin) continue;
+        if (screenX < -skipMargin || screenX > overlay.width + skipMargin) continue;
+        if (screenY < -skipMargin || screenY > overlay.height + skipMargin) continue;
         const parsed = parseLabelSource(raw);
         const lines = parsed.lines;
         if (!lines.length) continue;
@@ -1475,11 +1526,32 @@
   }
   requestAnimationFrame(frame);
 
-  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-    timeScale = 0.0; timeScaleTarget = 0.0;
-    rewireInterval = rewireIntervalTarget = 1e9;
-    pulseInterval = pulseIntervalTarget = 1e9;
-    setAnimationActive(false);
+  function applyReducedMotion(enabled){
+    motionDisabled = enabled;
+    if (enabled){
+      timeScale = timeScaleTarget = 0.0;
+      rewireInterval = rewireIntervalTarget = PAUSE_INTERVAL;
+      pulseInterval = pulseIntervalTarget = PAUSE_INTERVAL;
+      setAnimationActive(false);
+    } else {
+      timeScale = timeScaleTarget = BASE_TIME_SCALE;
+      rewireInterval = rewireIntervalTarget = BASE_REWIRE_INTERVAL;
+      pulseInterval = pulseIntervalTarget = BASE_PULSE_INTERVAL;
+      updateAnimationActive();
+    }
+  }
+
+  const reduceMotionQuery = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  if (reduceMotionQuery){
+    const handleReduceMotionChange = (event) => applyReducedMotion(event.matches);
+    if (typeof reduceMotionQuery.addEventListener === 'function'){
+      reduceMotionQuery.addEventListener('change', handleReduceMotionChange);
+    } else if (typeof reduceMotionQuery.addListener === 'function'){
+      reduceMotionQuery.addListener(handleReduceMotionChange);
+    }
+    applyReducedMotion(reduceMotionQuery.matches);
+  } else {
+    updateAnimationActive();
   }
 })();
 </script>
