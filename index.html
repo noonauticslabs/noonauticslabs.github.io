@@ -121,6 +121,7 @@
       --hero-copy-glow:radial-gradient(ellipse at center, rgba(4,7,14,.88) 0%, rgba(4,7,14,.54) 42%, rgba(4,7,14,.16) 72%, transparent 100%);
       --hero-text-shadow:0 18px 58px rgba(0,0,0,.9), 0 0 64px rgba(3,12,26,.9);
       --hero-ambient:radial-gradient(1200px 700px at 70% -10%, rgba(43,212,161,.10), transparent 60%), radial-gradient(1000px 600px at -10% 0%, rgba(31,111,235,.14), transparent 60%), linear-gradient(to bottom, rgba(11,12,16,.25), rgba(11,12,16,.0) 35%, rgba(11,12,16,.0) 70%, rgba(11,12,16,.65));
+      --hero-fade-bg: var(--bg);
       --section-backdrop:radial-gradient(900px 420px at 12% 6%, rgba(31,111,235,.12), transparent 65%), radial-gradient(780px 360px at 88% 88%, rgba(43,212,161,.1), transparent 72%), linear-gradient(180deg, rgba(16,19,28,.96), rgba(10,12,18,.94) 58%, rgba(8,10,15,1));
       --section-inner-backdrop:radial-gradient(720px 320px at 15% 5%, rgba(31,111,235,.16), transparent 62%), radial-gradient(620px 320px at 85% 92%, rgba(43,212,161,.14), transparent 70%), linear-gradient(180deg, rgba(13,16,24,.96), rgba(9,11,17,1));
       --card-bg:linear-gradient(155deg, rgba(22,28,40,.92), rgba(16,22,34,.9) 52%, rgba(19,24,37,.98));
@@ -171,12 +172,13 @@
       --header-gradient:linear-gradient(to bottom, rgba(244,247,251,.94), rgba(244,247,251,.7) 60%, transparent);
       --header-solid:rgba(244,247,251,.95);
       --header-shadow:0 6px 22px rgba(35,55,95,.18);
-      --hero-overlay-gradient:radial-gradient(620px 360px at 50% 18%, rgba(162,191,255,.32), rgba(162,191,255,0) 68%), linear-gradient(180deg, rgba(232,238,248,.42), rgba(232,238,248,.16) 60%, rgba(223,232,245,.46));
-      --hero-copy-glow:radial-gradient(ellipse at center, rgba(238,243,252,.78) 0%, rgba(238,243,252,.54) 46%, rgba(238,243,252,.18) 78%, transparent 100%);
-      --hero-text-shadow:0 18px 48px rgba(160,178,210,.42), 0 0 44px rgba(172,191,225,.48);
-      --hero-ambient:radial-gradient(1200px 700px at 70% -10%, rgba(82,149,255,.12), transparent 60%), radial-gradient(980px 560px at -10% 0%, rgba(66,200,170,.1), transparent 62%), linear-gradient(to bottom, rgba(234,241,252,.16), rgba(236,243,253,0) 55%, rgba(224,233,246,.38));
-      --section-backdrop:radial-gradient(900px 420px at 12% 6%, rgba(66,149,255,.1), transparent 65%), radial-gradient(780px 360px at 88% 88%, rgba(61,200,165,.08), transparent 72%), linear-gradient(180deg, rgba(244,247,252,.96), rgba(235,240,249,.96) 58%, rgba(226,233,246,.94));
-      --section-inner-backdrop:radial-gradient(720px 320px at 15% 5%, rgba(64,142,255,.12), transparent 62%), radial-gradient(620px 320px at 85% 92%, rgba(56,196,160,.1), transparent 70%), linear-gradient(180deg, rgba(255,255,255,1), rgba(242,247,255,1));
+      --hero-overlay-gradient:radial-gradient(640px 380px at 52% 16%, rgba(118,154,228,.34), rgba(118,154,228,0) 66%), linear-gradient(180deg, rgba(226,233,246,.46), rgba(226,236,250,.18) 58%, rgba(210,223,241,.52));
+      --hero-copy-glow:radial-gradient(ellipse at center, rgba(232,240,252,.74) 0%, rgba(232,240,252,.48) 46%, rgba(232,240,252,.16) 78%, transparent 100%);
+      --hero-text-shadow:0 18px 46px rgba(128,148,188,.46), 0 0 42px rgba(150,170,210,.48);
+      --hero-ambient:radial-gradient(1200px 700px at 70% -10%, rgba(70,128,214,.16), transparent 62%), radial-gradient(980px 560px at -6% 4%, rgba(56,170,150,.12), transparent 68%), linear-gradient(to bottom, rgba(226,234,248,.18), rgba(226,234,248,0) 48%, rgba(206,220,243,.52));
+      --hero-fade-bg: rgba(188,202,226,.92);
+      --section-backdrop:radial-gradient(900px 420px at 12% 6%, rgba(70,138,220,.12), transparent 65%), radial-gradient(780px 360px at 88% 88%, rgba(58,172,142,.1), transparent 72%), linear-gradient(180deg, rgba(238,243,252,.96), rgba(224,233,246,.96) 58%, rgba(210,223,242,.94));
+      --section-inner-backdrop:radial-gradient(720px 320px at 15% 5%, rgba(62,130,220,.14), transparent 64%), radial-gradient(620px 320px at 85% 92%, rgba(58,176,150,.12), transparent 72%), linear-gradient(180deg, rgba(255,255,255,1), rgba(236,243,253,1));
       --card-bg:linear-gradient(155deg, rgba(252,254,255,.92), rgba(240,246,255,.9) 52%, rgba(243,248,255,.98));
       --card-border:rgba(79,114,178,.18);
       --card-shadow:0 20px 40px rgba(120,150,200,.22);
@@ -185,17 +187,17 @@
       --footer-link-shadow:0 14px 46px rgba(99,122,168,.18), 0 0 36px rgba(130,152,196,.25);
       --cols-glow:radial-gradient(ellipse at center, rgba(230,237,250,.88) 0%, rgba(230,237,250,.52) 46%, rgba(230,237,250,.18) 78%, transparent 100%);
       --accent-strong:#4d9cff;
-      --gl-clear:232,236,247;
+      --gl-clear:214,218,230;
       --gl-label-text:rgba(28,36,54,0.92);
       --gl-label-bracket:rgba(45,61,94,0.65);
       --menu-shadow:0 24px 60px rgba(35,56,102,.18);
-      --gl-fog:214,220,232;
-      --gl-node-cool:34,120,236;
-      --gl-node-warm:240,70,144;
-      --gl-edge-strong:44,130,234;
-      --gl-edge-soft:42,194,162;
-      --gl-edge-hot:232,82,156;
-      --gl-line-pulse:118,160,252;
+      --gl-fog:138,152,182;
+      --gl-node-cool:32,124,228;
+      --gl-node-warm:232,78,148;
+      --gl-edge-strong:52,118,218;
+      --gl-edge-soft:50,176,152;
+      --gl-edge-hot:226,74,144;
+      --gl-line-pulse:96,138,232;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -329,7 +331,7 @@
     }
     .hero-fade{
       position:absolute; left:0; right:0; bottom:-1px; height:22svh; z-index:2; pointer-events:none;
-      background: linear-gradient(to bottom, transparent, var(--bg));
+      background: linear-gradient(to bottom, transparent, var(--hero-fade-bg));
     }
 
     /* Sections */
