@@ -14,12 +14,15 @@
   <link rel="alternate" hreflang="de" href="https://noonauticslabs.org/" />
   <link rel="alternate" hreflang="fr" href="https://noonauticslabs.org/" />
   <link rel="alternate" hreflang="es" href="https://noonauticslabs.org/" />
-  <link rel="alternate" hreflang="ru" href="https://noonauticslabs.org/" />
-  <link rel="alternate" hreflang="zh" href="https://noonauticslabs.org/" />
-  <link rel="alternate" hreflang="ar" href="https://noonauticslabs.org/" />
-  <link rel="alternate" hreflang="it" href="https://noonauticslabs.org/" />
-  <link rel="alternate" hreflang="pt" href="https://noonauticslabs.org/" />
-  <link rel="alternate" hreflang="ja" href="https://noonauticslabs.org/" />
+      <link rel="alternate" hreflang="ru" href="https://noonauticslabs.org/" />
+      <link rel="alternate" hreflang="zh" href="https://noonauticslabs.org/" />
+      <link rel="alternate" hreflang="ar" href="https://noonauticslabs.org/" />
+      <link rel="alternate" hreflang="it" href="https://noonauticslabs.org/" />
+      <link rel="alternate" hreflang="pt" href="https://noonauticslabs.org/" />
+      <link rel="alternate" hreflang="ja" href="https://noonauticslabs.org/" />
+      <link rel="alternate" hreflang="hi" href="https://noonauticslabs.org/" />
+      <link rel="alternate" hreflang="tr" href="https://noonauticslabs.org/" />
+      <link rel="alternate" hreflang="nl" href="https://noonauticslabs.org/" />
   <link rel="alternate" hreflang="x-default" href="https://noonauticslabs.org/" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="SiCell by Noonautics Labs" />
@@ -58,7 +61,10 @@
           "Arabic",
           "Italian",
           "Portuguese",
-          "Japanese"
+          "Japanese",
+          "Hindi",
+          "Turkish",
+          "Dutch"
         ]
       }
     ],
@@ -117,32 +123,26 @@
     .menu{display:flex; gap:18px; align-items:center}
     .menu a{color:var(--text); opacity:.9}
     .menu a:hover{opacity:1}
-    .lang-switcher{position:relative; display:flex; flex-direction:column; align-items:flex-end; gap:6px;}
-    .lang{position:relative; display:inline-block; border:1px solid var(--border); border-radius:999px; background:#141722;
-      color:#d8e0ee; font-size:.9rem; min-width:170px;}
-    .lang summary{list-style:none; display:flex; align-items:center; gap:10px; padding:6px 16px; cursor:pointer;
-      font-weight:600; font-size:.86rem; letter-spacing:.02em; border-radius:999px;}
-    .lang summary::-webkit-details-marker{display:none}
-    .lang .lang-code{font-weight:700; font-size:.75rem; letter-spacing:.08em; opacity:.8; text-transform:uppercase}
-    .lang .lang-name{font-size:.84rem}
-    .lang[open]{box-shadow:0 0 0 2px rgba(8,14,30,.6), 0 10px 26px rgba(5,12,28,.35)}
-    .lang-menu{position:absolute; right:0; top:calc(100% + 8px); margin:0; padding:10px; list-style:none;
-      background:#101522; border:1px solid var(--border); border-radius:18px; display:flex; flex-direction:column;
-      gap:6px; min-width:220px; box-shadow:0 18px 42px rgba(5,10,22,.55); z-index:400;}
-    .lang:not([open]) .lang-menu{display:none}
-    .lang-menu li{margin:0; padding:0; list-style:none}
-    .lang-menu button{appearance:none; border:none; background:transparent; color:rgba(225,233,247,.86);
-      padding:10px 12px; border-radius:12px; font-weight:600; display:flex; flex-direction:column; align-items:flex-start;
-      gap:2px; cursor:pointer; text-align:left; transition:background .18s ease, color .18s ease, box-shadow .18s ease}
-    .lang-menu button .lang-native{font-size:.92rem}
-    .lang-menu button .lang-english{font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; opacity:.68;
-      color:rgba(189,204,232,.88)}
-    .lang-menu button[aria-selected="true"]{background:linear-gradient(135deg, rgba(31,111,235,.92), rgba(43,212,161,.9));
-      color:#061427; box-shadow:0 0 0 2px rgba(8,14,30,.6), 0 10px 22px rgba(5,12,28,.35)}
-    .lang-menu button[aria-selected="true"] .lang-english{color:rgba(9,26,52,.68)}
-    .lang-menu button:hover{background:rgba(31,111,235,.15); color:#f0f4ff}
-    .lang-menu button:focus-visible{outline:2px solid rgba(62,142,255,.9); outline-offset:2px}
-    .lang-noscript{margin:0; font-size:.82rem; color:var(--muted)}
+    .lang-switcher{display:flex; flex-direction:column; align-items:flex-end; gap:10px; min-width:220px;}
+    .lang-header{display:flex; align-items:center; gap:10px; justify-content:flex-end; width:100%;}
+    .lang-label{font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);}
+    .lang-current{display:inline-flex; align-items:center; gap:10px; border:1px solid var(--border);
+      border-radius:999px; background:#141722; color:#d8e0ee; padding:6px 18px; font-weight:600; font-size:.86rem;}
+    .lang-current .lang-code{font-weight:700; font-size:.74rem; letter-spacing:.1em; opacity:.8; text-transform:uppercase;}
+    .lang-current .lang-name{font-size:.84rem;}
+    .lang-options{display:flex; flex-wrap:wrap; justify-content:flex-end; gap:6px; width:100%; max-width:360px;}
+    .lang-option{appearance:none; border:1px solid var(--border); border-radius:999px; background:rgba(18,21,33,.72);
+      color:rgba(224,232,247,.88); padding:8px 14px; font-weight:600; cursor:pointer; display:flex; flex-direction:column;
+      align-items:flex-end; min-width:156px; gap:2px; text-align:right;
+      transition:background .18s ease, color .18s ease, box-shadow .18s ease, border-color .18s ease;}
+    .lang-option .lang-native{font-size:.9rem;}
+    .lang-option .lang-english{font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; opacity:.7;}
+    .lang-option:hover{background:rgba(31,111,235,.16); color:#f0f4ff;}
+    .lang-option[aria-selected="true"]{background:linear-gradient(135deg, rgba(31,111,235,.92), rgba(43,212,161,.9));
+      color:#061427; border-color:transparent; box-shadow:0 0 0 1px rgba(11,22,42,.55), 0 12px 26px rgba(6,14,32,.35);}
+    .lang-option[aria-selected="true"] .lang-english{color:rgba(8,26,54,.72);}
+    .lang-option:focus-visible{outline:2px solid rgba(62,142,255,.9); outline-offset:2px;}
+    .lang-noscript{margin:0; font-size:.82rem; color:var(--muted); text-align:right;}
     .hamb{display:none; background:#151a27; border:1px solid var(--border); color:#e6ebf2; padding:8px 10px; border-radius:10px}
     @media (max-width:860px){
       .hamb{display:inline-flex}
@@ -154,11 +154,11 @@
         width: calc(100vw - 24px)
       }
       .menu.open{display:flex}
-      .menu .lang-switcher{align-self:stretch; width:100%}
-      .menu .lang{width:100%}
-      .menu .lang summary{width:100%; justify-content:space-between}
-      .menu .lang-menu{position:static; box-shadow:none; border-radius:14px; margin-top:8px}
-      .menu .lang:not([open]) .lang-menu{display:none}
+      .menu .lang-switcher{align-items:stretch; width:100%; min-width:auto; gap:12px;}
+      .menu .lang-header{justify-content:space-between;}
+      .menu .lang-current{text-align:left; align-self:flex-start;}
+      .menu .lang-options{justify-content:flex-start; max-width:none;}
+      .menu .lang-option{text-align:left; align-items:flex-start; min-width:0; width:100%;}
     }
     @media (max-width:720px){
       .hero{padding: calc(var(--header-h) + 6px) 0 14svh;}
@@ -331,16 +331,17 @@
       <a href="#company" data-i18n="nav_company">Company</a>
       <a href="#team" data-i18n="nav_team">Team</a>
       <a href="#contact" data-i18n="nav_contact">Contact</a>
-      <div class="lang-switcher">
-        <details class="lang" data-component="lang-switcher">
-          <summary class="lang-current" aria-haspopup="listbox" aria-label="Language menu">
+      <div class="lang-switcher" data-component="lang-switcher">
+        <div class="lang-header">
+          <span class="lang-label" id="langLabel" data-i18n="lang_label">Language</span>
+          <span class="lang-current" aria-live="polite">
             <span class="lang-code" aria-hidden="true">EN</span>
             <span class="lang-name" lang="en">English</span>
-          </summary>
-          <ul class="lang-menu" role="listbox" aria-label="Select language"></ul>
-        </details>
+          </span>
+        </div>
+        <div class="lang-options" role="listbox" aria-labelledby="langLabel"></div>
         <noscript>
-          <p class="lang-noscript">English · Polski · Deutsch · Français · Español · Русский · 中文 · العربية · Italiano · Português · 日本語</p>
+          <p class="lang-noscript">English · Polski · Deutsch · Français · Español · Русский · 中文 · العربية · Italiano · Português · 日本語 · हिन्दी · Türkçe · Nederlands</p>
         </noscript>
       </div>
     </nav>
@@ -504,7 +505,10 @@
   { "code": "ar", "english": "Arabic", "native": "العربية", "dir": "rtl" },
   { "code": "it", "english": "Italian", "native": "Italiano", "dir": "ltr" },
   { "code": "pt", "english": "Portuguese", "native": "Português", "dir": "ltr" },
-  { "code": "ja", "english": "Japanese", "native": "日本語", "dir": "ltr" }
+  { "code": "ja", "english": "Japanese", "native": "日本語", "dir": "ltr" },
+  { "code": "hi", "english": "Hindi", "native": "हिन्दी", "dir": "ltr" },
+  { "code": "tr", "english": "Turkish", "native": "Türkçe", "dir": "ltr" },
+  { "code": "nl", "english": "Dutch", "native": "Nederlands", "dir": "ltr" }
 ]
 </script>
 
@@ -610,19 +614,13 @@
     }
   }
 
-  const langDropdown = document.querySelector('details[data-component="lang-switcher"]');
-  const langMenu = langDropdown ? langDropdown.querySelector('.lang-menu') : null;
-  const langSummary = langDropdown ? langDropdown.querySelector('.lang-current') : null;
-  const summaryCode = langSummary ? langSummary.querySelector('.lang-code') : null;
-  const summaryName = langSummary ? langSummary.querySelector('.lang-name') : null;
+  const langComponent = document.querySelector('[data-component="lang-switcher"]');
+  const langListbox = langComponent ? langComponent.querySelector('.lang-options') : null;
+  const langCurrent = langComponent ? langComponent.querySelector('.lang-current') : null;
+  const summaryCode = langCurrent ? langCurrent.querySelector('.lang-code') : null;
+  const summaryName = langCurrent ? langCurrent.querySelector('.lang-name') : null;
+  const summaryLabel = langComponent ? langComponent.querySelector('.lang-label') : null;
   const inlineLangScript = document.getElementById('language-data');
-
-  if (langDropdown && langSummary) {
-    langSummary.setAttribute('aria-expanded', 'false');
-    langDropdown.addEventListener('toggle', () => {
-      langSummary.setAttribute('aria-expanded', langDropdown.open ? 'true' : 'false');
-    });
-  }
 
   const fallbackLangs = [
     { code: 'en', english: 'English', native: 'English', dir: 'ltr' },
@@ -636,6 +634,9 @@
     { code: 'it', english: 'Italian', native: 'Italiano', dir: 'ltr' },
     { code: 'pt', english: 'Portuguese', native: 'Português', dir: 'ltr' },
     { code: 'ja', english: 'Japanese', native: '日本語', dir: 'ltr' },
+    { code: 'hi', english: 'Hindi', native: 'हिन्दी', dir: 'ltr' },
+    { code: 'tr', english: 'Turkish', native: 'Türkçe', dir: 'ltr' },
+    { code: 'nl', english: 'Dutch', native: 'Nederlands', dir: 'ltr' },
   ];
 
   let LANGS = fallbackLangs.map((entry) => ({ ...entry }));
@@ -688,7 +689,7 @@
   async function loadLanguageConfig() {
     const inlineConfig = parseInlineLanguageConfig();
     if (inlineConfig.length) return inlineConfig;
-    if (!langMenu) return fallbackLangs.map((entry) => ({ ...entry }));
+    if (!langListbox) return fallbackLangs.map((entry) => ({ ...entry }));
     try {
       const response = await fetch('./i18n/languages.json', { cache: 'force-cache' });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -702,25 +703,24 @@
   }
 
   function renderLangButtons(list) {
-    if (!langMenu) return;
-    langMenu.innerHTML = '';
+    if (!langListbox) return;
+    langListbox.innerHTML = '';
     const fragment = document.createDocumentFragment();
     for (const entry of list) {
-      const item = document.createElement('li');
-      item.setAttribute('role', 'none');
       const button = document.createElement('button');
       button.type = 'button';
+      button.className = 'lang-option';
       button.dataset.lang = entry.code;
       button.dataset.dir = entry.dir;
       button.setAttribute('role', 'option');
       button.setAttribute('lang', entry.code);
+      button.id = `lang-option-${entry.code}`;
+      button.tabIndex = -1;
       const nativeSpan = document.createElement('span');
       nativeSpan.className = 'lang-native';
       nativeSpan.textContent = entry.native;
       nativeSpan.setAttribute('lang', entry.code);
-      if (entry.dir === 'rtl') {
-        nativeSpan.dir = 'rtl';
-      }
+      nativeSpan.dir = entry.dir === 'rtl' ? 'rtl' : 'ltr';
       const englishSpan = document.createElement('span');
       englishSpan.className = 'lang-english';
       englishSpan.textContent = entry.english;
@@ -731,21 +731,67 @@
         : `${entry.english} · ${entry.native}`;
       button.addEventListener('click', (event) => {
         event.preventDefault();
-        closeLangMenu();
         setLang(entry.code);
       });
-      item.appendChild(button);
-      fragment.appendChild(item);
+      fragment.appendChild(button);
     }
-    langMenu.appendChild(fragment);
-    langButtons = Array.from(langMenu.querySelectorAll('[data-lang]'));
-    langDropdown?.setAttribute('data-ready', 'true');
+    langListbox.appendChild(fragment);
+    langButtons = Array.from(langListbox.querySelectorAll('[data-lang]'));
+    langComponent?.setAttribute('data-ready', 'true');
   }
 
+  function focusLangButton(index) {
+    if (!langButtons.length) return;
+    const total = langButtons.length;
+    const targetIndex = ((index % total) + total) % total;
+    const btn = langButtons[targetIndex];
+    if (btn) btn.focus();
+  }
+
+  function handleLangKeydown(event) {
+    if (!langButtons.length) return;
+    const { key } = event;
+    const activeElement = document.activeElement;
+    const currentIndex = langButtons.indexOf(activeElement);
+    if (key === 'ArrowLeft' || key === 'ArrowUp') {
+      event.preventDefault();
+      const nextIndex = currentIndex > -1 ? currentIndex - 1 : langButtons.length - 1;
+      focusLangButton(nextIndex);
+    } else if (key === 'ArrowRight' || key === 'ArrowDown') {
+      event.preventDefault();
+      const nextIndex = currentIndex > -1 ? currentIndex + 1 : 0;
+      focusLangButton(nextIndex);
+    } else if (key === 'Home') {
+      event.preventDefault();
+      focusLangButton(0);
+    } else if (key === 'End') {
+      event.preventDefault();
+      focusLangButton(langButtons.length - 1);
+    } else if (key === ' ' || key === 'Spacebar' || key === 'Enter') {
+      if (currentIndex > -1) {
+        event.preventDefault();
+        langButtons[currentIndex].click();
+      }
+    }
+  }
+
+  langListbox?.addEventListener('keydown', handleLangKeydown);
+
   function updateLangButtons(activeLang) {
+    let activeId = null;
     for (const btn of langButtons) {
       const isActive = btn.dataset.lang === activeLang;
       btn.setAttribute('aria-selected', String(isActive));
+      btn.tabIndex = isActive ? 0 : -1;
+      if (isActive) activeId = btn.id || null;
+    }
+    if (!activeId && langButtons.length) {
+      langButtons[0].tabIndex = 0;
+      activeId = langButtons[0].id || null;
+    }
+    if (langListbox) {
+      if (activeId) langListbox.setAttribute('aria-activedescendant', activeId);
+      else langListbox.removeAttribute('aria-activedescendant');
     }
   }
 
@@ -754,7 +800,7 @@
   }
 
   function updateLangSummary(lang) {
-    if (!langSummary) return;
+    if (!langCurrent) return;
     const entry = getLangEntry(lang) || fallbackLangs[0];
     const displayCode = entry.code.split('-')[0].toUpperCase();
     if (summaryCode) summaryCode.textContent = displayCode;
@@ -763,8 +809,9 @@
       summaryName.setAttribute('lang', entry.code);
       summaryName.dir = entry.dir === 'rtl' ? 'rtl' : 'ltr';
     }
-    langSummary.setAttribute('aria-label', `Language: ${entry.english}`);
-    langDropdown?.setAttribute('data-current', entry.code);
+    langCurrent.setAttribute('aria-label', `Current language: ${entry.english}`);
+    langComponent?.setAttribute('data-current', entry.code);
+    if (summaryLabel) summaryLabel.setAttribute('data-current', entry.code);
   }
 
   function updateDocumentDirection(lang) {
@@ -786,16 +833,6 @@
   function persistLang(lang) {
     try { localStorage.setItem('lang', lang); } catch (e) {}
   }
-
-  function closeLangMenu() {
-    if (langDropdown && langDropdown.open) {
-      langDropdown.open = false;
-    }
-  }
-
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') closeLangMenu();
-  });
 
   async function loadTranslations(lang) {
     if (lang === 'en') return null;
@@ -880,7 +917,6 @@
       saved = match ? match.code : 'en';
     }
     await setLang(saved);
-    closeLangMenu();
   })();
 </script>
 

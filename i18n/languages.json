@@ -9,5 +9,8 @@
   { "code": "ar", "english": "Arabic", "native": "العربية", "dir": "rtl" },
   { "code": "it", "english": "Italian", "native": "Italiano", "dir": "ltr" },
   { "code": "pt", "english": "Portuguese", "native": "Português", "dir": "ltr" },
-  { "code": "ja", "english": "Japanese", "native": "日本語", "dir": "ltr" }
+  { "code": "ja", "english": "Japanese", "native": "日本語", "dir": "ltr" },
+  { "code": "hi", "english": "Hindi", "native": "हिन्दी", "dir": "ltr" },
+  { "code": "tr", "english": "Turkish", "native": "Türkçe", "dir": "ltr" },
+  { "code": "nl", "english": "Dutch", "native": "Nederlands", "dir": "ltr" }
 ]
