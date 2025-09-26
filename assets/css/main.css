@@ -113,10 +113,10 @@
       --gl-fog:206,212,228;
       --gl-node-cool:32,124,228;
       --gl-node-warm:232,78,148;
-      --gl-edge-strong:52,118,218;
-      --gl-edge-soft:50,176,152;
-      --gl-edge-hot:226,74,144;
-      --gl-line-pulse:96,138,232;
+      --gl-edge-strong:32,94,204;
+      --gl-edge-soft:24,148,126;
+      --gl-edge-hot:208,52,128;
+      --gl-line-pulse:74,116,220;
       --gl-fog-density:0.28;
     }
     *{box-sizing:border-box}
