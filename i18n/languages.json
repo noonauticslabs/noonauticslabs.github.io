@@ -1,0 +1,10 @@
+[
+  { "code": "en", "english": "English", "native": "English", "dir": "ltr" },
+  { "code": "pl", "english": "Polish", "native": "Polski", "dir": "ltr" },
+  { "code": "de", "english": "German", "native": "Deutsch", "dir": "ltr" },
+  { "code": "fr", "english": "French", "native": "Français", "dir": "ltr" },
+  { "code": "es", "english": "Spanish", "native": "Español", "dir": "ltr" },
+  { "code": "ru", "english": "Russian", "native": "Русский", "dir": "ltr" },
+  { "code": "zh", "english": "Chinese (Simplified)", "native": "中文", "dir": "ltr" },
+  { "code": "ar", "english": "Arabic", "native": "العربية", "dir": "rtl" }
+]
