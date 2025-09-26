@@ -134,6 +134,13 @@
       --gl-label-text:rgba(255,255,255,0.95);
       --gl-label-bracket:rgba(255,255,255,0.72);
       --menu-shadow:0 24px 60px rgba(2,4,10,.48);
+      --gl-fog:12,19,32;
+      --gl-node-cool:40,199,184;
+      --gl-node-warm:234,62,150;
+      --gl-edge-strong:42,156,255;
+      --gl-edge-soft:48,214,170;
+      --gl-edge-hot:236,74,158;
+      --gl-line-pulse:112,176,255;
     }
     :root[data-theme='light']{
       --bg:#f4f7fb;
@@ -164,12 +171,12 @@
       --header-gradient:linear-gradient(to bottom, rgba(244,247,251,.94), rgba(244,247,251,.7) 60%, transparent);
       --header-solid:rgba(244,247,251,.95);
       --header-shadow:0 6px 22px rgba(35,55,95,.18);
-      --hero-overlay-gradient:radial-gradient(620px 360px at 50% 18%, rgba(219,230,246,.7), rgba(219,230,246,0) 68%), linear-gradient(180deg, rgba(232,238,248,.78), rgba(237,242,252,.3) 60%, rgba(232,238,248,.66));
-      --hero-copy-glow:radial-gradient(ellipse at center, rgba(238,243,252,.95) 0%, rgba(238,243,252,.72) 46%, rgba(238,243,252,.28) 78%, transparent 100%);
-      --hero-text-shadow:0 22px 60px rgba(169,185,217,.6), 0 0 60px rgba(173,191,225,.65);
-      --hero-ambient:radial-gradient(1200px 700px at 70% -10%, rgba(31,111,235,.08), transparent 60%), radial-gradient(1000px 600px at -10% 0%, rgba(43,212,161,.1), transparent 60%), linear-gradient(to bottom, rgba(244,247,251,.2), rgba(244,247,251,.0) 35%, rgba(244,247,251,.0) 70%, rgba(216,226,244,.65));
-      --section-backdrop:radial-gradient(900px 420px at 12% 6%, rgba(31,111,235,.1), transparent 65%), radial-gradient(780px 360px at 88% 88%, rgba(43,212,161,.08), transparent 72%), linear-gradient(180deg, rgba(244,247,252,1), rgba(234,239,248,1) 58%, rgba(224,231,245,1));
-      --section-inner-backdrop:radial-gradient(720px 320px at 15% 5%, rgba(31,111,235,.12), transparent 62%), radial-gradient(620px 320px at 85% 92%, rgba(43,212,161,.12), transparent 70%), linear-gradient(180deg, rgba(255,255,255,1), rgba(240,246,255,1));
+      --hero-overlay-gradient:radial-gradient(620px 360px at 50% 18%, rgba(162,191,255,.32), rgba(162,191,255,0) 68%), linear-gradient(180deg, rgba(232,238,248,.42), rgba(232,238,248,.16) 60%, rgba(223,232,245,.46));
+      --hero-copy-glow:radial-gradient(ellipse at center, rgba(238,243,252,.78) 0%, rgba(238,243,252,.54) 46%, rgba(238,243,252,.18) 78%, transparent 100%);
+      --hero-text-shadow:0 18px 48px rgba(160,178,210,.42), 0 0 44px rgba(172,191,225,.48);
+      --hero-ambient:radial-gradient(1200px 700px at 70% -10%, rgba(82,149,255,.12), transparent 60%), radial-gradient(980px 560px at -10% 0%, rgba(66,200,170,.1), transparent 62%), linear-gradient(to bottom, rgba(234,241,252,.16), rgba(236,243,253,0) 55%, rgba(224,233,246,.38));
+      --section-backdrop:radial-gradient(900px 420px at 12% 6%, rgba(66,149,255,.1), transparent 65%), radial-gradient(780px 360px at 88% 88%, rgba(61,200,165,.08), transparent 72%), linear-gradient(180deg, rgba(244,247,252,.96), rgba(235,240,249,.96) 58%, rgba(226,233,246,.94));
+      --section-inner-backdrop:radial-gradient(720px 320px at 15% 5%, rgba(64,142,255,.12), transparent 62%), radial-gradient(620px 320px at 85% 92%, rgba(56,196,160,.1), transparent 70%), linear-gradient(180deg, rgba(255,255,255,1), rgba(242,247,255,1));
       --card-bg:linear-gradient(155deg, rgba(252,254,255,.92), rgba(240,246,255,.9) 52%, rgba(243,248,255,.98));
       --card-border:rgba(79,114,178,.18);
       --card-shadow:0 20px 40px rgba(120,150,200,.22);
@@ -182,6 +189,13 @@
       --gl-label-text:rgba(28,36,54,0.92);
       --gl-label-bracket:rgba(45,61,94,0.65);
       --menu-shadow:0 24px 60px rgba(35,56,102,.18);
+      --gl-fog:214,220,232;
+      --gl-node-cool:34,120,236;
+      --gl-node-warm:240,70,144;
+      --gl-edge-strong:44,130,234;
+      --gl-edge-soft:42,194,162;
+      --gl-edge-hot:232,82,156;
+      --gl-line-pulse:118,160,252;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -823,28 +837,51 @@
   if (!gl) return;
   const overlayCtx = overlay ? overlay.getContext('2d') : null;
   const rootEl = document.documentElement;
-  let clearColor = [0.015, 0.02, 0.05];
+  const clearColor = new Float32Array([0.015, 0.02, 0.05]);
+  const fogColor = new Float32Array([0.03, 0.05, 0.09]);
+  const pulseTint = new Float32Array([0.35, 0.55, 0.9]);
   const overlayColors = {
     text: 'rgba(255,255,255,0.95)',
     bracket: 'rgba(255,255,255,0.72)'
   };
+  const palette = {
+    nodeCool: new Float32Array([0.16,0.78,0.72]),
+    nodeWarm: new Float32Array([0.92,0.18,0.56]),
+    edgeStrong: new Float32Array([0.12,0.62,0.98]),
+    edgeSoft: new Float32Array([0.17,0.85,0.66]),
+    edgeHot: new Float32Array([0.92,0.18,0.56])
+  };
+  let edgePaletteDirty = false;
+
+  function parseVec(styles, name, target){
+    const raw = styles.getPropertyValue(name);
+    if (!raw) return;
+    const parts = raw.split(',');
+    if (parts.length < 3) return;
+    for (let i=0;i<3;i++){
+      const value = parseFloat(parts[i]);
+      if (!Number.isFinite(value)) return;
+      target[i] = Math.max(0, Math.min(255, value)) / 255;
+    }
+  }
 
   function refreshPalette(){
     const styles = getComputedStyle(rootEl);
-    const clearRaw = styles.getPropertyValue('--gl-clear').trim();
-    if (clearRaw){
-      const parts = clearRaw.split(',').map((part) => parseFloat(part.trim()));
-      if (parts.length >= 3 && parts.every((value) => Number.isFinite(value))){
-        clearColor = parts.slice(0,3).map((value) => Math.max(0, Math.min(255, value)) / 255);
-      }
-    }
+    parseVec(styles, '--gl-clear', clearColor);
+    parseVec(styles, '--gl-fog', fogColor);
+    parseVec(styles, '--gl-node-cool', palette.nodeCool);
+    parseVec(styles, '--gl-node-warm', palette.nodeWarm);
+    parseVec(styles, '--gl-edge-strong', palette.edgeStrong);
+    parseVec(styles, '--gl-edge-soft', palette.edgeSoft);
+    parseVec(styles, '--gl-edge-hot', palette.edgeHot);
+    parseVec(styles, '--gl-line-pulse', pulseTint);
     const textRaw = styles.getPropertyValue('--gl-label-text').trim();
     if (textRaw) overlayColors.text = textRaw;
     const bracketRaw = styles.getPropertyValue('--gl-label-bracket').trim();
     if (bracketRaw) overlayColors.bracket = bracketRaw;
+    edgePaletteDirty = true;
   }
 
-  refreshPalette();
   rootEl.addEventListener('themechange', refreshPalette);
 
   let lastPulse = performance.now();
@@ -1046,6 +1083,7 @@
   }`;
   const F_POINTS = `
   precision mediump float;
+  uniform vec3 uFogColor;
   varying vec3 vColor;
   varying float vDepth;
   varying float vPulse;
@@ -1061,7 +1099,7 @@
     float halo = smoothstep(0.9, 0.0, r2) * vPulse * 0.9;
     float fog = clamp((vDepth-1.0) / 9.0, 0.0, 1.0);
     vec3 base = vColor*(diff + 0.12*halo) + spec*vec3(1.0);
-    base = mix(base, vec3(0.03,0.05,0.09), fog);
+    base = mix(base, uFogColor, fog);
     gl_FragColor = vec4(base, 0.86 * vAlpha);
   }`;
   const V_LINES = `
@@ -1082,13 +1120,15 @@
   }`;
   const F_LINES = `
   precision mediump float;
+  uniform vec3 uFogColor;
+  uniform vec3 uPulseColor;
   varying vec3 vColor;
   varying float vDepth;
   varying float vPulse;
   varying float vAlpha;
   void main(){
     float fog = clamp((vDepth-1.0) / 9.0, 0.0, 1.0);
-    vec3 col = mix(vColor + vPulse*vec3(0.35,0.55,0.9), vec3(0.03,0.05,0.09), fog);
+    vec3 col = mix(vColor + vPulse*uPulseColor, uFogColor, fog);
     gl_FragColor = vec4(col, (0.35 + 0.35*min(1.0, vPulse)) * vAlpha);
   }`;
 
@@ -1106,12 +1146,15 @@
   const uPoints = {
     uProj: gl.getUniformLocation(PROG_POINTS,'uProj'),
     uView: gl.getUniformLocation(PROG_POINTS,'uView'),
-    uModel: gl.getUniformLocation(PROG_POINTS,'uModel')
+    uModel: gl.getUniformLocation(PROG_POINTS,'uModel'),
+    uFogColor: gl.getUniformLocation(PROG_POINTS,'uFogColor')
   };
   const uLines = {
     uProj: gl.getUniformLocation(PROG_LINES,'uProj'),
     uView: gl.getUniformLocation(PROG_LINES,'uView'),
-    uModel: gl.getUniformLocation(PROG_LINES,'uModel')
+    uModel: gl.getUniformLocation(PROG_LINES,'uModel'),
+    uFogColor: gl.getUniformLocation(PROG_LINES,'uFogColor'),
+    uPulseColor: gl.getUniformLocation(PROG_LINES,'uPulseColor')
   };
 
   function attrib(p, name, buf, size){
@@ -1165,7 +1208,7 @@
     velocities[i*3+0]=(Math.random()-0.5)*0.0018;
     velocities[i*3+1]=(Math.random()-0.5)*0.0018;
     velocities[i*3+2]=(Math.random()-0.5)*0.0018;
-    colors.set([0.16,0.78,0.72], i*3);
+    colors.set(palette.nodeCool, i*3);
     labelText[i] = pickLabel();
     const amp = 0.14 + Math.random()*0.12;
     const theta = Math.random()*Math.PI*2;
@@ -1185,7 +1228,22 @@
   const edgeAlpha = new Float32Array(MAX_EDGES*2);   // per-vertex alpha (fade)
   const edgeLife  = new Float32Array(MAX_EDGES);     // 1 = alive target, 0 = removed target
   const edgeFade  = new Float32Array(MAX_EDGES);     // current fade 0..1
+  const edgeVariant = new Uint8Array(MAX_EDGES);
   let edgeCount = 0;
+
+  function assignEdgeColors(index){
+    const offset = index*6;
+    edgeColor.set(palette.edgeStrong, offset);
+    const variant = edgeVariant[index];
+    const endColor = variant === 1 ? palette.edgeHot : palette.edgeSoft;
+    edgeColor.set(endColor, offset+3);
+  }
+
+  function applyEdgeColors(){
+    for (let e=0; e<edgeCount; e++) assignEdgeColors(e);
+    gl.bindBuffer(gl.ARRAY_BUFFER, lineColBuf);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, edgeColor.subarray(0, edgeCount*6));
+  }
 
   function addEdge(a,b, startFade=0){
     if (a===b || edgeCount>=MAX_EDGES) return false;
@@ -1195,11 +1253,12 @@
     edges[edgeCount*2]=a; edges[edgeCount*2+1]=b;
     const dx=positions[a*3]-positions[b*3], dy=positions[a*3+1]-positions[b*3+1], dz=positions[a*3+2]-positions[b*3+2];
     springRest[edgeCount] = Math.max(0.42, Math.min(0.92, Math.hypot(dx,dy,dz)));
-    const c1 = [0.12,0.62,0.98], c2 = Math.random()<0.12 ? [0.92,0.18,0.56] : [0.17,0.85,0.66];
-    edgeColor.set(c1, edgeCount*6+0); edgeColor.set(c2, edgeCount*6+3);
+    edgeVariant[edgeCount] = Math.random()<0.13 ? 1 : 0;
+    assignEdgeColors(edgeCount);
     edgePulse[edgeCount*2] = 0.0; edgePulse[edgeCount*2+1] = 0.0;
     edgeLife[edgeCount] = 1.0;
     edgeFade[edgeCount] = startFade; // start small, fade in
+    edgePaletteDirty = true;
     edgeCount++;
     return true;
   }
@@ -1235,6 +1294,10 @@
   const lineColBuf   = makeBuf(gl.ARRAY_BUFFER, edgeColor);
   const linePulseBuf = makeBuf(gl.ARRAY_BUFFER, edgePulse);
   const lineAlphaBuf = makeBuf(gl.ARRAY_BUFFER, edgeAlpha);
+
+  refreshPalette();
+  applyEdgeColors();
+  edgePaletteDirty = false;
 
   const lineVerts = new Float32Array(MAX_EDGES*2*3);
   function updateLineVerts(){
@@ -1362,7 +1425,9 @@
         springRest[idx]=springRest[edgeCount];
         edgeFade[idx]=edgeFade[edgeCount];
         edgeLife[idx]=edgeLife[edgeCount];
-        for(let k=0;k<6;k++) edgeColor[idx*6+k]=edgeColor[edgeCount*6+k];
+        edgeVariant[idx] = edgeVariant[edgeCount];
+        assignEdgeColors(idx);
+        edgePaletteDirty = true;
       }
     }
     // add back up to MAX_EDGES with fade-in
@@ -1434,10 +1499,12 @@
       positions[ix+2] -= positions[ix+2]*PULL*dt*0.8;
 
       const sp = Math.min(1.0, Math.hypot(velocities[ix],velocities[ix+1],velocities[ix+2])*8.5);
-      const cool=[0.16,0.78,0.72], warm=[0.92,0.18,0.56];
-      colors[ix]   = cool[0]*(1-sp) + warm[0]*sp*0.55;
-      colors[ix+1] = cool[1]*(1-sp) + warm[1]*sp*0.55;
-      colors[ix+2] = cool[2]*(1-sp) + warm[2]*sp*0.55;
+      const cool = palette.nodeCool;
+      const warm = palette.nodeWarm;
+      const warmBlend = sp*0.6;
+      colors[ix]   = cool[0]*(1-sp) + warm[0]*warmBlend;
+      colors[ix+1] = cool[1]*(1-sp) + warm[1]*warmBlend;
+      colors[ix+2] = cool[2]*(1-sp) + warm[2]*warmBlend;
     }
     gl.bindBuffer(gl.ARRAY_BUFFER, posBuf); gl.bufferSubData(gl.ARRAY_BUFFER, 0, positions);
     gl.bindBuffer(gl.ARRAY_BUFFER, colBuf); gl.bufferSubData(gl.ARRAY_BUFFER, 0, colors);
@@ -1579,6 +1646,10 @@
     rewire();
     fadeEdges(dt);
     updateLineVerts();
+    if (edgePaletteDirty){
+      applyEdgeColors();
+      edgePaletteDirty = false;
+    }
 
     const aspect = canvas.width/canvas.height;
     const proj = M.perspective(50*Math.PI/180, aspect, 0.1, 100.0);
@@ -1597,6 +1668,8 @@
     gl.uniformMatrix4fv(uLinesLoc.uProj,false,proj);
     gl.uniformMatrix4fv(uLinesLoc.uView,false,view);
     gl.uniformMatrix4fv(uLinesLoc.uModel,false,model);
+    if (uLines.uFogColor) gl.uniform3fv(uLines.uFogColor, fogColor);
+    if (uLines.uPulseColor) gl.uniform3fv(uLines.uPulseColor, pulseTint);
     attrib(PROG_LINES,'position', linePosBuf, 3);
     attrib(PROG_LINES,'color',    lineColBuf, 3);
     attrib(PROG_LINES,'pulse',    linePulseBuf, 1);
@@ -1608,6 +1681,7 @@
     gl.uniformMatrix4fv(uPointsLoc.uProj,false,proj);
     gl.uniformMatrix4fv(uPointsLoc.uView,false,view);
     gl.uniformMatrix4fv(uPointsLoc.uModel,false,model);
+    if (uPoints.uFogColor) gl.uniform3fv(uPoints.uFogColor, fogColor);
     attrib(PROG_POINTS,'position', posBuf, 3);
     attrib(PROG_POINTS,'color',    colBuf, 3);
     attrib(PROG_POINTS,'pulse',    pulseBuf, 1);
