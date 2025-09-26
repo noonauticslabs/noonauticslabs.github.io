@@ -1,0 +1,22 @@
+<div class="lang-switcher" data-component="lang-switcher">
+  <button class="lang-toggle" type="button" id="langToggle" aria-haspopup="listbox" aria-expanded="false" aria-controls="langMenu">
+    <span class="sr-only" data-i18n="lang_label">Language</span>
+    <span class="lang-flag lang-flag-current" aria-hidden="true">🌐</span>
+    <span class="lang-current" aria-live="polite">
+      <span class="lang-code" aria-hidden="true">EN</span>
+      <span class="lang-name" lang="en">English</span>
+    </span>
+    <span class="lang-chevron" aria-hidden="true">▾</span>
+  </button>
+  <div class="lang-menu" id="langMenu" role="presentation" hidden>
+    <p class="lang-label" id="langLabel" data-i18n="lang_label">Language</p>
+    <label class="sr-only" for="langSearch">Search languages</label>
+    <div class="lang-search">
+      <input type="search" id="langSearch" name="langSearch" placeholder="Search languages" autocomplete="off" spellcheck="false" />
+    </div>
+    <div class="lang-options" role="listbox" aria-labelledby="langLabel"></div>
+  </div>
+  <noscript>
+    <p class="lang-noscript">English · Polski · Deutsch · Français · Español · Русский · 中文 · العربية · Italiano · Português · 日本語 · हिन्दी · Türkçe · Nederlands</p>
+  </noscript>
+</div>

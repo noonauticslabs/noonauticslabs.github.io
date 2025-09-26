@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en" data-theme="dark" dir="/">
+  <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SiCell - by Noonautics Labs</title>
+  <meta name="description" content="SiCell is Noonautics Labs' flagship project: mechanistic human cell simulations, a search engine for disease mechanisms, and a biotech AI engine for R&D teams." />
+  <meta name="keywords" content="cell simulation software, mechanistic cell simulation, computational biology platform, mechanistic systems biology, digital cell twin, in silico drug discovery, biotech AI engine, biotech R&D tools, bioinformatics automation, disease pathway analysis" />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#0b0c10" />
+  <link rel="canonical" href="http://0.0.0.0:4000/" />
+  
+  
+    
+      <link rel="alternate" hreflang="en" href="https://noonauticslabs.org/" />
+    
+      <link rel="alternate" hreflang="pl" href="https://noonauticslabs.org/" />
+    
+      <link rel="alternate" hreflang="de" href="https://noonauticslabs.org/" />
+    
+      <link rel="alternate" hreflang="fr" href="https://noonauticslabs.org/" />
+    
+      <link rel="alternate" hreflang="es" href="https://noonauticslabs.org/" />
+    
+      <link rel="alternate" hreflang="ru" href="https://noonauticslabs.org/" />
+    
+      <link rel="alternate" hreflang="zh" href="https://noonauticslabs.org/" />
+    
+      <link rel="alternate" hreflang="ar" href="https://noonauticslabs.org/" />
+    
+      <link rel="alternate" hreflang="it" href="https://noonauticslabs.org/" />
+    
+      <link rel="alternate" hreflang="pt" href="https://noonauticslabs.org/" />
+    
+      <link rel="alternate" hreflang="ja" href="https://noonauticslabs.org/" />
+    
+      <link rel="alternate" hreflang="hi" href="https://noonauticslabs.org/" />
+    
+      <link rel="alternate" hreflang="tr" href="https://noonauticslabs.org/" />
+    
+      <link rel="alternate" hreflang="nl" href="https://noonauticslabs.org/" />
+    
+  
+  <link rel="alternate" hreflang="x-default" href="http://0.0.0.0:4000/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="SiCell by Noonautics Labs" />
+  <meta property="og:description" content="Mechanistic human cell simulations, computational biology software, and in-silico discovery tools for biotech and pharma teams." />
+  <meta property="og:url" content="http://0.0.0.0:4000/" />
+  <meta property="og:site_name" content="Noonautics Labs" />
+  <meta property="og:image" content="http://0.0.0.0:4000/logo.svg" />
+  <meta property="og:locale" content="en_US" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="SiCell by Noonautics Labs" />
+  <meta name="twitter:description" content="Mechanistic human cell simulations, computational biology software, and in-silico discovery tools for biotech and pharma teams." />
+  <meta name="twitter:image" content="http://0.0.0.0:4000/logo.svg" />
+  <script>
+    (function(){
+      const root = document.documentElement;
+      const meta = document.querySelector('meta[name="theme-color"]');
+      let theme = root.dataset.theme || 'dark';
+      try {
+        const stored = localStorage.getItem('theme');
+        if (stored === 'light' || stored === 'dark') {
+          theme = stored;
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          theme = 'dark';
+        } else {
+          theme = 'light';
+        }
+      } catch (err) {
+        try {
+          if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            theme = 'dark';
+          } else {
+            theme = 'light';
+          }
+        } catch (err2) {
+          theme = 'dark';
+        }
+      }
+      root.dataset.theme = theme;
+      if (meta) meta.setAttribute('content', theme === 'dark' ? '#0b0c10' : '#f4f7fb');
+    })();
+  </script>
+  <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+  <link rel="stylesheet" href="/assets/css/main.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Noonautics Labs",
+    "url": "https://noonauticslabs.org/",
+    "logo": "https://noonauticslabs.org/logo.svg",
+    "description": "Mechanistic human cell simulations, computational biology software, and in-silico discovery tools for biotech and pharma teams.",
+    "contactPoint": [
+      {
+        "@type": "ContactPoint",
+        "contactType": "Business inquiries",
+        "email": "contact@noonauticslabs.org",
+        "areaServed": "Worldwide",
+        "availableLanguage": [
+          "English",
+          "Polish",
+          "German",
+          "French",
+          "Spanish",
+          "Russian",
+          "Chinese (Simplified)",
+          "Arabic",
+          "Italian",
+          "Portuguese",
+          "Japanese",
+          "Hindi",
+          "Turkish",
+          "Dutch"
+        ]
+      }
+    ],
+    "knowsAbout": [
+      "cell simulation",
+      "computational biology",
+      "bioinformatics",
+      "systems biology",
+      "in silico drug discovery"
+    ]
+  }
+  </script>
+</head>
+
+  <body>
+    <header>
+  <div class="container nav">
+    <div class="brand" aria-label="Noonautics Labs">
+      <img class="logo" src="/logo.svg" alt="Noonautics Labs logo" />
+      <div>
+        NOONAUTICS LABS
+        <small data-i18n="tagline">R&amp;D • Cell Sim • Bioinformatics</small>
+      </div>
+    </div>
+    <button class="hamb" id="hamb" aria-expanded="false" aria-controls="menu" aria-label="Open main menu">Menu</button>
+    <nav class="menu" id="menu" aria-label="Primary">
+      <a href="#project" data-i18n="nav_project">Project</a>
+      <a href="#technology" data-i18n="nav_tech">Technology</a>
+      <a href="#company" data-i18n="nav_company">Company</a>
+      <a href="#team" data-i18n="nav_team">Team</a>
+      <a href="#contact" data-i18n="nav_contact">Contact</a>
+      <span class="theme-toggle" role="group" aria-label="Theme">
+        <button type="button" id="theme-toggle" aria-pressed="true" data-icon="🌞" aria-label="Switch to light mode">Light</button>
+      </span>
+      <div class="lang-switcher" data-component="lang-switcher">
+  <button class="lang-toggle" type="button" id="langToggle" aria-haspopup="listbox" aria-expanded="false" aria-controls="langMenu">
+    <span class="sr-only" data-i18n="lang_label">Language</span>
+    <span class="lang-flag lang-flag-current" aria-hidden="true">🌐</span>
+    <span class="lang-current" aria-live="polite">
+      <span class="lang-code" aria-hidden="true">EN</span>
+      <span class="lang-name" lang="en">English</span>
+    </span>
+    <span class="lang-chevron" aria-hidden="true">▾</span>
+  </button>
+  <div class="lang-menu" id="langMenu" role="presentation" hidden>
+    <p class="lang-label" id="langLabel" data-i18n="lang_label">Language</p>
+    <label class="sr-only" for="langSearch">Search languages</label>
+    <div class="lang-search">
+      <input type="search" id="langSearch" name="langSearch" placeholder="Search languages" autocomplete="off" spellcheck="false" />
+    </div>
+    <div class="lang-options" role="listbox" aria-labelledby="langLabel"></div>
+  </div>
+  <noscript>
+    <p class="lang-noscript">English · Polski · Deutsch · Français · Español · Русский · 中文 · العربية · Italiano · Português · 日本語 · हिन्दी · Türkçe · Nederlands</p>
+  </noscript>
+</div>
+
+    </nav>
+  </div>
+</header>
+
+    <main id="main-content">
+      <section class="hero" id="project" aria-label="SiCell hero">
+  <div class="hero-bg" aria-hidden="true">
+    <canvas id="viz3d"></canvas>
+    <canvas id="vizLabels"></canvas>
+  </div>
+  <div class="hero-fade" aria-hidden="true"></div>
+  <div class="container">
+    <div class="hero-copy">
+      <span class="badge"><span class="sr-only">Project: </span><span data-i18n="hero_badge">SiCell - Flagship Project</span></span>
+      <h1 data-i18n="hero_title">Full human cell simulations - closing the gap between silicon and carbon.</h1>
+      <p class="lead" data-i18n="hero_lead">
+        <strong>SiCell</strong> is our audacious step toward programmable biology:
+        universal initial-state definitions, mechanistic models, and a search engine
+        to explore disease mechanisms and pharma targets - as fast and iterative as software.
+      </p>
+      <div class="cta">
+        <a class="btn" href="#contact" role="button" aria-label="Contact us" data-i18n="cta_contact">Contact us</a>
+        <button class="btn ghost" type="button" disabled title="Whitepaper coming soon" data-i18n="cta_whitepaper">Whitepaper (soon)</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="technology" aria-label="Technology">
+  <div class="section-inner">
+    <div class="card">
+      <h2 data-i18n="tech_title">Technology</h2>
+      <p class="muted" data-i18n="tech_intro">
+        From curated databases to mechanistic graphs:
+        we synthesize structured knowledge into deterministic systems that run fast and compose cleanly.
+      </p>
+      <ul class="list">
+        <li><span data-i18n="tech_point1">Universal <strong>initial state</strong>: genes, epigenetics, organelles, protein levels &rarr; any cell type (neuron, stem, cancer, engineered).</span></li>
+        <li><span data-i18n="tech_point2">Mechanistic <strong>ODE/graph models</strong> with feedback loops; no trillion-param training needed.</span></li>
+        <li><span data-i18n="tech_point3"><strong>Search engine</strong> to explore disease pathways, targets, apoptosis routes, and drug effects.</span></li>
+        <li><span data-i18n="tech_point4">Simple <strong>APIs &amp; visuals</strong> for rapid prototyping, like software.</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2 data-i18n="why_title">Why now?</h2>
+      <p class="muted" data-i18n="why_text">
+        It is a paradox: we run trillion-parameter AIs trained from scratch, yet biology -
+        where we already know so much - trails behind. We aim to close the gap between silicon on CPUs and carbon in cells, bringing biology into the era of emergent, iterative tooling.
+      </p>
+      <p class="mono" data-i18n="why_motto">"Make biology buildable."</p>
+    </div>
+    <div class="card">
+      <h2 data-i18n="seo_title">Who finds SiCell when searching?</h2>
+      <p class="muted" data-i18n="seo_intro">
+        If you are exploring cell simulation software, computational biology platforms, or mechanistic systems biology tooling,
+        these are the problems we solve every day.
+      </p>
+      <ul class="list">
+        <li><span data-i18n="seo_point1">Cell simulation software for biotech R&amp;D teams, computational biologists, and digital cell twin initiatives.</span></li>
+        <li><span data-i18n="seo_point2">Mechanistic systems biology models for pharmaceutical target discovery and translational research pipelines.</span></li>
+        <li><span data-i18n="seo_point3">In-silico drug discovery, disease pathway analysis, and bioinformatics automation for precision medicine groups.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="company" aria-label="Company">
+  <div class="section-inner">
+    <div class="card">
+      <h2 data-i18n="about_title">About Noonautics Labs</h2>
+      <p><strong>NOONAUTICS LABS SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ</strong><br/>
+        <span class="muted" data-i18n="about_legal">Legal form: sp. z o.o. • Kraków (Kraków-Podgórze), Małopolskie</span></p>
+      <p class="muted" data-i18n="about_desc">BADANIA I ROZWÓJ W ZAKRESIE SYMULACJI KOMÓRKOWYCH, BIOINFORMATYKI I TWORZENIA NARZĘDZI DLA BIOTECHNOLOGII.</p>
+    </div>
+    <div class="card">
+      <h2 data-i18n="focus_title">Focus</h2>
+      <ul class="list">
+        <li><span data-i18n="focus_1">Full human cell simulations (mechanistic).</span></li>
+        <li><span data-i18n="focus_2">Bioinformatics pipelines &amp; knowledge synthesis.</span></li>
+        <li><span data-i18n="focus_3">Developer-grade tools for biotech teams.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="team" aria-label="Team">
+  <div class="section-inner">
+    <div class="card">
+      <h2 data-i18n="team_title">Team</h2>
+      <p><strong>Marcel Tomaszek</strong> - <span data-i18n="team_affil">Cellular &amp; Molecular Biophysics, UJ</span></p>
+      <p><a href="mailto:marcel.tomaszek@student.uj.edu.pl">marcel.tomaszek@student.uj.edu.pl</a></p>
+    </div>
+    <div class="card">
+      <h2 data-i18n="next_title">What we are building next</h2>
+      <ul class="list">
+        <li><span data-i18n="next_1">Open APIs for state definitions and simulation control.</span></li>
+        <li><span data-i18n="next_2">Interactive visuals for pathway exploration.</span></li>
+        <li><span data-i18n="next_3">Whitepaper &amp; demo (in progress).</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="contact" aria-label="Contact">
+  <div class="section-inner">
+    <div class="card">
+      <h2 data-i18n="contact_title">Contact</h2>
+      <p><span data-i18n="contact_general">General</span>:
+        <a href="mailto:contact@noonauticslabs.org">contact@noonauticslabs.org</a></p>
+
+      <form id="mailtoForm">
+        <div class="row">
+          <div>
+            <label class="sr-only" for="name">Name</label>
+            <input id="name" name="name" type="text" placeholder="Name / Company" required>
+          </div>
+          <div>
+            <label class="sr-only" for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="Email" required>
+          </div>
+        </div>
+        <label class="sr-only" for="message">Message</label>
+        <textarea id="message" name="message" placeholder="How can we collaborate?" required></textarea>
+        <div class="cta" style="margin-top:14px">
+          <button class="btn" type="submit" data-i18n="contact_send">Send</button>
+          <a class="btn ghost" href="mailto:contact@noonauticslabs.org" data-i18n="contact_email">Email instead</a>
+        </div>
+        <p class="muted" style="margin-top:8px">No backend needed - this opens your email client with the details prefilled.</p>
+      </form>
+
+      <p class="muted" data-i18n="contact_note" style="margin-top:10px">We are preparing our conference materials. A whitepaper and demo access will follow.</p>
+    </div>
+
+    <div class="card">
+      <h2 data-i18n="partners_title">For partners</h2>
+      <p class="muted" data-i18n="partners_text">
+        Exploration of disease mechanisms, target discovery, and in-silico hypothesis testing.
+        Let us collaborate on focused, mechanistic problems.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+    </main>
+    <footer>
+  <div class="cols">
+    <div>
+      <div class="footer-brand" aria-label="Noonautics Labs">
+        <img class="logo" src="/logo.svg" alt="Noonautics Labs logo" />
+        <div>
+          <div class="footer-brand-name">NOONAUTICS LABS</div>
+          <small class="muted" data-i18n="tagline">R&amp;D • Cell Sim • Bioinformatics</small>
+        </div>
+      </div>
+      <span class="pill">SiCell</span>
+      <div class="footer-copy">&copy; 2025 Noonautics Labs sp. z o.o. - Kraków, Poland</div>
+    </div>
+    <div class="footer-links">
+      <div class="muted">Company</div>
+      <a href="#company" data-i18n="nav_company">About</a>
+      <a href="#team" data-i18n="nav_team">Team</a>
+      <a href="#" aria-disabled="true">Careers (soon)</a>
+    </div>
+    <div class="footer-links">
+      <div class="muted">Project</div>
+      <a href="#project" data-i18n="nav_project">Overview</a>
+      <a href="#technology" data-i18n="nav_tech">Technology</a>
+      <a href="#" aria-disabled="true">Whitepaper (soon)</a>
+    </div>
+    <div class="footer-links">
+      <div class="muted">Legal</div>
+      <a href="#" aria-disabled="true">Privacy (soon)</a>
+      <a href="#" aria-disabled="true">Imprint (soon)</a>
+    </div>
+  </div>
+</footer>
+
+    <script src="/assets/js/main.js" defer></script>
+  </body>
+</html>

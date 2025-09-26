@@ -1,0 +1,39 @@
+<section id="contact" aria-label="Contact">
+  <div class="section-inner">
+    <div class="card">
+      <h2 data-i18n="contact_title">Contact</h2>
+      <p><span data-i18n="contact_general">General</span>:
+        <a href="mailto:contact@noonauticslabs.org">contact@noonauticslabs.org</a></p>
+
+      <form id="mailtoForm">
+        <div class="row">
+          <div>
+            <label class="sr-only" for="name">Name</label>
+            <input id="name" name="name" type="text" placeholder="Name / Company" required>
+          </div>
+          <div>
+            <label class="sr-only" for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="Email" required>
+          </div>
+        </div>
+        <label class="sr-only" for="message">Message</label>
+        <textarea id="message" name="message" placeholder="How can we collaborate?" required></textarea>
+        <div class="cta" style="margin-top:14px">
+          <button class="btn" type="submit" data-i18n="contact_send">Send</button>
+          <a class="btn ghost" href="mailto:contact@noonauticslabs.org" data-i18n="contact_email">Email instead</a>
+        </div>
+        <p class="muted" style="margin-top:8px">No backend needed - this opens your email client with the details prefilled.</p>
+      </form>
+
+      <p class="muted" data-i18n="contact_note" style="margin-top:10px">We are preparing our conference materials. A whitepaper and demo access will follow.</p>
+    </div>
+
+    <div class="card">
+      <h2 data-i18n="partners_title">For partners</h2>
+      <p class="muted" data-i18n="partners_text">
+        Exploration of disease mechanisms, target discovery, and in-silico hypothesis testing.
+        Let us collaborate on focused, mechanistic problems.
+      </p>
+    </div>
+  </div>
+</section>

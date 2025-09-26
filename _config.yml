@@ -1,0 +1,21 @@
+# Jekyll site configuration for noonauticslabs.org
+# Converts the previously single-page HTML build into modular templates.
+title: "SiCell - Noonautics Labs"
+description: "SiCell is Noonautics Labs' flagship project: mechanistic human cell simulations, a search engine for disease mechanisms, and a biotech AI engine for R&D teams."
+url: "https://noonauticslabs.org"
+lang: en
+permalink: pretty
+markdown: kramdown
+kramdown:
+  input: GFM
+plugins: []
+include:
+  - i18n
+exclude:
+  - README.md
+  - node_modules
+  - vendor
+  - Gemfile
+  - Gemfile.lock
+  - .gitignore
+  - .github
