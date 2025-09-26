@@ -263,6 +263,15 @@
     .menu{display:flex; gap:18px; align-items:center}
     .menu a{color:var(--text); opacity:.9}
     .menu a:hover{opacity:1}
+    .theme-toggle{display:inline-flex; align-items:center;}
+    #theme-toggle{appearance:none; border:1px solid var(--border); border-radius:999px; background:var(--btn-ghost-bg);
+      color:var(--btn-ghost-text); padding:6px 14px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center;
+      gap:10px; transition:background .18s ease, color .18s ease, border-color .18s ease, box-shadow .18s ease;}
+    #theme-toggle::before{content:attr(data-icon); font-size:1rem; line-height:1; display:inline-flex; align-items:center; margin-right:6px;}
+    #theme-toggle:hover{background:rgba(31,111,235,.16); color:var(--text);}
+    #theme-toggle:focus-visible{outline:2px solid rgba(62,142,255,.9); outline-offset:2px;}
+    #theme-toggle[aria-pressed="true"]{background:linear-gradient(135deg, rgba(31,111,235,.18), rgba(43,212,161,.14));
+      border-color:rgba(31,111,235,.45); box-shadow:0 10px 24px rgba(10,22,40,.22); color:var(--text);}
     .lang-switcher{position:relative; display:flex; flex-direction:column; align-items:flex-end; gap:8px;}
     .lang-toggle{appearance:none; border:1px solid var(--border); border-radius:999px; background:var(--btn-ghost-bg);
       color:var(--btn-ghost-text); padding:6px 14px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center;
@@ -277,10 +286,17 @@
     .lang-switcher[data-open="true"] .lang-toggle{background:linear-gradient(135deg, rgba(31,111,235,.16), rgba(43,212,161,.12));
       border-color:rgba(31,111,235,.45); box-shadow:0 12px 28px rgba(12,22,40,.28);}
     .lang-menu{position:absolute; right:0; top:calc(100% + 10px); background:var(--panel-bg); border:1px solid var(--border);
-      border-radius:14px; padding:14px; box-shadow:var(--menu-shadow); width:min(320px, 80vw); display:none; z-index:120;}
+      border-radius:14px; padding:14px; box-shadow:var(--menu-shadow); width:min(320px, 80vw); display:none; z-index:120;
+      max-height:min(440px, 70vh); overflow:hidden;}
     .lang-switcher[data-open="true"] .lang-menu{display:block;}
     .lang-label{margin:0 0 8px; font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);}
-    .lang-options{display:flex; flex-direction:column; gap:6px;}
+    .lang-search{position:relative; margin:0 0 10px;}
+    .lang-search input{width:100%; padding:8px 12px 8px 34px; border-radius:10px; border:1px solid var(--border);
+      background:var(--input-bg); color:var(--text); font-size:.86rem; transition:border-color .18s ease, box-shadow .18s ease;}
+    .lang-search input::placeholder{color:var(--muted);}
+    .lang-search input:focus{border-color:rgba(31,111,235,.55); box-shadow:0 0 0 3px rgba(31,111,235,.16); outline:none;}
+    .lang-search::before{content:"🔍"; position:absolute; left:10px; top:50%; transform:translateY(-50%); font-size:.9rem; opacity:.72;}
+    .lang-options{display:flex; flex-direction:column; gap:6px; max-height:max(180px, calc(min(440px, 70vh) - 96px)); overflow-y:auto; padding-right:4px;}
     .lang-option{appearance:none; border:1px solid var(--border); border-radius:12px; background:var(--btn-ghost-bg);
       color:var(--btn-ghost-text); padding:8px 12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:10px;
       transition:background .18s ease, color .18s ease, border-color .18s ease, box-shadow .18s ease;}
@@ -289,6 +305,7 @@
     .lang-option .lang-native{font-size:.92rem;}
     .lang-option .lang-english{font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; opacity:.7;}
     .lang-option:hover{background:rgba(31,111,235,.16); color:var(--text);}
+    .lang-option.is-highlight{border-color:rgba(31,111,235,.45); box-shadow:0 0 0 1px rgba(31,111,235,.22), 0 10px 24px rgba(10,22,40,.18);}
     .lang-option[aria-selected="true"]{background:linear-gradient(135deg, rgba(31,111,235,.92), rgba(43,212,161,.9));
       color:#061427; border-color:transparent; box-shadow:0 0 0 1px rgba(11,22,42,.45), 0 12px 26px rgba(6,14,32,.35);}
     .lang-option[aria-selected="true"] .lang-english{color:rgba(6,24,52,.72);}
@@ -310,7 +327,8 @@
       .menu .lang-toggle{width:100%; justify-content:space-between;}
       .menu .lang-switcher .lang-menu{position:static; right:auto; top:auto; width:100%; display:none; box-shadow:none; border-radius:12px; padding:12px; margin-top:6px;}
       .menu .lang-switcher[data-open="true"] .lang-menu{display:block;}
-      .menu .lang-switcher .lang-options{max-height:min(280px, 50vh); overflow:auto;}
+      .menu .lang-switcher .lang-menu{max-height:none;}
+      .menu .lang-switcher .lang-options{max-height:min(260px, 50vh);}
       .menu .lang-option{width:100%;}
       .menu .lang-noscript{text-align:left;}
     }
@@ -475,7 +493,7 @@
       <a href="#team" data-i18n="nav_team">Team</a>
       <a href="#contact" data-i18n="nav_contact">Contact</a>
       <span class="theme-toggle" role="group" aria-label="Theme">
-        <button type="button" id="theme-toggle" aria-pressed="true">Light</button>
+        <button type="button" id="theme-toggle" aria-pressed="true" data-icon="🌞" aria-label="Switch to light mode">Light</button>
       </span>
       <div class="lang-switcher" data-component="lang-switcher">
         <button class="lang-toggle" type="button" id="langToggle" aria-haspopup="listbox" aria-expanded="false" aria-controls="langMenu">
@@ -489,6 +507,10 @@
         </button>
         <div class="lang-menu" id="langMenu" role="presentation" hidden>
           <p class="lang-label" id="langLabel" data-i18n="lang_label">Language</p>
+          <label class="sr-only" for="langSearch">Search languages</label>
+          <div class="lang-search">
+            <input type="search" id="langSearch" name="langSearch" placeholder="Search languages" autocomplete="off" spellcheck="false" />
+          </div>
           <div class="lang-options" role="listbox" aria-labelledby="langLabel"></div>
         </div>
         <noscript>
@@ -733,9 +755,14 @@
     updateMetaTheme();
     if (themeToggle){
       const isDark = theme === 'dark';
+      const icon = isDark ? '🌞' : '🌙';
+      const label = isDark ? 'Light mode' : 'Dark mode';
+      const ariaLabel = isDark ? 'Switch to light mode' : 'Switch to dark mode';
       themeToggle.setAttribute('aria-pressed', String(isDark));
-      themeToggle.textContent = isDark ? 'Light' : 'Dark';
-      themeToggle.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+      themeToggle.textContent = label;
+      themeToggle.setAttribute('data-icon', icon);
+      themeToggle.setAttribute('aria-label', ariaLabel);
+      themeToggle.setAttribute('title', ariaLabel);
     }
     root.dispatchEvent(new CustomEvent('themechange', { detail: { theme } }));
   }
@@ -828,6 +855,7 @@
   const langCurrent = langComponent ? langComponent.querySelector('.lang-current') : null;
   const langToggle = langComponent ? langComponent.querySelector('.lang-toggle') : null;
   const langMenu = langComponent ? langComponent.querySelector('.lang-menu') : null;
+  const langSearchInput = langComponent ? langComponent.querySelector('#langSearch') : null;
   const summaryFlag = langComponent ? langComponent.querySelector('.lang-flag-current') : null;
   const summaryCode = langCurrent ? langCurrent.querySelector('.lang-code') : null;
   const summaryName = langCurrent ? langCurrent.querySelector('.lang-name') : null;
@@ -837,6 +865,9 @@
   if (langMenu) {
     langMenu.hidden = true;
     langMenu.setAttribute('aria-hidden', 'true');
+  }
+  if (langSearchInput && langSearchInput.value) {
+    langSearchTerm = normalizeSearchText(langSearchInput.value.trim());
   }
   if (langToggle) {
     langToggle.setAttribute('aria-expanded', 'false');
@@ -919,6 +950,8 @@
   let LANGS = fallbackLangs.map((entry) => ({ ...entry }));
   let langButtons = [];
   let langMenuOpen = false;
+  let langSearchTerm = '';
+  let langHighlightedButton = null;
   const translationCache = new Map();
 
   function normalizeLanguageEntry(entry) {
@@ -950,6 +983,18 @@
       if (fallbackEn) unique.unshift({ ...fallbackEn });
     }
     return unique.length ? unique : fallbackLangs.map((entry) => ({ ...entry }));
+  }
+
+  function normalizeSearchText(value) {
+    const text = String(value || '');
+    try {
+      return text
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase();
+    } catch (err) {
+      return text.toLowerCase();
+    }
   }
 
   function parseInlineLanguageConfig() {
@@ -990,6 +1035,7 @@
       button.className = 'lang-option';
       button.dataset.lang = entry.code;
       button.dataset.dir = entry.dir;
+      button.dataset.search = normalizeSearchText(`${entry.english} ${entry.native} ${entry.code}`);
       button.setAttribute('role', 'option');
       button.setAttribute('lang', entry.code);
       const safeId = entry.code ? entry.code.toLowerCase().replace(/[^a-z0-9-]/g, '-') : 'lang';
@@ -1016,7 +1062,7 @@
         : `${entry.english} · ${entry.native}`;
       button.addEventListener('click', (event) => {
         event.preventDefault();
-        closeLangMenu();
+        closeLangMenu({ resetSearch: true });
         setLang(entry.code);
       });
       fragment.appendChild(button);
@@ -1024,14 +1070,76 @@
     langListbox.appendChild(fragment);
     langButtons = Array.from(langListbox.querySelectorAll('[data-lang]'));
     langComponent?.setAttribute('data-ready', 'true');
+    const currentSearch = langSearchInput ? langSearchInput.value : langSearchTerm;
+    setLangSearchValue(currentSearch, { scroll: false });
+  }
+
+  function setLangHighlight(button, { scroll = true } = {}) {
+    if (langHighlightedButton && langHighlightedButton !== button) {
+      langHighlightedButton.classList.remove('is-highlight');
+    }
+    langHighlightedButton = button || null;
+    if (!langHighlightedButton) return;
+    langHighlightedButton.classList.add('is-highlight');
+    if (scroll && langMenuOpen) {
+      try {
+        langHighlightedButton.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      } catch (err) {
+        langHighlightedButton.scrollIntoView();
+      }
+    }
+  }
+
+  function applyLangSearch(term, { scroll = true } = {}) {
+    langSearchTerm = typeof term === 'string' ? normalizeSearchText(term.trim()) : '';
+    const hasTerm = langSearchTerm.length > 0;
+    let firstMatch = null;
+    for (const btn of langButtons) {
+      if (!btn) continue;
+      const haystack = btn.dataset.search || '';
+      if (hasTerm && haystack.includes(langSearchTerm)) {
+        btn.setAttribute('data-match', 'true');
+        if (!firstMatch) firstMatch = btn;
+      } else {
+        btn.removeAttribute('data-match');
+      }
+    }
+    if (hasTerm) {
+      setLangHighlight(firstMatch || null, { scroll });
+    } else {
+      const selected = langButtons.find((btn) => btn?.getAttribute('aria-selected') === 'true') || null;
+      setLangHighlight(selected, { scroll });
+    }
+  }
+
+  function setLangSearchValue(value, { focusInput = false, scroll = true } = {}) {
+    const text = typeof value === 'string' ? value : '';
+    if (langSearchInput) {
+      langSearchInput.value = text;
+      if (focusInput) {
+        const cursor = text.length;
+        langSearchInput.focus();
+        langSearchInput.setSelectionRange(cursor, cursor);
+      }
+    }
+    applyLangSearch(text, { scroll });
   }
 
   function focusLangButton(index) {
     if (!langButtons.length) return;
     const total = langButtons.length;
-    const targetIndex = ((index % total) + total) % total;
-    const btn = langButtons[targetIndex];
-    if (btn) btn.focus();
+    let offset = 0;
+    let target = null;
+    while (offset < total) {
+      const targetIndex = ((index + offset) % total + total) % total;
+      const candidate = langButtons[targetIndex];
+      if (candidate && candidate.offsetParent !== null) {
+        target = candidate;
+        break;
+      }
+      offset += 1;
+    }
+    if (target) target.focus();
   }
 
   function handleLangKeydown(event) {
@@ -1061,21 +1169,51 @@
         event.preventDefault();
         langButtons[currentIndex].click();
       }
+    } else if (langSearchInput && (key === 'Backspace' || key === 'Delete')) {
+      event.preventDefault();
+      const currentValue = langSearchInput.value || '';
+      const nextValue = key === 'Backspace'
+        ? currentValue.slice(0, -1)
+        : '';
+      setLangSearchValue(nextValue, { focusInput: true, scroll: true });
+    } else if (langSearchInput && key.length === 1 && !event.altKey && !event.ctrlKey && !event.metaKey) {
+      event.preventDefault();
+      setLangSearchValue((langSearchInput.value || '') + key, { focusInput: true, scroll: true });
     }
   }
 
   langListbox?.addEventListener('keydown', handleLangKeydown);
 
-  function focusActiveLangButton() {
+  function focusActiveLangButton({ preferHighlight = true } = {}) {
     if (!langButtons.length) return;
-    const active = langButtons.find((btn) => btn.getAttribute('aria-selected') === 'true');
-    (active || langButtons[0])?.focus();
+    const selected = langButtons.find((btn) => btn.getAttribute('aria-selected') === 'true');
+    const target = preferHighlight && langHighlightedButton ? langHighlightedButton : (selected || langButtons[0]);
+    if (target) {
+      target.focus();
+      if (langMenuOpen) {
+        try {
+          target.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        } catch (err) {
+          target.scrollIntoView();
+        }
+      }
+    }
   }
 
-  function openLangMenu({ focusActive = true } = {}) {
+  function focusLangMenuTarget(mode = 'active') {
+    if (mode === 'search' && langSearchInput) {
+      langSearchInput.focus();
+      langSearchInput.select();
+      return;
+    }
+    if (mode === 'none') return;
+    focusActiveLangButton();
+  }
+
+  function openLangMenu({ focus = 'active' } = {}) {
     if (!langComponent) return;
     if (langMenuOpen) {
-      if (focusActive) focusActiveLangButton();
+      focusLangMenuTarget(focus);
       return;
     }
     langMenuOpen = true;
@@ -1085,10 +1223,11 @@
       langMenu.hidden = false;
       langMenu.setAttribute('aria-hidden', 'false');
     }
-    if (focusActive) focusActiveLangButton();
+    setLangSearchValue(langSearchInput ? langSearchInput.value : langSearchTerm, { scroll: false });
+    focusLangMenuTarget(focus);
   }
 
-  function closeLangMenu({ restoreFocus = false } = {}) {
+  function closeLangMenu({ restoreFocus = false, resetSearch = true } = {}) {
     if (!langComponent || !langMenuOpen) return;
     langMenuOpen = false;
     langComponent.removeAttribute('data-open');
@@ -1097,12 +1236,14 @@
       langMenu.hidden = true;
       langMenu.setAttribute('aria-hidden', 'true');
     }
+    const searchValue = resetSearch ? '' : (langSearchInput ? langSearchInput.value : langSearchTerm);
+    setLangSearchValue(searchValue, { scroll: false });
     if (restoreFocus && langToggle) langToggle.focus();
   }
 
-  function toggleLangMenu() {
-    if (langMenuOpen) closeLangMenu({ restoreFocus: true });
-    else openLangMenu({ focusActive: true });
+  function toggleLangMenu({ focus = 'active' } = {}) {
+    if (langMenuOpen) closeLangMenu({ restoreFocus: true, resetSearch: true });
+    else openLangMenu({ focus });
   }
 
   if (langMenu) {
@@ -1111,21 +1252,38 @@
   if (langListbox) {
     langListbox.addEventListener('click', (event) => event.stopPropagation());
   }
+  if (langSearchInput) {
+    langSearchInput.addEventListener('input', (event) => {
+      applyLangSearch(event.target.value, { scroll: true });
+    });
+    langSearchInput.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        event.preventDefault();
+        focusActiveLangButton();
+      } else if (event.key === 'Enter' && langHighlightedButton) {
+        event.preventDefault();
+        langHighlightedButton.click();
+      } else if (event.key === 'Escape') {
+        event.preventDefault();
+        closeLangMenu({ restoreFocus: true, resetSearch: true });
+      }
+    });
+  }
   if (langToggle) {
     langToggle.addEventListener('click', (event) => {
       event.preventDefault();
       event.stopPropagation();
-      toggleLangMenu();
+      toggleLangMenu({ focus: 'search' });
     });
     langToggle.addEventListener('keydown', (event) => {
       const { key } = event;
       if (key === 'ArrowDown' || key === 'ArrowUp') {
         event.preventDefault();
-        if (!langMenuOpen) openLangMenu({ focusActive: true });
+        if (!langMenuOpen) openLangMenu({ focus: 'active' });
         else focusActiveLangButton();
       } else if (key === ' ' || key === 'Spacebar' || key === 'Enter') {
         event.preventDefault();
-        toggleLangMenu();
+        toggleLangMenu({ focus: 'active' });
       } else if (key === 'Escape' && langMenuOpen) {
         event.preventDefault();
         closeLangMenu({ restoreFocus: true });
@@ -1161,6 +1319,8 @@
       if (activeId) langListbox.setAttribute('aria-activedescendant', activeId);
       else langListbox.removeAttribute('aria-activedescendant');
     }
+    const currentSearch = langSearchInput ? langSearchInput.value : langSearchTerm;
+    setLangSearchValue(currentSearch, { scroll: langMenuOpen });
   }
 
   function getLangEntry(code) {
@@ -1511,7 +1671,7 @@
 
   function generateHessianMatrix() {
     const dimOptions = [2, 3, 4];
-    const dim = dimOptions[weightedPick([1, 3, 2])];
+    const dim = dimOptions[weightedPick([3, 2, 1])];
     const axes = randomAxisSet(dim);
     const symbol = sample(tensorSymbols);
     const rows = axes.map((axisRow) => axes.map((axisCol) => {
