@@ -597,14 +597,23 @@
     }
   };
   function setLang(lang){
-    document.documentElement.setAttribute('lang', lang);
-    document.documentElement.dataset.lang = lang;
-    for (const el of document.querySelectorAll('[data-i18n]')) {
-      const key = el.getAttribute('data-i18n'); const html = dict[lang][key] || '';
-      if (html) el.innerHTML = html;
+    const root = document.documentElement;
+    const current = root.dataset.lang;
+    const changed = current !== lang;
+    const translations = dict[lang];
+    root.setAttribute('lang', lang);
+    root.dataset.lang = lang;
+    if (changed && translations){
+      for (const el of document.querySelectorAll('[data-i18n]')) {
+        const key = el.getAttribute('data-i18n');
+        const html = translations[key];
+        if (html) el.innerHTML = html;
+      }
     }
-    document.getElementById('lang-en').setAttribute('aria-pressed', lang==='en');
-    document.getElementById('lang-pl').setAttribute('aria-pressed', lang==='pl');
+    const langEnBtn = document.getElementById('lang-en');
+    const langPlBtn = document.getElementById('lang-pl');
+    if (langEnBtn) langEnBtn.setAttribute('aria-pressed', String(lang === 'en'));
+    if (langPlBtn) langPlBtn.setAttribute('aria-pressed', String(lang === 'pl'));
     try { localStorage.setItem('lang', lang); } catch(e) {}
   }
   document.getElementById('lang-en').addEventListener('click', ()=>setLang('en'));
@@ -651,21 +660,6 @@
     }
   }
   resize(); addEventListener('resize', resize);
-
-  let animationActive = true;
-  function setAnimationActive(active){
-    if (active === animationActive) return;
-    animationActive = active;
-    const now = performance.now();
-    lastTS = now;
-    lastPulse = now;
-  }
-  function updateAnimationActive(){
-    const shouldRun = document.visibilityState !== 'hidden';
-    setAnimationActive(shouldRun);
-  }
-  document.addEventListener('visibilitychange', updateAnimationActive);
-  updateAnimationActive();
 
   /* Matrices */
   const M = {
@@ -1360,10 +1354,6 @@
   function frame(ts){
     const rawDt = Math.min(40, ts - lastTS);
     lastTS = ts;
-    if (!animationActive){
-      requestAnimationFrame(frame);
-      return;
-    }
     const dt = (rawDt/1000);
 
     // smooth scroll & targets to avoid flicker
@@ -1530,14 +1520,12 @@
 
     requestAnimationFrame(frame);
   }
-  requestAnimationFrame(frame);
-
-  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-    timeScale = 0.0; timeScaleTarget = 0.0;
-    rewireInterval = rewireIntervalTarget = 1e9;
-    pulseInterval = pulseIntervalTarget = 1e9;
-    setAnimationActive(false);
+  const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReducedMotion){
+    return;
   }
+
+  requestAnimationFrame(frame);
 })();
 </script>
 </body>
