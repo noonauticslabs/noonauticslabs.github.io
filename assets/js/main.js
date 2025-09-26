@@ -65,17 +65,23 @@
     else if (prefersDarkMql.addListener) prefersDarkMql.addListener(onPrefersChange);
   }
 
+  let lastMenuWidth = window.innerWidth || document.documentElement.clientWidth || 0;
+
   if (hamb && menu) {
     hamb.addEventListener('click', () => {
       const open = menu.classList.toggle('open');
       hamb.setAttribute('aria-expanded', String(open));
-      if (open) header.classList.remove('hide');
+      if (open) {
+        header.classList.remove('hide');
+        lastMenuWidth = window.innerWidth || document.documentElement.clientWidth || lastMenuWidth;
+      }
     });
     const closeMenu = () => {
       if (!menu.classList.contains('open')) return;
       menu.classList.remove('open');
       hamb.setAttribute('aria-expanded', 'false');
       closeLangMenu();
+      lastMenuWidth = window.innerWidth || document.documentElement.clientWidth || lastMenuWidth;
     };
     for (const link of menu.querySelectorAll('a[href^="#"]')){
       link.addEventListener('click', closeMenu);
@@ -87,7 +93,17 @@
       if (menu.contains(target)) return;
       closeMenu();
     });
-    window.addEventListener('resize', closeMenu);
+    const onMenuResponsiveResize = () => {
+      const width = window.innerWidth || document.documentElement.clientWidth || 0;
+      if (!menu.classList.contains('open')) {
+        lastMenuWidth = width;
+        return;
+      }
+      if (Math.abs(width - lastMenuWidth) < 40) return;
+      lastMenuWidth = width;
+      closeMenu();
+    };
+    window.addEventListener('resize', onMenuResponsiveResize);
   }
 
   let lastY = window.scrollY, ticking = false;
