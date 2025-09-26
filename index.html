@@ -169,6 +169,7 @@
       --gl-edge-soft:48,214,170;
       --gl-edge-hot:236,74,158;
       --gl-line-pulse:112,176,255;
+      --gl-fog-density:0.9;
     }
     :root[data-theme='light']{
       --bg:#f4f7fb;
@@ -199,11 +200,11 @@
       --header-gradient:linear-gradient(to bottom, rgba(244,247,251,.94), rgba(244,247,251,.7) 60%, transparent);
       --header-solid:rgba(244,247,251,.95);
       --header-shadow:0 6px 22px rgba(35,55,95,.18);
-      --hero-overlay-gradient:radial-gradient(640px 380px at 52% 16%, rgba(118,154,228,.34), rgba(118,154,228,0) 66%), linear-gradient(180deg, rgba(226,233,246,.46), rgba(226,236,250,.18) 58%, rgba(210,223,241,.52));
-      --hero-copy-glow:radial-gradient(ellipse at center, rgba(232,240,252,.74) 0%, rgba(232,240,252,.48) 46%, rgba(232,240,252,.16) 78%, transparent 100%);
+      --hero-overlay-gradient:radial-gradient(560px 340px at 52% 18%, rgba(138,168,232,.18), rgba(138,168,232,0) 64%), linear-gradient(180deg, rgba(226,233,246,.18), rgba(226,236,250,.06) 58%, rgba(210,223,241,.28));
+      --hero-copy-glow:radial-gradient(ellipse at center, rgba(232,240,252,.52) 0%, rgba(232,240,252,.24) 50%, rgba(232,240,252,.08) 78%, transparent 100%);
       --hero-text-shadow:0 18px 46px rgba(128,148,188,.46), 0 0 42px rgba(150,170,210,.48);
-      --hero-ambient:radial-gradient(1200px 700px at 70% -10%, rgba(70,128,214,.16), transparent 62%), radial-gradient(980px 560px at -6% 4%, rgba(56,170,150,.12), transparent 68%), linear-gradient(to bottom, rgba(226,234,248,.18), rgba(226,234,248,0) 48%, rgba(206,220,243,.52));
-      --hero-fade-bg: rgba(188,202,226,.92);
+      --hero-ambient:radial-gradient(1100px 640px at 70% -8%, rgba(70,128,214,.12), transparent 62%), radial-gradient(860px 520px at -6% 6%, rgba(58,176,150,.08), transparent 68%), linear-gradient(to bottom, rgba(226,234,248,.08), rgba(226,234,248,0) 52%, rgba(206,220,243,.24));
+      --hero-fade-bg: rgba(205,216,237,.82);
       --section-backdrop:radial-gradient(900px 420px at 12% 6%, rgba(70,138,220,.12), transparent 65%), radial-gradient(780px 360px at 88% 88%, rgba(58,172,142,.1), transparent 72%), linear-gradient(180deg, rgba(238,243,252,.96), rgba(224,233,246,.96) 58%, rgba(210,223,242,.94));
       --section-inner-backdrop:radial-gradient(720px 320px at 15% 5%, rgba(62,130,220,.14), transparent 64%), radial-gradient(620px 320px at 85% 92%, rgba(58,176,150,.12), transparent 72%), linear-gradient(180deg, rgba(255,255,255,1), rgba(236,243,253,1));
       --card-bg:linear-gradient(155deg, rgba(252,254,255,.92), rgba(240,246,255,.9) 52%, rgba(243,248,255,.98));
@@ -218,13 +219,14 @@
       --gl-label-text:rgba(28,36,54,0.92);
       --gl-label-bracket:rgba(45,61,94,0.65);
       --menu-shadow:0 24px 60px rgba(35,56,102,.18);
-      --gl-fog:138,152,182;
+      --gl-fog:206,212,228;
       --gl-node-cool:32,124,228;
       --gl-node-warm:232,78,148;
       --gl-edge-strong:52,118,218;
       --gl-edge-soft:50,176,152;
       --gl-edge-hot:226,74,144;
       --gl-line-pulse:96,138,232;
+      --gl-fog-density:0.28;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -261,26 +263,37 @@
     .menu{display:flex; gap:18px; align-items:center}
     .menu a{color:var(--text); opacity:.9}
     .menu a:hover{opacity:1}
-    .lang-switcher{display:flex; flex-direction:column; align-items:flex-end; gap:10px; min-width:220px;}
-    .lang-header{display:flex; align-items:center; gap:10px; justify-content:flex-end; width:100%;}
-    .lang-label{font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);}
-    .lang-current{display:inline-flex; align-items:center; gap:10px; border:1px solid var(--border);
-      border-radius:999px; background:#141722; color:#d8e0ee; padding:6px 18px; font-weight:600; font-size:.86rem;}
-    .lang-current .lang-code{font-weight:700; font-size:.74rem; letter-spacing:.1em; opacity:.8; text-transform:uppercase;}
-    .lang-current .lang-name{font-size:.84rem;}
-    .lang-options{display:flex; flex-wrap:wrap; justify-content:flex-end; gap:6px; width:100%; max-width:360px;}
-    .lang-option{appearance:none; border:1px solid var(--border); border-radius:999px; background:rgba(18,21,33,.72);
-      color:rgba(224,232,247,.88); padding:8px 14px; font-weight:600; cursor:pointer; display:flex; flex-direction:column;
-      align-items:flex-end; min-width:156px; gap:2px; text-align:right;
-      transition:background .18s ease, color .18s ease, box-shadow .18s ease, border-color .18s ease;}
-    .lang-option .lang-native{font-size:.9rem;}
+    .lang-switcher{position:relative; display:flex; flex-direction:column; align-items:flex-end; gap:8px;}
+    .lang-toggle{appearance:none; border:1px solid var(--border); border-radius:999px; background:var(--btn-ghost-bg);
+      color:var(--btn-ghost-text); padding:6px 14px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center;
+      gap:10px; transition:background .18s ease, color .18s ease, border-color .18s ease, box-shadow .18s ease;}
+    .lang-toggle:hover{background:rgba(31,111,235,.16); color:var(--text);}
+    .lang-toggle:focus-visible{outline:2px solid rgba(62,142,255,.9); outline-offset:2px;}
+    .lang-toggle .lang-flag{font-size:1.1rem; line-height:1;}
+    .lang-toggle .lang-current{display:flex; flex-direction:column; align-items:flex-start; line-height:1.1;}
+    .lang-toggle .lang-code{font-weight:700; font-size:.74rem; letter-spacing:.1em; opacity:.75; text-transform:uppercase;}
+    .lang-toggle .lang-name{font-size:.86rem;}
+    .lang-toggle .lang-chevron{font-size:.7rem; opacity:.65;}
+    .lang-switcher[data-open="true"] .lang-toggle{background:linear-gradient(135deg, rgba(31,111,235,.16), rgba(43,212,161,.12));
+      border-color:rgba(31,111,235,.45); box-shadow:0 12px 28px rgba(12,22,40,.28);}
+    .lang-menu{position:absolute; right:0; top:calc(100% + 10px); background:var(--panel-bg); border:1px solid var(--border);
+      border-radius:14px; padding:14px; box-shadow:var(--menu-shadow); width:min(320px, 80vw); display:none; z-index:120;}
+    .lang-switcher[data-open="true"] .lang-menu{display:block;}
+    .lang-label{margin:0 0 8px; font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);}
+    .lang-options{display:flex; flex-direction:column; gap:6px;}
+    .lang-option{appearance:none; border:1px solid var(--border); border-radius:12px; background:var(--btn-ghost-bg);
+      color:var(--btn-ghost-text); padding:8px 12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:10px;
+      transition:background .18s ease, color .18s ease, border-color .18s ease, box-shadow .18s ease;}
+    .lang-option .lang-flag{font-size:1.1rem; line-height:1;}
+    .lang-option .lang-labels{display:flex; flex-direction:column; align-items:flex-start; gap:2px; line-height:1.1;}
+    .lang-option .lang-native{font-size:.92rem;}
     .lang-option .lang-english{font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; opacity:.7;}
-    .lang-option:hover{background:rgba(31,111,235,.16); color:#f0f4ff;}
+    .lang-option:hover{background:rgba(31,111,235,.16); color:var(--text);}
     .lang-option[aria-selected="true"]{background:linear-gradient(135deg, rgba(31,111,235,.92), rgba(43,212,161,.9));
-      color:#061427; border-color:transparent; box-shadow:0 0 0 1px rgba(11,22,42,.55), 0 12px 26px rgba(6,14,32,.35);}
-    .lang-option[aria-selected="true"] .lang-english{color:rgba(8,26,54,.72);}
+      color:#061427; border-color:transparent; box-shadow:0 0 0 1px rgba(11,22,42,.45), 0 12px 26px rgba(6,14,32,.35);}
+    .lang-option[aria-selected="true"] .lang-english{color:rgba(6,24,52,.72);}
     .lang-option:focus-visible{outline:2px solid rgba(62,142,255,.9); outline-offset:2px;}
-    .lang-noscript{margin:0; font-size:.82rem; color:var(--muted); text-align:right;}
+    .lang-noscript{margin:10px 0 0; font-size:.82rem; color:var(--muted); text-align:right;}
     .hamb{display:none; background:#151a27; border:1px solid var(--border); color:#e6ebf2; padding:8px 10px; border-radius:10px}
     @media (max-width:860px){
       .hamb{display:inline-flex}
@@ -293,11 +306,13 @@
         width: calc(100vw - 24px)
       }
       .menu.open{display:flex}
-      .menu .lang-switcher{align-items:stretch; width:100%; min-width:auto; gap:12px;}
-      .menu .lang-header{justify-content:space-between;}
-      .menu .lang-current{text-align:left; align-self:flex-start;}
-      .menu .lang-options{justify-content:flex-start; max-width:none;}
-      .menu .lang-option{text-align:left; align-items:flex-start; min-width:0; width:100%;}
+      .menu .lang-switcher{width:100%; align-items:stretch;}
+      .menu .lang-toggle{width:100%; justify-content:space-between;}
+      .menu .lang-switcher .lang-menu{position:static; right:auto; top:auto; width:100%; display:none; box-shadow:none; border-radius:12px; padding:12px; margin-top:6px;}
+      .menu .lang-switcher[data-open="true"] .lang-menu{display:block;}
+      .menu .lang-switcher .lang-options{max-height:min(280px, 50vh); overflow:auto;}
+      .menu .lang-option{width:100%;}
+      .menu .lang-noscript{text-align:left;}
     }
     @media (max-width:720px){
       .hero{padding: calc(var(--header-h) + 6px) 0 14svh;}
@@ -463,14 +478,19 @@
         <button type="button" id="theme-toggle" aria-pressed="true">Light</button>
       </span>
       <div class="lang-switcher" data-component="lang-switcher">
-        <div class="lang-header">
-          <span class="lang-label" id="langLabel" data-i18n="lang_label">Language</span>
+        <button class="lang-toggle" type="button" id="langToggle" aria-haspopup="listbox" aria-expanded="false" aria-controls="langMenu">
+          <span class="sr-only" data-i18n="lang_label">Language</span>
+          <span class="lang-flag lang-flag-current" aria-hidden="true">🌐</span>
           <span class="lang-current" aria-live="polite">
             <span class="lang-code" aria-hidden="true">EN</span>
             <span class="lang-name" lang="en">English</span>
           </span>
+          <span class="lang-chevron" aria-hidden="true">▾</span>
+        </button>
+        <div class="lang-menu" id="langMenu" role="presentation" hidden>
+          <p class="lang-label" id="langLabel" data-i18n="lang_label">Language</p>
+          <div class="lang-options" role="listbox" aria-labelledby="langLabel"></div>
         </div>
-        <div class="lang-options" role="listbox" aria-labelledby="langLabel"></div>
         <noscript>
           <p class="lang-noscript">English · Polski · Deutsch · Français · Español · Русский · 中文 · العربية · Italiano · Português · 日本語 · हिन्दी · Türkçe · Nederlands</p>
         </noscript>
@@ -750,6 +770,7 @@
       if (!menu.classList.contains('open')) return;
       menu.classList.remove('open');
       hamb.setAttribute('aria-expanded', 'false');
+      closeLangMenu();
     };
     for (const link of menu.querySelectorAll('a[href^="#"]')){
       link.addEventListener('click', closeMenu);
@@ -805,10 +826,21 @@
   const langComponent = document.querySelector('[data-component="lang-switcher"]');
   const langListbox = langComponent ? langComponent.querySelector('.lang-options') : null;
   const langCurrent = langComponent ? langComponent.querySelector('.lang-current') : null;
+  const langToggle = langComponent ? langComponent.querySelector('.lang-toggle') : null;
+  const langMenu = langComponent ? langComponent.querySelector('.lang-menu') : null;
+  const summaryFlag = langComponent ? langComponent.querySelector('.lang-flag-current') : null;
   const summaryCode = langCurrent ? langCurrent.querySelector('.lang-code') : null;
   const summaryName = langCurrent ? langCurrent.querySelector('.lang-name') : null;
   const summaryLabel = langComponent ? langComponent.querySelector('.lang-label') : null;
   const inlineLangScript = document.getElementById('language-data');
+
+  if (langMenu) {
+    langMenu.hidden = true;
+    langMenu.setAttribute('aria-hidden', 'true');
+  }
+  if (langToggle) {
+    langToggle.setAttribute('aria-expanded', 'false');
+  }
 
   const fallbackLangs = [
     { code: 'en', english: 'English', native: 'English', dir: 'ltr' },
@@ -827,8 +859,66 @@
     { code: 'nl', english: 'Dutch', native: 'Nederlands', dir: 'ltr' },
   ];
 
+  const LANGUAGE_FLAGS = {
+    'en': '🇺🇸',
+    'en-gb': '🇬🇧',
+    'en-us': '🇺🇸',
+    'pl': '🇵🇱',
+    'de': '🇩🇪',
+    'fr': '🇫🇷',
+    'es': '🇪🇸',
+    'ru': '🇷🇺',
+    'zh': '🇨🇳',
+    'zh-cn': '🇨🇳',
+    'zh-hans': '🇨🇳',
+    'zh-hant': '🇹🇼',
+    'zh-tw': '🇹🇼',
+    'ar': '🇸🇦',
+    'it': '🇮🇹',
+    'pt': '🇵🇹',
+    'pt-br': '🇧🇷',
+    'ja': '🇯🇵',
+    'hi': '🇮🇳',
+    'tr': '🇹🇷',
+    'nl': '🇳🇱',
+    'ko': '🇰🇷',
+    'vi': '🇻🇳',
+    'sv': '🇸🇪',
+    'no': '🇳🇴',
+    'da': '🇩🇰',
+    'fi': '🇫🇮',
+    'cs': '🇨🇿',
+    'sk': '🇸🇰',
+    'uk': '🇺🇦',
+    'el': '🇬🇷',
+    'he': '🇮🇱',
+    'fa': '🇮🇷',
+    'id': '🇮🇩',
+    'ms': '🇲🇾',
+    'th': '🇹🇭',
+    'bg': '🇧🇬',
+    'ro': '🇷🇴'
+  };
+
+  function flagForLang(code) {
+    if (!code) return '🌐';
+    const lower = code.toLowerCase();
+    if (LANGUAGE_FLAGS[lower]) return LANGUAGE_FLAGS[lower];
+    const base = lower.split('-')[0];
+    if (LANGUAGE_FLAGS[base]) return LANGUAGE_FLAGS[base];
+    if (/^[a-z]{2}$/.test(base)) {
+      const first = base.charCodeAt(0) - 97;
+      const second = base.charCodeAt(1) - 97;
+      if (first >= 0 && first < 26 && second >= 0 && second < 26) {
+        return String.fromCodePoint(0x1F1E6 + first, 0x1F1E6 + second);
+      }
+    }
+    return '🌐';
+  }
+
   let LANGS = fallbackLangs.map((entry) => ({ ...entry }));
   let langButtons = [];
+  let langMenuOpen = false;
   const translationCache = new Map();
 
   function normalizeLanguageEntry(entry) {
@@ -902,8 +992,14 @@
       button.dataset.dir = entry.dir;
       button.setAttribute('role', 'option');
       button.setAttribute('lang', entry.code);
-      button.id = `lang-option-${entry.code}`;
+      const safeId = entry.code ? entry.code.toLowerCase().replace(/[^a-z0-9-]/g, '-') : 'lang';
+      button.id = `lang-option-${safeId}`;
       button.tabIndex = -1;
+      const flagSpan = document.createElement('span');
+      flagSpan.className = 'lang-flag';
+      flagSpan.textContent = flagForLang(entry.code);
+      const labels = document.createElement('span');
+      labels.className = 'lang-labels';
       const nativeSpan = document.createElement('span');
       nativeSpan.className = 'lang-native';
       nativeSpan.textContent = entry.native;
@@ -913,12 +1009,14 @@
       englishSpan.className = 'lang-english';
       englishSpan.textContent = entry.english;
       englishSpan.setAttribute('lang', 'en');
-      button.append(nativeSpan, englishSpan);
+      labels.append(nativeSpan, englishSpan);
+      button.append(flagSpan, labels);
       button.title = entry.english === entry.native
         ? entry.english
         : `${entry.english} · ${entry.native}`;
       button.addEventListener('click', (event) => {
         event.preventDefault();
+        closeLangMenu();
         setLang(entry.code);
       });
       fragment.appendChild(button);
@@ -955,6 +1053,9 @@
     } else if (key === 'End') {
       event.preventDefault();
       focusLangButton(langButtons.length - 1);
+    } else if (key === 'Escape') {
+      event.preventDefault();
+      closeLangMenu({ restoreFocus: true });
     } else if (key === ' ' || key === 'Spacebar' || key === 'Enter') {
       if (currentIndex > -1) {
         event.preventDefault();
@@ -964,6 +1065,85 @@
   }
 
   langListbox?.addEventListener('keydown', handleLangKeydown);
+
+  function focusActiveLangButton() {
+    if (!langButtons.length) return;
+    const active = langButtons.find((btn) => btn.getAttribute('aria-selected') === 'true');
+    (active || langButtons[0])?.focus();
+  }
+
+  function openLangMenu({ focusActive = true } = {}) {
+    if (!langComponent) return;
+    if (langMenuOpen) {
+      if (focusActive) focusActiveLangButton();
+      return;
+    }
+    langMenuOpen = true;
+    langComponent.setAttribute('data-open', 'true');
+    if (langToggle) langToggle.setAttribute('aria-expanded', 'true');
+    if (langMenu) {
+      langMenu.hidden = false;
+      langMenu.setAttribute('aria-hidden', 'false');
+    }
+    if (focusActive) focusActiveLangButton();
+  }
+
+  function closeLangMenu({ restoreFocus = false } = {}) {
+    if (!langComponent || !langMenuOpen) return;
+    langMenuOpen = false;
+    langComponent.removeAttribute('data-open');
+    if (langToggle) langToggle.setAttribute('aria-expanded', 'false');
+    if (langMenu) {
+      langMenu.hidden = true;
+      langMenu.setAttribute('aria-hidden', 'true');
+    }
+    if (restoreFocus && langToggle) langToggle.focus();
+  }
+
+  function toggleLangMenu() {
+    if (langMenuOpen) closeLangMenu({ restoreFocus: true });
+    else openLangMenu({ focusActive: true });
+  }
+
+  if (langMenu) {
+    langMenu.addEventListener('click', (event) => event.stopPropagation());
+  }
+  if (langListbox) {
+    langListbox.addEventListener('click', (event) => event.stopPropagation());
+  }
+  if (langToggle) {
+    langToggle.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      toggleLangMenu();
+    });
+    langToggle.addEventListener('keydown', (event) => {
+      const { key } = event;
+      if (key === 'ArrowDown' || key === 'ArrowUp') {
+        event.preventDefault();
+        if (!langMenuOpen) openLangMenu({ focusActive: true });
+        else focusActiveLangButton();
+      } else if (key === ' ' || key === 'Spacebar' || key === 'Enter') {
+        event.preventDefault();
+        toggleLangMenu();
+      } else if (key === 'Escape' && langMenuOpen) {
+        event.preventDefault();
+        closeLangMenu({ restoreFocus: true });
+      }
+    });
+  }
+
+  document.addEventListener('click', (event) => {
+    if (!langMenuOpen || !langComponent) return;
+    if (langComponent.contains(event.target)) return;
+    closeLangMenu();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && langMenuOpen) {
+      closeLangMenu({ restoreFocus: true });
+    }
+  });
 
   function updateLangButtons(activeLang) {
     let activeId = null;
@@ -991,11 +1171,19 @@
     if (!langCurrent) return;
     const entry = getLangEntry(lang) || fallbackLangs[0];
     const displayCode = entry.code.split('-')[0].toUpperCase();
+    if (summaryFlag) summaryFlag.textContent = flagForLang(entry.code);
     if (summaryCode) summaryCode.textContent = displayCode;
     if (summaryName) {
       summaryName.textContent = entry.native;
       summaryName.setAttribute('lang', entry.code);
       summaryName.dir = entry.dir === 'rtl' ? 'rtl' : 'ltr';
+    }
+    if (langToggle) {
+      langToggle.setAttribute('data-lang', entry.code);
+      const toggleTitle = entry.english === entry.native
+        ? entry.english
+        : `${entry.english} · ${entry.native}`;
+      langToggle.setAttribute('title', toggleTitle);
     }
     langCurrent.setAttribute('aria-label', `Current language: ${entry.english}`);
     langComponent?.setAttribute('data-current', entry.code);
@@ -1139,6 +1327,7 @@
     edgeSoft: new Float32Array([0.17,0.85,0.66]),
     edgeHot: new Float32Array([0.92,0.18,0.56])
   };
+  let fogDensity = 1;
   let edgePaletteDirty = false;
 
   function parseVec(styles, name, target){
@@ -1163,6 +1352,9 @@
     parseVec(styles, '--gl-edge-soft', palette.edgeSoft);
     parseVec(styles, '--gl-edge-hot', palette.edgeHot);
     parseVec(styles, '--gl-line-pulse', pulseTint);
+    const densityRaw = styles.getPropertyValue('--gl-fog-density').trim();
+    const densityValue = densityRaw ? parseFloat(densityRaw) : NaN;
+    fogDensity = Number.isFinite(densityValue) ? Math.max(0, Math.min(2, densityValue)) : 1;
     const textRaw = styles.getPropertyValue('--gl-label-text').trim();
     if (textRaw) overlayColors.text = textRaw;
     const bracketRaw = styles.getPropertyValue('--gl-label-bracket').trim();
@@ -1240,108 +1432,267 @@
     }).join('\n');
   }
 
-  function buildColumn(entries){
-    return makeBracketedRows(entries);
+  function centerCell(value, width) {
+    const text = String(value ?? '');
+    const diff = width - text.length;
+    if (diff <= 0) return text;
+    const left = Math.floor(diff / 2);
+    const right = diff - left;
+    return `${' '.repeat(left)}${text}${' '.repeat(right)}`;
   }
 
-  function buildMatrix(rows){
-    return makeBracketedRows(rows.map((row) => row.join(' ')));
+  function buildMatrix(rows) {
+    if (!rows || !rows.length) return makeBracketedRows([]);
+    const normalized = rows.map((row) => row.map((cell) => String(cell ?? '')));
+    const colCount = normalized.reduce((max, row) => Math.max(max, row.length), 0);
+    const colWidths = new Array(colCount).fill(0);
+    for (const row of normalized) {
+      for (let i = 0; i < colCount; i++) {
+        const value = row[i] !== undefined ? String(row[i]) : '';
+        if (value.length > colWidths[i]) colWidths[i] = value.length;
+      }
+    }
+    const formatted = normalized.map((row) => {
+      const cells = [];
+      for (let i = 0; i < colCount; i++) {
+        const value = row[i] !== undefined ? row[i] : '';
+        cells.push(centerCell(value, colWidths[i]));
+      }
+      return cells.join('  ');
+    });
+    return makeBracketedRows(formatted);
   }
 
-  function sample(pool){
+  function buildColumn(entries) {
+    return buildMatrix(entries.map((entry) => [entry]));
+  }
+
+  function buildRowVector(entries) {
+    if (!entries.length) return '[]';
+    const normalized = entries.map((entry) => String(entry ?? ''));
+    const maxLen = normalized.reduce((max, value) => Math.max(max, value.length), 0);
+    const padded = normalized.map((value) => centerCell(value, maxLen));
+    return `[ ${padded.join('  ')} ]`;
+  }
+
+  function sample(pool) {
     return pool[(Math.random() * pool.length) | 0];
   }
 
-  const columnScalars = ['0', '1', '-1', '2', '-2', '3', '-3', 'x', 'y', 'z', 'λ', 'μ', 'σ', 'κ'];
-  const rowSymbols = ['ẋ', 'ẏ', 'ż', 'p', 'q', 'r', 'ω', 'θ', 'φ', 'ψ', 'μ', 'ν', '0', '1'];
-  const gradSymbols = ['∂f/∂x', '∂f/∂y', '∂f/∂z', '∂g/∂x', '∂g/∂y', '∂g/∂z'];
+  const SUBSCRIPT_DIGITS = { '0': '₀', '1': '₁', '2': '₂', '3': '₃', '4': '₄', '5': '₅', '6': '₆', '7': '₇', '8': '₈', '9': '₉' };
 
-  const smallMatrixTemplates = [
-    buildMatrix([
-      ['∂²f/∂x²', '∂²f/∂x∂y'],
-      ['∂²f/∂y∂x', '∂²f/∂y²']
-    ]),
-    buildMatrix([
-      ['∂f/∂x', '∂f/∂y'],
-      ['∂g/∂x', '∂g/∂y'],
-      ['∂h/∂x', '∂h/∂y']
-    ]),
-    buildMatrix([
-      ['1', '0', '0'],
-      ['0', 'cosθ', '-sinθ']
-    ]),
-    buildMatrix([
-      ['0', '1'],
-      ['-1', '0'],
-      ['0', 'κ']
-    ])
+  function toSubscript(value) {
+    return String(value).split('').map((ch) => SUBSCRIPT_DIGITS[ch] || ch).join('');
+  }
+
+  function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function randomAxisSet(dim) {
+    const bases = ['x', 'y', 'z', 't', 'r', 'θ', 'φ', 'u', 'v', 'w'];
+    const counts = Object.create(null);
+    const axes = [];
+    for (let i = 0; i < dim; i++) {
+      const root = sample(bases);
+      counts[root] = (counts[root] || 0) + 1;
+      axes.push(counts[root] === 1 ? root : `${root}${toSubscript(counts[root])}`);
+    }
+    return axes;
+  }
+
+  const angleSymbols = ['θ', 'φ', 'ψ', 'α', 'β'];
+  const tensorSymbols = ['Φ', 'Ψ', '𝓛', 'E', 'U', 'H'];
+  const functionRoots = ['f', 'g', 'h', 'F', 'G'];
+  const weightRoots = ['w', 'α', 'β', 'γ', 'η', 'ζ'];
+  const covarRoots = ['σ', 'ρ', 'κ'];
+  const stateRoots = ['h', 's', 'm', 'q'];
+  const kinematicSymbols = ['ẋ', 'ẏ', 'ż', 'ω', 'θ̇', 'φ̇', 'ν', 'μ', 'ξ'];
+
+  function generateHessianMatrix() {
+    const dimOptions = [2, 3, 4];
+    const dim = dimOptions[weightedPick([1, 3, 2])];
+    const axes = randomAxisSet(dim);
+    const symbol = sample(tensorSymbols);
+    const rows = axes.map((axisRow) => axes.map((axisCol) => {
+      if (axisRow === axisCol) return `∂²${symbol}/∂${axisRow}²`;
+      return `∂²${symbol}/∂${axisRow}∂${axisCol}`;
+    }));
+    return buildMatrix(rows);
+  }
+
+  function generateJacobianMatrix() {
+    const outputOptions = [3, 4, 5];
+    const inputOptions = [3, 4, 5];
+    const outputs = outputOptions[weightedPick([2, 3, 1])];
+    const inputs = inputOptions[weightedPick([3, 2, 1])];
+    const axes = randomAxisSet(inputs);
+    const rows = [];
+    for (let i = 0; i < outputs; i++) {
+      const fn = sample(functionRoots);
+      const fnLabel = `${fn}${toSubscript(i + 1)}`;
+      rows.push(axes.map((axis) => `∂${fnLabel}/∂${axis}`));
+    }
+    return buildMatrix(rows);
+  }
+
+  function generateRotationMatrix() {
+    if (Math.random() < 0.4) {
+      const angle = sample(angleSymbols);
+      return buildMatrix([
+        [`cos${angle}`, `-sin${angle}`],
+        [`sin${angle}`, `cos${angle}`],
+      ]);
+    }
+    const angle = sample(angleSymbols);
+    const axis = sample(['x', 'y', 'z']);
+    if (axis === 'x') {
+      return buildMatrix([
+        ['1', '0', '0'],
+        ['0', `cos${angle}`, `-sin${angle}`],
+        ['0', `sin${angle}`, `cos${angle}`],
+      ]);
+    }
+    if (axis === 'y') {
+      return buildMatrix([
+        [`cos${angle}`, '0', `sin${angle}`],
+        ['0', '1', '0'],
+        [`-sin${angle}`, '0', `cos${angle}`],
+      ]);
+    }
+    return buildMatrix([
+      [`cos${angle}`, `-sin${angle}`, '0'],
+      [`sin${angle}`, `cos${angle}`, '0'],
+      ['0', '0', '1'],
+    ]);
+  }
+
+  function generateCovarianceMatrix() {
+    const dimOptions = [3, 4, 5];
+    const dim = dimOptions[weightedPick([3, 2, 1])];
+    const symbol = sample(covarRoots);
+    const rows = [];
+    for (let i = 0; i < dim; i++) {
+      const row = [];
+      for (let j = 0; j < dim; j++) {
+        if (i === j) row.push(`${symbol}${toSubscript(i + 1)}²`);
+        else row.push(`${symbol}${toSubscript(i + 1)}${toSubscript(j + 1)}`);
+      }
+      rows.push(row);
+    }
+    return buildMatrix(rows);
+  }
+
+  function generateDenseMatrix() {
+    const rows = randomInt(4, 6);
+    const cols = randomInt(4, 6);
+    const data = [];
+    for (let r = 0; r < rows; r++) {
+      const row = [];
+      for (let c = 0; c < cols; c++) {
+        if (Math.random() < 0.12) {
+          row.push('0');
+        } else {
+          const value = (Math.random() * 2 - 1) * (Math.random() < 0.35 ? 3 : 1);
+          const formatted = (value >= 0 ? '+' : '-') + Math.abs(value).toFixed(2);
+          row.push(formatted);
+        }
+      }
+      data.push(row);
+    }
+    return buildMatrix(data);
+  }
+
+  function generateAttentionMatrix() {
+    const heads = randomInt(3, 5);
+    const dims = randomInt(4, 6);
+    const prefix = sample(weightRoots);
+    const rows = [];
+    for (let i = 0; i < heads; i++) {
+      const row = [];
+      for (let j = 0; j < dims; j++) {
+        row.push(`${prefix}${toSubscript(i + 1)}${toSubscript(j + 1)}`);
+      }
+      rows.push(row);
+    }
+    return buildMatrix(rows);
+  }
+
+  function generateLaplacianStencil() {
+    const axes = randomAxisSet(3);
+    const coeff = sample(covarRoots);
+    const rows = axes.map((axisRow, i) => axes.map((axisCol, j) => {
+      if (i === j) return `∂²/∂${axisRow}² - ${coeff}${toSubscript(i + 1)}`;
+      return `∂²/∂${axisRow}∂${axisCol}`;
+    }));
+    rows.push(axes.map((axis, idx) => (idx === 0 ? 'Δ' : '0')));
+    return buildMatrix(rows);
+  }
+
+  const matrixGenerators = [
+    { weight: 3, fn: generateHessianMatrix },
+    { weight: 3, fn: generateJacobianMatrix },
+    { weight: 2, fn: generateRotationMatrix },
+    { weight: 2, fn: generateCovarianceMatrix },
+    { weight: 3, fn: generateDenseMatrix },
+    { weight: 2, fn: generateAttentionMatrix },
+    { weight: 1, fn: generateLaplacianStencil },
   ];
 
-  const mediumMatrixTemplates = [
-    buildMatrix([
-      ['∂²Φ/∂x²', '∂²Φ/∂x∂y', '∂²Φ/∂x∂z'],
-      ['∂²Φ/∂y∂x', '∂²Φ/∂y²', '∂²Φ/∂y∂z'],
-      ['∂²Φ/∂z∂x', '∂²Φ/∂z∂y', '∂²Φ/∂z²']
-    ]),
-    buildMatrix([
-      ['2k', '0', '0'],
-      ['0', 'κ₁', '-ω'],
-      ['0', 'ω', 'κ₂']
-    ]),
-    buildMatrix([
-      ['1', '0', '0'],
-      ['0', '1', '0'],
-      ['0', '0', 'γ']
-    ])
-  ];
+  function randomMatrix() {
+    const weights = matrixGenerators.map((entry) => entry.weight);
+    const index = weightedPick(weights);
+    const generator = matrixGenerators[index]?.fn || matrixGenerators[0].fn;
+    return generator();
+  }
 
-  const largeMatrixTemplates = [
-    buildMatrix([
-      ['∂²𝓛/∂x²', '∂²𝓛/∂x∂y', '∂²𝓛/∂x∂z', '0'],
-      ['∂²𝓛/∂y∂x', '∂²𝓛/∂y²', '∂²𝓛/∂y∂z', '0'],
-      ['∂²𝓛/∂z∂x', '∂²𝓛/∂z∂y', '∂²𝓛/∂z²', '0'],
-      ['0', '0', '0', '1']
-    ]),
-    buildMatrix([
-      ['∂²Ψ/∂x²', '∂²Ψ/∂x∂y', '∂²Ψ/∂x∂z'],
-      ['∂²Ψ/∂y∂x', '∂²Ψ/∂y²', '∂²Ψ/∂y∂z'],
-      ['∂²Ψ/∂z∂x', '∂²Ψ/∂z∂y', '∂²Ψ/∂z²'],
-      ['∂Ψ/∂x', '∂Ψ/∂y', '∂Ψ/∂z'],
-      ['ΔΨ', '0', 'κ']
-    ])
-  ];
-
-  function randomColumnVector(){
+  function randomColumnVector() {
     const lengths = [3, 4, 5, 6];
-    const weights = [1, 2, 3, 5];
-    const len = lengths[weightedPick(weights)];
-    const entries = [];
-    for (let i=0;i<len;i++){
-      entries.push(sample(columnScalars));
+    const len = lengths[weightedPick([1, 2, 3, 2])];
+    const mode = weightedPick([3, 2, 3, 2]);
+    const values = [];
+    if (mode === 0) {
+      for (let i = 0; i < len; i++) values.push(`λ${toSubscript(i + 1)}`);
+    } else if (mode === 1) {
+      const target = sample(weightRoots);
+      const symbol = sample(tensorSymbols);
+      for (let i = 0; i < len; i++) values.push(`∂${symbol}/∂${target}${toSubscript(i + 1)}`);
+    } else if (mode === 2) {
+      for (let i = 0; i < len; i++) {
+        const value = (Math.random() * 2 - 1) * (Math.random() < 0.4 ? 2.5 : 1);
+        const formatted = (value >= 0 ? '+' : '-') + Math.abs(value).toFixed(2);
+        values.push(formatted);
+      }
+    } else {
+      const prefix = sample(stateRoots);
+      for (let i = 0; i < len; i++) values.push(`${prefix}${toSubscript(i + 1)}`);
     }
-    return buildColumn(entries);
+    return buildColumn(values);
   }
 
-  function randomRowVector(){
-    const lengths = [3, 4, 5];
-    const weights = [4, 2, 1];
-    const len = lengths[weightedPick(weights)];
-    const entries = [];
-    for (let i=0;i<len;i++){
-      const useGrad = Math.random() < 0.25;
-      entries.push(useGrad ? sample(gradSymbols) : sample(rowSymbols));
+  function randomRowVector() {
+    const lengths = [3, 4, 5, 6];
+    const len = lengths[weightedPick([3, 2, 2, 1])];
+    const mode = weightedPick([3, 2, 2, 2]);
+    const values = [];
+    if (mode === 0) {
+      const fn = sample(functionRoots);
+      const axes = randomAxisSet(len);
+      for (const axis of axes) values.push(`∂${fn}/∂${axis}`);
+    } else if (mode === 1) {
+      const prefix = sample(weightRoots);
+      for (let i = 0; i < len; i++) values.push(`${prefix}${toSubscript(i + 1)}`);
+    } else if (mode === 2) {
+      const raw = Array.from({ length: len }, () => Math.random());
+      const total = raw.reduce((sum, value) => sum + value, 0) || 1;
+      for (const value of raw) values.push((value / total).toFixed(2));
+    } else {
+      for (let i = 0; i < len; i++) values.push(sample(kinematicSymbols));
     }
-    return `[${entries.join(' ')}]`;
+    return buildRowVector(values);
   }
 
-  function randomMatrix(){
-    const roll = Math.random();
-    if (roll < 0.72) return sample(smallMatrixTemplates);
-    if (roll < 0.94) return sample(mediumMatrixTemplates);
-    return sample(largeMatrixTemplates);
-  }
-
-  function pickLabel(){
+function pickLabel(){
     const r = Math.random();
     if (r < 0.5) return randomColumnVector();
     if (r < 0.75) return randomRowVector();
@@ -1372,6 +1723,7 @@
   const F_POINTS = `
   precision mediump float;
   uniform vec3 uFogColor;
+  uniform float uFogDensity;
   varying vec3 vColor;
   varying float vDepth;
   varying float vPulse;
@@ -1385,7 +1737,7 @@
     float diff = 0.5 + 0.5*max(0.0, dot(N,L));
     float spec = pow(max(0.0, dot(reflect(-L,N), vec3(0.0,0.0,1.0))), 42.0) * 0.35;
     float halo = smoothstep(0.9, 0.0, r2) * vPulse * 0.9;
-    float fog = clamp((vDepth-1.0) / 9.0, 0.0, 1.0);
+    float fog = clamp(((vDepth-1.0) / 9.0) * uFogDensity, 0.0, 1.0);
     vec3 base = vColor*(diff + 0.12*halo) + spec*vec3(1.0);
     base = mix(base, uFogColor, fog);
     gl_FragColor = vec4(base, 0.86 * vAlpha);
@@ -1410,12 +1762,13 @@
   precision mediump float;
   uniform vec3 uFogColor;
   uniform vec3 uPulseColor;
+  uniform float uFogDensity;
   varying vec3 vColor;
   varying float vDepth;
   varying float vPulse;
   varying float vAlpha;
   void main(){
-    float fog = clamp((vDepth-1.0) / 9.0, 0.0, 1.0);
+    float fog = clamp(((vDepth-1.0) / 9.0) * uFogDensity, 0.0, 1.0);
     vec3 col = mix(vColor + vPulse*uPulseColor, uFogColor, fog);
     gl_FragColor = vec4(col, (0.35 + 0.35*min(1.0, vPulse)) * vAlpha);
   }`;
@@ -1435,14 +1788,16 @@
     uProj: gl.getUniformLocation(PROG_POINTS,'uProj'),
     uView: gl.getUniformLocation(PROG_POINTS,'uView'),
     uModel: gl.getUniformLocation(PROG_POINTS,'uModel'),
-    uFogColor: gl.getUniformLocation(PROG_POINTS,'uFogColor')
+    uFogColor: gl.getUniformLocation(PROG_POINTS,'uFogColor'),
+    uFogDensity: gl.getUniformLocation(PROG_POINTS,'uFogDensity'),
   };
   const uLines = {
     uProj: gl.getUniformLocation(PROG_LINES,'uProj'),
     uView: gl.getUniformLocation(PROG_LINES,'uView'),
     uModel: gl.getUniformLocation(PROG_LINES,'uModel'),
     uFogColor: gl.getUniformLocation(PROG_LINES,'uFogColor'),
-    uPulseColor: gl.getUniformLocation(PROG_LINES,'uPulseColor')
+    uPulseColor: gl.getUniformLocation(PROG_LINES,'uPulseColor'),
+    uFogDensity: gl.getUniformLocation(PROG_LINES,'uFogDensity'),
   };
 
   function attrib(p, name, buf, size){
@@ -1957,6 +2312,7 @@
     gl.uniformMatrix4fv(uLinesLoc.uView,false,view);
     gl.uniformMatrix4fv(uLinesLoc.uModel,false,model);
     if (uLines.uFogColor) gl.uniform3fv(uLines.uFogColor, fogColor);
+    if (uLines.uFogDensity) gl.uniform1f(uLines.uFogDensity, fogDensity);
     if (uLines.uPulseColor) gl.uniform3fv(uLines.uPulseColor, pulseTint);
     attrib(PROG_LINES,'position', linePosBuf, 3);
     attrib(PROG_LINES,'color',    lineColBuf, 3);
@@ -1970,6 +2326,7 @@
     gl.uniformMatrix4fv(uPointsLoc.uView,false,view);
     gl.uniformMatrix4fv(uPointsLoc.uModel,false,model);
     if (uPoints.uFogColor) gl.uniform3fv(uPoints.uFogColor, fogColor);
+    if (uPoints.uFogDensity) gl.uniform1f(uPoints.uFogDensity, fogDensity);
     attrib(PROG_POINTS,'position', posBuf, 3);
     attrib(PROG_POINTS,'color',    colBuf, 3);
     attrib(PROG_POINTS,'pulse',    pulseBuf, 1);
