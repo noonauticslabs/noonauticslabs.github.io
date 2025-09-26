@@ -7,7 +7,6 @@
         <small data-i18n="tagline">R&amp;D • Cell Sim • Bioinformatics</small>
       </div>
     </div>
-    <button class="hamb" id="hamb" aria-expanded="false" aria-controls="menu" aria-label="Open main menu">Menu</button>
     <nav class="menu" id="menu" aria-label="Primary">
       <a href="#project" data-i18n="nav_project">Project</a>
       <a href="#technology" data-i18n="nav_tech">Technology</a>
@@ -17,7 +16,10 @@
       <span class="theme-toggle" role="group" aria-label="Theme">
         <button type="button" id="theme-toggle" aria-pressed="true" data-icon="🌞" aria-label="Switch to light mode">Light</button>
       </span>
-      {% include lang-switcher.html %}
     </nav>
+    <div class="nav-actions">
+      {% include lang-switcher.html %}
+      <button class="hamb" id="hamb" aria-expanded="false" aria-controls="menu" aria-label="Open main menu">Menu</button>
+    </div>
   </div>
 </header>

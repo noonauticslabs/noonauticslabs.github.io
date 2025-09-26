@@ -5,6 +5,7 @@
   const themeToggle = document.getElementById('theme-toggle');
   const root = document.documentElement;
   const themeMeta = document.querySelector('meta[name="theme-color"]');
+  const langComponent = document.querySelector('[data-component="lang-switcher"]');
 
   function readStoredTheme(){
     try {
@@ -90,6 +91,7 @@
       if (!menu.classList.contains('open')) return;
       const target = evt.target;
       if (target === hamb || hamb.contains(target)) return;
+      if (langComponent && langComponent.contains(target)) return;
       if (menu.contains(target)) return;
       closeMenu();
     });
@@ -144,7 +146,6 @@
     }
   }
 
-  const langComponent = document.querySelector('[data-component="lang-switcher"]');
   const langListbox = langComponent ? langComponent.querySelector('.lang-options') : null;
   const langCurrent = langComponent ? langComponent.querySelector('.lang-current') : null;
   const langToggle = langComponent ? langComponent.querySelector('.lang-toggle') : null;
