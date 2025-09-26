@@ -6,5 +6,8 @@
   { "code": "es", "english": "Spanish", "native": "Español", "dir": "ltr" },
   { "code": "ru", "english": "Russian", "native": "Русский", "dir": "ltr" },
   { "code": "zh", "english": "Chinese (Simplified)", "native": "中文", "dir": "ltr" },
-  { "code": "ar", "english": "Arabic", "native": "العربية", "dir": "rtl" }
+  { "code": "ar", "english": "Arabic", "native": "العربية", "dir": "rtl" },
+  { "code": "it", "english": "Italian", "native": "Italiano", "dir": "ltr" },
+  { "code": "pt", "english": "Portuguese", "native": "Português", "dir": "ltr" },
+  { "code": "ja", "english": "Japanese", "native": "日本語", "dir": "ltr" }
 ]
