@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-lang="en" data-theme="dark">
+<html lang="en" data-lang="en" data-theme="dark" dir="ltr">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -11,6 +11,18 @@
   <link rel="canonical" href="https://noonauticslabs.org/" />
   <link rel="alternate" hreflang="en" href="https://noonauticslabs.org/" />
   <link rel="alternate" hreflang="pl" href="https://noonauticslabs.org/" />
+  <link rel="alternate" hreflang="de" href="https://noonauticslabs.org/" />
+  <link rel="alternate" hreflang="fr" href="https://noonauticslabs.org/" />
+  <link rel="alternate" hreflang="es" href="https://noonauticslabs.org/" />
+      <link rel="alternate" hreflang="ru" href="https://noonauticslabs.org/" />
+      <link rel="alternate" hreflang="zh" href="https://noonauticslabs.org/" />
+      <link rel="alternate" hreflang="ar" href="https://noonauticslabs.org/" />
+      <link rel="alternate" hreflang="it" href="https://noonauticslabs.org/" />
+      <link rel="alternate" hreflang="pt" href="https://noonauticslabs.org/" />
+      <link rel="alternate" hreflang="ja" href="https://noonauticslabs.org/" />
+      <link rel="alternate" hreflang="hi" href="https://noonauticslabs.org/" />
+      <link rel="alternate" hreflang="tr" href="https://noonauticslabs.org/" />
+      <link rel="alternate" hreflang="nl" href="https://noonauticslabs.org/" />
   <link rel="alternate" hreflang="x-default" href="https://noonauticslabs.org/" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="SiCell by Noonautics Labs" />
@@ -67,7 +79,22 @@
         "contactType": "Business inquiries",
         "email": "contact@noonauticslabs.org",
         "areaServed": "Worldwide",
-        "availableLanguage": ["English", "Polish"]
+        "availableLanguage": [
+          "English",
+          "Polish",
+          "German",
+          "French",
+          "Spanish",
+          "Russian",
+          "Chinese (Simplified)",
+          "Arabic",
+          "Italian",
+          "Portuguese",
+          "Japanese",
+          "Hindi",
+          "Turkish",
+          "Dutch"
+        ]
       }
     ],
     "knowsAbout": [
@@ -234,25 +261,27 @@
     .menu{display:flex; gap:18px; align-items:center}
     .menu a{color:var(--text); opacity:.9}
     .menu a:hover{opacity:1}
-    .lang{display:inline-flex; gap:6px; align-items:center; padding:4px;
-      border:1px solid var(--border); border-radius:999px; background:var(--chip-bg); color:var(--chip-text); font-size:.9rem}
-    .lang button{appearance:none; border:none; background:transparent; color:inherit;
-      padding:6px 12px; border-radius:999px; font-weight:600; font-size:.86rem; letter-spacing:.02em;
-      transition: background .2s ease, color .2s ease, box-shadow .2s ease; cursor:pointer}
-    .lang button[aria-pressed="true"]{background:linear-gradient(135deg, var(--accent), var(--accent-2));
-      color:var(--chip-active-text); box-shadow:var(--chip-active-shadow)}
-    .lang button[aria-pressed="false"]{color:var(--chip-muted)}
-    .lang button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
-    .theme-toggle{display:inline-flex; align-items:center;}
-    .theme-toggle button{appearance:none; border:1px solid var(--border); background:var(--chip-bg);
-      color:var(--chip-text); border-radius:999px; padding:6px 12px; font-weight:600; font-size:.86rem;
-      letter-spacing:.02em; cursor:pointer; transition: background .2s ease, color .2s ease, box-shadow .2s ease;}
-    .theme-toggle button:hover{box-shadow:0 0 0 1px var(--ring);}
-    .theme-toggle button[aria-pressed="true"]{background:linear-gradient(135deg, var(--accent), var(--accent-2));
-      color:var(--chip-active-text); box-shadow:var(--chip-active-shadow)}
-    .theme-toggle button[aria-pressed="false"]{color:var(--chip-muted)}
-    .theme-toggle button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
-    .hamb{display:none; background:var(--toolbar-button-bg); border:1px solid var(--border); color:var(--text); padding:8px 10px; border-radius:10px}
+    .lang-switcher{display:flex; flex-direction:column; align-items:flex-end; gap:10px; min-width:220px;}
+    .lang-header{display:flex; align-items:center; gap:10px; justify-content:flex-end; width:100%;}
+    .lang-label{font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);}
+    .lang-current{display:inline-flex; align-items:center; gap:10px; border:1px solid var(--border);
+      border-radius:999px; background:#141722; color:#d8e0ee; padding:6px 18px; font-weight:600; font-size:.86rem;}
+    .lang-current .lang-code{font-weight:700; font-size:.74rem; letter-spacing:.1em; opacity:.8; text-transform:uppercase;}
+    .lang-current .lang-name{font-size:.84rem;}
+    .lang-options{display:flex; flex-wrap:wrap; justify-content:flex-end; gap:6px; width:100%; max-width:360px;}
+    .lang-option{appearance:none; border:1px solid var(--border); border-radius:999px; background:rgba(18,21,33,.72);
+      color:rgba(224,232,247,.88); padding:8px 14px; font-weight:600; cursor:pointer; display:flex; flex-direction:column;
+      align-items:flex-end; min-width:156px; gap:2px; text-align:right;
+      transition:background .18s ease, color .18s ease, box-shadow .18s ease, border-color .18s ease;}
+    .lang-option .lang-native{font-size:.9rem;}
+    .lang-option .lang-english{font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; opacity:.7;}
+    .lang-option:hover{background:rgba(31,111,235,.16); color:#f0f4ff;}
+    .lang-option[aria-selected="true"]{background:linear-gradient(135deg, rgba(31,111,235,.92), rgba(43,212,161,.9));
+      color:#061427; border-color:transparent; box-shadow:0 0 0 1px rgba(11,22,42,.55), 0 12px 26px rgba(6,14,32,.35);}
+    .lang-option[aria-selected="true"] .lang-english{color:rgba(8,26,54,.72);}
+    .lang-option:focus-visible{outline:2px solid rgba(62,142,255,.9); outline-offset:2px;}
+    .lang-noscript{margin:0; font-size:.82rem; color:var(--muted); text-align:right;}
+    .hamb{display:none; background:#151a27; border:1px solid var(--border); color:#e6ebf2; padding:8px 10px; border-radius:10px}
     @media (max-width:860px){
       .hamb{display:inline-flex}
       .menu{
@@ -264,8 +293,11 @@
         width: calc(100vw - 24px)
       }
       .menu.open{display:flex}
-      .menu .lang,
-      .menu .theme-toggle{align-self:stretch; justify-content:space-between}
+      .menu .lang-switcher{align-items:stretch; width:100%; min-width:auto; gap:12px;}
+      .menu .lang-header{justify-content:space-between;}
+      .menu .lang-current{text-align:left; align-self:flex-start;}
+      .menu .lang-options{justify-content:flex-start; max-width:none;}
+      .menu .lang-option{text-align:left; align-items:flex-start; min-width:0; width:100%;}
     }
     @media (max-width:720px){
       .hero{padding: calc(var(--header-h) + 6px) 0 14svh;}
@@ -430,10 +462,19 @@
       <span class="theme-toggle" role="group" aria-label="Theme">
         <button type="button" id="theme-toggle" aria-pressed="true">Light</button>
       </span>
-      <span class="lang" role="group" aria-label="Language">
-        <button type="button" id="lang-en" aria-pressed="true">EN</button>
-        <button type="button" id="lang-pl" aria-pressed="false">PL</button>
-      </span>
+      <div class="lang-switcher" data-component="lang-switcher">
+        <div class="lang-header">
+          <span class="lang-label" id="langLabel" data-i18n="lang_label">Language</span>
+          <span class="lang-current" aria-live="polite">
+            <span class="lang-code" aria-hidden="true">EN</span>
+            <span class="lang-name" lang="en">English</span>
+          </span>
+        </div>
+        <div class="lang-options" role="listbox" aria-labelledby="langLabel"></div>
+        <noscript>
+          <p class="lang-noscript">English · Polski · Deutsch · Français · Español · Русский · 中文 · العربية · Italiano · Português · 日本語 · हिन्दी · Türkçe · Nederlands</p>
+        </noscript>
+      </div>
     </nav>
   </div>
 </header>
@@ -582,6 +623,25 @@
     </div>
   </section>
 </main>
+
+<script type="application/json" id="language-data">
+[
+  { "code": "en", "english": "English", "native": "English", "dir": "ltr" },
+  { "code": "pl", "english": "Polish", "native": "Polski", "dir": "ltr" },
+  { "code": "de", "english": "German", "native": "Deutsch", "dir": "ltr" },
+  { "code": "fr", "english": "French", "native": "Français", "dir": "ltr" },
+  { "code": "es", "english": "Spanish", "native": "Español", "dir": "ltr" },
+  { "code": "ru", "english": "Russian", "native": "Русский", "dir": "ltr" },
+  { "code": "zh", "english": "Chinese (Simplified)", "native": "中文", "dir": "ltr" },
+  { "code": "ar", "english": "Arabic", "native": "العربية", "dir": "rtl" },
+  { "code": "it", "english": "Italian", "native": "Italiano", "dir": "ltr" },
+  { "code": "pt", "english": "Portuguese", "native": "Português", "dir": "ltr" },
+  { "code": "ja", "english": "Japanese", "native": "日本語", "dir": "ltr" },
+  { "code": "hi", "english": "Hindi", "native": "हिन्दी", "dir": "ltr" },
+  { "code": "tr", "english": "Turkish", "native": "Türkçe", "dir": "ltr" },
+  { "code": "nl", "english": "Dutch", "native": "Nederlands", "dir": "ltr" }
+]
+</script>
 
 <footer>
   <div class="cols">
@@ -734,91 +794,317 @@
     window.location.href = `mailto:contact@noonauticslabs.org?subject=${subject}&body=${body}`;
   });
 
-  // i18n (concise)
-  const dict = {
-    en: {
-      tagline:"R&D • Cell Sim • Bioinformatics",
-      nav_project:"Project", nav_tech:"Technology", nav_company:"Company", nav_team:"Team", nav_contact:"Contact",
-      hero_badge:"SiCell - Flagship Project",
-      hero_title:"Full human cell simulations - closing the gap between silicon and carbon.",
-      hero_lead:"<strong>SiCell</strong> is our audacious step toward programmable biology: universal initial-state definitions, mechanistic models, and a search engine to explore disease mechanisms and pharma targets - as fast and iterative as software.",
-      cta_contact:"Contact us", cta_whitepaper:"Whitepaper (soon)",
-      tech_title:"Technology",
-      tech_intro:"From curated databases to mechanistic graphs: we synthesize structured knowledge into deterministic systems that run fast and compose cleanly.",
-      tech_point1:"Universal <strong>initial state</strong>: genes, epigenetics, organelles, protein levels → any cell type (neuron, stem, cancer, engineered).",
-      tech_point2:"Mechanistic <strong>ODE/graph models</strong> with feedback loops; no trillion-param training needed.",
-      tech_point3:"<strong>Search engine</strong> to explore disease pathways, targets, apoptosis routes, and drug effects.",
-      tech_point4:"Simple <strong>APIs & visuals</strong> for rapid prototyping, like software.",
-      seo_title:"Who finds SiCell when searching?",
-      seo_intro:"If you’re exploring cell simulation software, computational biology platforms, or mechanistic systems biology tooling, these are the problems we solve every day.",
-      seo_point1:"Cell simulation software for biotech R&D teams, computational biologists, and digital cell twin initiatives.",
-      seo_point2:"Mechanistic systems biology models for pharmaceutical target discovery and translational research pipelines.",
-      seo_point3:"In-silico drug discovery, disease pathway analysis, and bioinformatics automation for precision medicine groups.",
-      why_title:"Why now?", why_text:"It’s a paradox: we run trillion-parameter AIs trained from scratch, yet biology - where we already know so much - trails behind. We aim to close the gap between silicon on CPUs and carbon in cells, bringing biology into the era of emergent, iterative tooling.",
-      why_motto:"“Make biology buildable.”",
-      about_title:"About Noonautics Labs", about_legal:"Legal form: sp. z o.o. • Kraków (Kraków-Podgórze), Małopolskie",
-      about_desc:"BADANIA I ROZWÓJ W ZAKRESIE SYMULACJI KOMÓRKOWYCH, BIOINFORMATYKI I TWORZENIA NARZĘDZI DLA BIOTECHNOLOGII.",
-      focus_title:"Focus", focus_1:"Full human cell simulations (mechanistic).", focus_2:"Bioinformatics pipelines & knowledge synthesis.", focus_3:"Developer-grade tools for biotech teams.",
-      team_title:"Team", team_affil:"Cellular & Molecular Biophysics, UJ",
-      next_title:"What we’re building next", next_1:"Open APIs for state definitions and simulation control.", next_2:"Interactive visuals for pathway exploration.", next_3:"Whitepaper & demo (in progress).",
-      contact_title:"Contact", contact_general:"General", contact_send:"Send", contact_email:"Email instead",
-      contact_note:"We’re preparing our conference materials. A whitepaper and demo access will follow.",
-      partners_title:"For partners", partners_text:"Exploration of disease mechanisms, target discovery, and in-silico hypothesis testing. Let’s collaborate on focused, mechanistic problems."
-    },
-    pl: {
-      tagline:"B+R • Symulacje komórkowe • Bioinformatyka",
-      nav_project:"Projekt", nav_tech:"Technologia", nav_company:"Spółka", nav_team:"Zespół", nav_contact:"Kontakt",
-      hero_badge:"SiCell - projekt flagowy",
-      hero_title:"Symulacje komórek w pełnej skali - zamykamy lukę między krzemem a węglem.",
-      hero_lead:"<strong>SiCell</strong> to nasz odważny krok w stronę programowalnej biologii: definicje stanów początkowych, modele mechanistyczne i wyszukiwarka do analizy mechanizmów chorób oraz celów farmaceutycznych.",
-      cta_contact:"Skontaktuj się", cta_whitepaper:"Biała księga (wkrótce)",
-      tech_title:"Technologia", tech_intro:"Od kuratorowanych baz do modeli mechanistycznych - szybkie i komponowalne systemy.",
-      tech_point1:"Elastyczne <strong>stany początkowe</strong> → dowolny typ komórki.",
-      tech_point2:"<strong>Modele ODE/grafowe</strong> ze sprzężeniami zwrotnymi.",
-      tech_point3:"<strong>Wyszukiwarka</strong> szlaków i efektów leków.",
-      tech_point4:"Proste <strong>API i wizualizacje</strong>.",
-      seo_title:"Dla kogo jest SiCell?",
-      seo_intro:"Jeśli szukasz oprogramowania do symulacji komórkowych, platform bioinformatycznych lub mechanistycznych modeli systemów biologicznych, to właściwe miejsce.",
-      seo_point1:"Oprogramowanie do symulacji komórkowych dla zespołów B+R, bioinformatyków i projektów cyfrowych bliźniaków.",
-      seo_point2:"Mechanistyczne modele systemów biologicznych do odkrywania celów terapeutycznych i badań translacyjnych.",
-      seo_point3:"In silico drug discovery, analiza szlaków chorobowych i automatyzacja bioinformatyczna dla zespołów medycyny precyzyjnej.",
-      why_title:"Dlaczego teraz?", why_text:"Domykamy lukę między krzemem a komórką.",
-      why_motto:"„Sprawmy, by biologia stała się inżynierią.”",
-      about_title:"O Noonautics Labs", about_legal:"Forma prawna: sp. z o.o. • Kraków (Kraków-Podgórze)",
-      about_desc:"Symulacje komórkowe, bioinformatyka, narzędzia dla biotech.",
-      focus_title:"Zakres", focus_1:"Symulacje komórkowe.", focus_2:"Pipeline’y i synteza wiedzy.", focus_3:"Narzędzia deweloperskie.",
-      team_title:"Zespół", team_affil:"Biofizyka komórkowa i molekularna, UJ",
-      next_title:"Co dalej", next_1:"Otwarte API.", next_2:"Interaktywne wizualizacje.", next_3:"Biała księga i demo.",
-      contact_title:"Kontakt", contact_general:"Ogólne", contact_send:"Wyślij", contact_email:"Wyślij e-mail",
-      contact_note:"Przygotowujemy materiały konferencyjne.",
-      partners_title:"Dla partnerów", partners_text:"Mechanizmy chorób, cele terapeutyczne, hipotezy in-silico."
+  // i18n (JSON-driven)
+  const i18nElements = Array.from(document.querySelectorAll('[data-i18n]'));
+  for (const el of i18nElements) {
+    if (!el.dataset.i18nDefault) {
+      el.dataset.i18nDefault = el.innerHTML;
     }
-  };
-  function setLang(lang){
-    const current = root.dataset.lang;
-    const changed = current !== lang;
-    const translations = dict[lang];
-    root.setAttribute('lang', lang);
-    root.dataset.lang = lang;
-    if (changed && translations){
-      for (const el of document.querySelectorAll('[data-i18n]')) {
-        const key = el.getAttribute('data-i18n');
-        const html = translations[key];
-        if (html) el.innerHTML = html;
+  }
+
+  const langComponent = document.querySelector('[data-component="lang-switcher"]');
+  const langListbox = langComponent ? langComponent.querySelector('.lang-options') : null;
+  const langCurrent = langComponent ? langComponent.querySelector('.lang-current') : null;
+  const summaryCode = langCurrent ? langCurrent.querySelector('.lang-code') : null;
+  const summaryName = langCurrent ? langCurrent.querySelector('.lang-name') : null;
+  const summaryLabel = langComponent ? langComponent.querySelector('.lang-label') : null;
+  const inlineLangScript = document.getElementById('language-data');
+
+  const fallbackLangs = [
+    { code: 'en', english: 'English', native: 'English', dir: 'ltr' },
+    { code: 'pl', english: 'Polish', native: 'Polski', dir: 'ltr' },
+    { code: 'de', english: 'German', native: 'Deutsch', dir: 'ltr' },
+    { code: 'fr', english: 'French', native: 'Français', dir: 'ltr' },
+    { code: 'es', english: 'Spanish', native: 'Español', dir: 'ltr' },
+    { code: 'ru', english: 'Russian', native: 'Русский', dir: 'ltr' },
+    { code: 'zh', english: 'Chinese (Simplified)', native: '中文', dir: 'ltr' },
+    { code: 'ar', english: 'Arabic', native: 'العربية', dir: 'rtl' },
+    { code: 'it', english: 'Italian', native: 'Italiano', dir: 'ltr' },
+    { code: 'pt', english: 'Portuguese', native: 'Português', dir: 'ltr' },
+    { code: 'ja', english: 'Japanese', native: '日本語', dir: 'ltr' },
+    { code: 'hi', english: 'Hindi', native: 'हिन्दी', dir: 'ltr' },
+    { code: 'tr', english: 'Turkish', native: 'Türkçe', dir: 'ltr' },
+    { code: 'nl', english: 'Dutch', native: 'Nederlands', dir: 'ltr' },
+  ];
+
+  let LANGS = fallbackLangs.map((entry) => ({ ...entry }));
+  let langButtons = [];
+  const translationCache = new Map();
+
+  function normalizeLanguageEntry(entry) {
+    if (!entry || typeof entry !== 'object') return null;
+    const code = String(entry.code || '').trim().toLowerCase();
+    if (!code) return null;
+    const english = String(entry.english || entry.label || entry.name || '').trim();
+    const native = String(entry.native || entry.endonym || english || '').trim();
+    const dir = entry.dir === 'rtl' ? 'rtl' : 'ltr';
+    const fallbackLabel = code.split('-')[0].toUpperCase();
+    return {
+      code,
+      english: english || native || fallbackLabel,
+      native: native || english || fallbackLabel,
+      dir,
+    };
+  }
+
+  function dedupeLanguages(list) {
+    const unique = [];
+    const seen = new Set();
+    for (const item of list) {
+      if (!item || seen.has(item.code)) continue;
+      seen.add(item.code);
+      unique.push(item);
+    }
+    if (!seen.has('en')) {
+      const fallbackEn = fallbackLangs.find((entry) => entry.code === 'en');
+      if (fallbackEn) unique.unshift({ ...fallbackEn });
+    }
+    return unique.length ? unique : fallbackLangs.map((entry) => ({ ...entry }));
+  }
+
+  function parseInlineLanguageConfig() {
+    if (!inlineLangScript || !inlineLangScript.textContent) return [];
+    try {
+      const parsed = JSON.parse(inlineLangScript.textContent);
+      if (!Array.isArray(parsed)) return [];
+      return dedupeLanguages(parsed.map(normalizeLanguageEntry).filter(Boolean));
+    } catch (error) {
+      console.error('[i18n]', 'Unable to parse inline language data', error);
+      return [];
+    }
+  }
+
+  async function loadLanguageConfig() {
+    const inlineConfig = parseInlineLanguageConfig();
+    if (inlineConfig.length) return inlineConfig;
+    if (!langListbox) return fallbackLangs.map((entry) => ({ ...entry }));
+    try {
+      const response = await fetch('./i18n/languages.json', { cache: 'force-cache' });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const json = await response.json();
+      if (!Array.isArray(json)) throw new Error('Invalid payload');
+      return dedupeLanguages(json.map(normalizeLanguageEntry).filter(Boolean));
+    } catch (error) {
+      console.error('[i18n]', 'Unable to load language list', error);
+      return fallbackLangs.map((entry) => ({ ...entry }));
+    }
+  }
+
+  function renderLangButtons(list) {
+    if (!langListbox) return;
+    langListbox.innerHTML = '';
+    const fragment = document.createDocumentFragment();
+    for (const entry of list) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'lang-option';
+      button.dataset.lang = entry.code;
+      button.dataset.dir = entry.dir;
+      button.setAttribute('role', 'option');
+      button.setAttribute('lang', entry.code);
+      button.id = `lang-option-${entry.code}`;
+      button.tabIndex = -1;
+      const nativeSpan = document.createElement('span');
+      nativeSpan.className = 'lang-native';
+      nativeSpan.textContent = entry.native;
+      nativeSpan.setAttribute('lang', entry.code);
+      nativeSpan.dir = entry.dir === 'rtl' ? 'rtl' : 'ltr';
+      const englishSpan = document.createElement('span');
+      englishSpan.className = 'lang-english';
+      englishSpan.textContent = entry.english;
+      englishSpan.setAttribute('lang', 'en');
+      button.append(nativeSpan, englishSpan);
+      button.title = entry.english === entry.native
+        ? entry.english
+        : `${entry.english} · ${entry.native}`;
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        setLang(entry.code);
+      });
+      fragment.appendChild(button);
+    }
+    langListbox.appendChild(fragment);
+    langButtons = Array.from(langListbox.querySelectorAll('[data-lang]'));
+    langComponent?.setAttribute('data-ready', 'true');
+  }
+
+  function focusLangButton(index) {
+    if (!langButtons.length) return;
+    const total = langButtons.length;
+    const targetIndex = ((index % total) + total) % total;
+    const btn = langButtons[targetIndex];
+    if (btn) btn.focus();
+  }
+
+  function handleLangKeydown(event) {
+    if (!langButtons.length) return;
+    const { key } = event;
+    const activeElement = document.activeElement;
+    const currentIndex = langButtons.indexOf(activeElement);
+    if (key === 'ArrowLeft' || key === 'ArrowUp') {
+      event.preventDefault();
+      const nextIndex = currentIndex > -1 ? currentIndex - 1 : langButtons.length - 1;
+      focusLangButton(nextIndex);
+    } else if (key === 'ArrowRight' || key === 'ArrowDown') {
+      event.preventDefault();
+      const nextIndex = currentIndex > -1 ? currentIndex + 1 : 0;
+      focusLangButton(nextIndex);
+    } else if (key === 'Home') {
+      event.preventDefault();
+      focusLangButton(0);
+    } else if (key === 'End') {
+      event.preventDefault();
+      focusLangButton(langButtons.length - 1);
+    } else if (key === ' ' || key === 'Spacebar' || key === 'Enter') {
+      if (currentIndex > -1) {
+        event.preventDefault();
+        langButtons[currentIndex].click();
       }
     }
-    const langEnBtn = document.getElementById('lang-en');
-    const langPlBtn = document.getElementById('lang-pl');
-    if (langEnBtn) langEnBtn.setAttribute('aria-pressed', String(lang === 'en'));
-    if (langPlBtn) langPlBtn.setAttribute('aria-pressed', String(lang === 'pl'));
-    try { localStorage.setItem('lang', lang); } catch(e) {}
   }
-  document.getElementById('lang-en').addEventListener('click', ()=>setLang('en'));
-  document.getElementById('lang-pl').addEventListener('click', ()=>setLang('pl'));
-  (function initLang(){
-    let saved = null; try { saved = localStorage.getItem('lang'); } catch(e) {}
-    if (!saved) { const ul = (navigator.language||'en').toLowerCase(); saved = ul.startsWith('pl') ? 'pl' : 'en'; }
-    setLang(saved);
+
+  langListbox?.addEventListener('keydown', handleLangKeydown);
+
+  function updateLangButtons(activeLang) {
+    let activeId = null;
+    for (const btn of langButtons) {
+      const isActive = btn.dataset.lang === activeLang;
+      btn.setAttribute('aria-selected', String(isActive));
+      btn.tabIndex = isActive ? 0 : -1;
+      if (isActive) activeId = btn.id || null;
+    }
+    if (!activeId && langButtons.length) {
+      langButtons[0].tabIndex = 0;
+      activeId = langButtons[0].id || null;
+    }
+    if (langListbox) {
+      if (activeId) langListbox.setAttribute('aria-activedescendant', activeId);
+      else langListbox.removeAttribute('aria-activedescendant');
+    }
+  }
+
+  function getLangEntry(code) {
+    return LANGS.find((entry) => entry.code === code) || null;
+  }
+
+  function updateLangSummary(lang) {
+    if (!langCurrent) return;
+    const entry = getLangEntry(lang) || fallbackLangs[0];
+    const displayCode = entry.code.split('-')[0].toUpperCase();
+    if (summaryCode) summaryCode.textContent = displayCode;
+    if (summaryName) {
+      summaryName.textContent = entry.native;
+      summaryName.setAttribute('lang', entry.code);
+      summaryName.dir = entry.dir === 'rtl' ? 'rtl' : 'ltr';
+    }
+    langCurrent.setAttribute('aria-label', `Current language: ${entry.english}`);
+    langComponent?.setAttribute('data-current', entry.code);
+    if (summaryLabel) summaryLabel.setAttribute('data-current', entry.code);
+  }
+
+  function updateDocumentDirection(lang) {
+    const entry = getLangEntry(lang);
+    document.documentElement.setAttribute('dir', entry?.dir === 'rtl' ? 'rtl' : 'ltr');
+  }
+
+  function updateHistory(lang) {
+    if (!('history' in window) || typeof history.replaceState !== 'function') return;
+    const url = new URL(window.location.href);
+    if (lang === 'en') {
+      url.searchParams.delete('lang');
+    } else {
+      url.searchParams.set('lang', lang);
+    }
+    history.replaceState(null, '', url);
+  }
+
+  function persistLang(lang) {
+    try { localStorage.setItem('lang', lang); } catch (e) {}
+  }
+
+  async function loadTranslations(lang) {
+    if (lang === 'en') return null;
+    if (translationCache.has(lang)) return translationCache.get(lang);
+    try {
+      const response = await fetch(`./i18n/${lang}.json`, { cache: 'force-cache' });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const json = await response.json();
+      translationCache.set(lang, json);
+      return json;
+    } catch (error) {
+      console.error('[i18n]', `Unable to load translations for "${lang}"`, error);
+      translationCache.set(lang, null);
+      return null;
+    }
+  }
+
+  function applyTranslations(payload) {
+    const lang = payload?.lang || 'en';
+    const translations = payload?.translations || null;
+    for (const el of i18nElements) {
+      const key = el.getAttribute('data-i18n');
+      const fallback = el.dataset.i18nDefault || '';
+      const html = translations && Object.prototype.hasOwnProperty.call(translations, key)
+        ? translations[key]
+        : fallback;
+      if (el.innerHTML !== html) {
+        el.innerHTML = html;
+      }
+    }
+    document.documentElement.setAttribute('lang', lang);
+    document.documentElement.dataset.lang = lang;
+  }
+
+  function onLanguageActivated(lang) {
+    updateDocumentDirection(lang);
+    updateLangButtons(lang);
+    updateLangSummary(lang);
+    updateHistory(lang);
+    persistLang(lang);
+  }
+
+  let loadingLang = null;
+
+  async function setLang(lang) {
+    let target = (lang || 'en').toLowerCase();
+    if (!getLangEntry(target)) target = 'en';
+    if (loadingLang === target) return;
+    loadingLang = target;
+    let translations = null;
+    try {
+      translations = await loadTranslations(target);
+    } finally {
+      const appliedLang = target === 'en' ? 'en' : (translations ? target : 'en');
+      applyTranslations({
+        lang: appliedLang,
+        translations: appliedLang === 'en' ? null : translations,
+      });
+      onLanguageActivated(appliedLang);
+      loadingLang = null;
+    }
+  }
+
+  (async function initLang() {
+    LANGS = await loadLanguageConfig();
+    if (!Array.isArray(LANGS) || !LANGS.length) {
+      LANGS = fallbackLangs.map((entry) => ({ ...entry }));
+    }
+    renderLangButtons(LANGS);
+    let saved = null;
+    const currentUrl = new URL(window.location.href);
+    const queryLang = (currentUrl.searchParams.get('lang') || '').toLowerCase();
+    if (queryLang) {
+      saved = queryLang;
+    }
+    if (!saved) {
+      try { saved = localStorage.getItem('lang'); } catch (e) {}
+    }
+    if (!saved) {
+      const browser = (navigator.language || 'en').toLowerCase();
+      const match = LANGS.find((entry) => browser.startsWith(entry.code));
+      saved = match ? match.code : 'en';
+    }
+    await setLang(saved);
   })();
 </script>
 
