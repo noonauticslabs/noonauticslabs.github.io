@@ -228,8 +228,8 @@
         position: fixed;
         top: calc(var(--header-h) + 8px);
         left: 12px;
-        right: 12px;        /* keep gutters */
-        /* don't set bottom — let height be content-limited */
+        right: 12px;
+        width: calc(100% - 24px);
         max-height: calc(100dvh - var(--header-h) - 24px - env(safe-area-inset-bottom, 0px));
         padding-bottom: env(safe-area-inset-bottom, 0px);
         overflow: auto;
