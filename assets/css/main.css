@@ -137,7 +137,7 @@
       backdrop-filter: saturate(140%) blur(6px);
       background: var(--header-gradient);
       border-bottom: 1px solid var(--border);
-      transform: translateY(0);
+      transform: none;
       transition: transform .25s ease, background .2s ease, box-shadow .2s ease;
     }
     header.scrolled{ background: var(--header-solid); box-shadow: var(--header-shadow) }
