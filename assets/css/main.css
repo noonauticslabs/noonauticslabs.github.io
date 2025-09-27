@@ -153,7 +153,6 @@
     footer .pill{margin-top:6px;}
     .menu{display:flex; gap:18px; align-items:center; margin-left:28px;}
     .nav-actions{display:flex; align-items:center; gap:12px; flex-shrink:0; margin-left:18px;}
-    .lang-slot{display:flex; align-items:center;}
     .menu a{color:var(--text); opacity:.9}
     .menu a:hover{opacity:1}
     .theme-toggle{display:inline-flex; align-items:center;}
@@ -233,10 +232,6 @@
       }
       .lang-switcher .lang-options{max-height:none;}
       .lang-noscript{text-align:left;}
-      .menu .lang-slot{width:100%;}
-      .menu .lang-switcher{width:100%; align-items:stretch;}
-      .menu .lang-toggle{width:100%;}
-      .menu .lang-switcher .lang-menu{position:static; inset:auto; width:100%; max-height:min(320px, 60vh); margin-top:8px; border-radius:12px; box-shadow:none;}
     }
     @media (max-width:600px){
       .brand small{display:none;}

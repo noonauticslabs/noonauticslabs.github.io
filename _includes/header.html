@@ -16,12 +16,9 @@
       <span class="theme-toggle" role="group" aria-label="Theme">
         <button type="button" id="theme-toggle" aria-pressed="true" data-icon="🌞" aria-label="Switch to light mode">Light</button>
       </span>
-      <div class="lang-slot" data-lang-anchor="menu"></div>
     </nav>
     <div class="nav-actions">
-      <div class="lang-slot" data-lang-anchor="actions">
-        {% include lang-switcher.html %}
-      </div>
+      {% include lang-switcher.html %}
       <button class="hamb" id="hamb" aria-expanded="false" aria-controls="menu" aria-label="Open main menu">Menu</button>
     </div>
   </div>
