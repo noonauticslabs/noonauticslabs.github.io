@@ -218,22 +218,15 @@
         width: calc(100vw - 24px)
       }
       .menu.open{display:flex}
-      .lang-switcher{align-items:flex-start; width:auto;}
+      .lang-switcher{align-items:flex-end; width:auto;}
       .lang-toggle{width:auto; justify-content:space-between;}
       .lang-switcher[data-open="true"]{
         position:relative;
       }
-      .lang-switcher[data-open="true"]::before{
-        content:"";
-        position:fixed;
-        inset:0;
-        background:rgba(8,12,22,.45);
-        z-index:110;
-        pointer-events:none;
-      }
       .lang-switcher .lang-menu{
         position:fixed;
         inset:calc(var(--header-h) + 8px) 12px max(12px, env(safe-area-inset-bottom, 12px)) 12px;
+        max-height:calc(100vh - var(--header-h) - 40px);
         overflow:auto;
         z-index:130;
       }
