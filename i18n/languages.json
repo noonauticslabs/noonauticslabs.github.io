@@ -12,5 +12,10 @@
   { "code": "ja", "english": "Japanese", "native": "日本語", "dir": "ltr" },
   { "code": "hi", "english": "Hindi", "native": "हिन्दी", "dir": "ltr" },
   { "code": "tr", "english": "Turkish", "native": "Türkçe", "dir": "ltr" },
-  { "code": "nl", "english": "Dutch", "native": "Nederlands", "dir": "ltr" }
+  { "code": "nl", "english": "Dutch", "native": "Nederlands", "dir": "ltr" },
+  { "code": "he", "english": "Hebrew", "native": "עברית", "dir": "rtl" },
+  { "code": "ko", "english": "Korean", "native": "한국어", "dir": "ltr" },
+  { "code": "el", "english": "Greek", "native": "Ελληνικά", "dir": "ltr" },
+  { "code": "vi", "english": "Vietnamese", "native": "Tiếng Việt", "dir": "ltr" },
+  { "code": "id", "english": "Indonesian", "native": "Bahasa Indonesia", "dir": "ltr" }
 ]
